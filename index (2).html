@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0ede4;
+  --bg-dark: #1e4d2b;
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --accent: #1e4d2b;
+  --accent-hover: #163d22;
+  --border: rgba(30,77,43,0.15);
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(240,237,228,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 60px;
+  transition: box-shadow 0.3s;
+}
+
+nav.scrolled { box-shadow: 0 4px 24px rgba(0,0,0,0.06); }
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--ink);
+  text-decoration: none;
+  letter-spacing: -0.3px;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 36px;
+  list-style: none;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-mid);
+  text-decoration: none;
+  letter-spacing: 0.2px;
+  transition: color 0.2s;
+  position: relative;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 0;
+  height: 1.5px;
+  background: var(--accent-hover);
+  transition: width 0.25s ease;
+}
+
+.nav-links a.active { color: var(--ink); }
+.nav-links a.active::after { width: 100%; }
+.nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  background: var(--accent) !important;
+  color: #f0ede4 !important;
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  transition: background 0.2s, transform 0.15s !important;
+}
+.nav-cta::after { display: none !important; }
+.nav-cta:hover { background: var(--accent-hover) !important; transform: translateY(-1px); }
+
+/* HERO */
+.hero {
+  background: var(--bg-dark);
+  padding: 100px 48px 88px;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 60px;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  min-height: 92vh;
+}
+
+.hero-bg-text {
+  position: absolute;
+  bottom: -20px;
+  right: -10px;
+  font-family: var(--font-serif);
+  font-size: 220px;
+  color: rgba(255,255,255,0.02);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -8px;
+  will-change: transform;
+}
+
+.hero-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--accent);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.7s ease forwards 0.1s;
+}
+
+.hero-name {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5vw, 60px);
+  color: #f0ede4;
+  line-height: 1.05;
+  letter-spacing: -1px;
+  margin-bottom: 24px;
+  opacity: 0;
+  transform: translateY(20px);
+  animation: fadeUp 0.8s ease forwards 0.25s;
+}
+
+.hero-tagline {
+  font-size: 15px;
+  color: rgba(240,237,228,0.65);
+  line-height: 1.75;
+  max-width: 460px;
+  margin-bottom: 36px;
+  opacity: 0;
+  transform: translateY(16px);
+  animation: fadeUp 0.7s ease forwards 0.4s;
+}
+
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(12px);
+  animation: fadeUp 0.7s ease forwards 0.55s;
+}
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: rgba(240,237,228,0.4);
+  border: 1px solid rgba(240,237,228,0.2);
+  padding: 5px 12px;
+  border-radius: 100px;
+  text-transform: uppercase;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.hero-tag:hover { border-color: var(--accent); color: var(--accent); }
+
+.hero-photo-wrap {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: fadeUp 0.9s ease forwards 0.35s;
+  will-change: transform;
+}
+
+.hero-photo {
+  width: 100%;
+  aspect-ratio: 3/4;
+  background: #163d22;
+  border-radius: 4px;
+  border: 1px solid rgba(240,237,228,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-photo::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(45deg, transparent, transparent 12px, rgba(255,255,255,0.015) 12px, rgba(255,255,255,0.015) 13px);
+}
+
+.hero-photo-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 48px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 1s;
+}
+
+.hero-scroll-line {
+  width: 32px;
+  height: 1px;
+  background: rgba(240,237,228,0.3);
+}
+
+.hero-scroll-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+}
+
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* SCROLL REVEAL */
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* SECTION HEADER */
+.section-header {
+  padding: 56px 48px 18px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 28px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.section-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+/* FILTER */
+.filter-bar {
+  padding: 20px 48px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+.filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--bg); font-weight: 500; }
+
+/* WORK CARDS */
+.work-list { padding: 0 48px; }
+
+.work-card {
+  display: grid;
+  grid-template-columns: 148px 1fr 120px;
+  gap: 32px;
+  align-items: start;
+  padding: 32px 0;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.work-card:last-child { border-bottom: none; }
+.work-card:hover { transform: translateX(5px); }
+.work-card:hover .work-card-title { color: var(--accent-hover); }
+.work-card:hover .work-arrow { transform: translate(4px, -4px); color: var(--accent-hover); }
+.work-card:hover .work-card-thumb { border-color: rgba(30,77,43,0.5); }
+
+.work-card-thumb {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: border-color 0.25s;
+  background: #dbd8cf;
+}
+
+.work-card-thumb-inner {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(-45deg, #dbd8cf, #dbd8cf 4px, #cec9be 4px, #cec9be 8px);
+}
+
+.work-card-thumb.dark { background: #163d22; }
+.work-card-thumb.dark .work-card-thumb-inner {
+  background: repeating-linear-gradient(-45deg, #163d22, #163d22 4px, #1a4526 4px, #1a4526 8px);
+}
+
+.work-card-body { padding-top: 2px; }
+
+.work-card-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.08);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.tag.wip { background: rgba(30,77,43,0.15); color: #3a8050; }
+.tag.series { background: rgba(30,77,43,0.1); color: var(--ink-mid); }
+
+.work-card-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.work-card-excerpt {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+
+.work-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.work-arrow {
+  font-size: 18px;
+  color: var(--ink-faint);
+  transition: transform 0.25s ease, color 0.2s;
+  display: inline-block;
+}
+
+/* ABOUT */
+.about-section {
+  padding: 88px 48px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  border-top: 1px solid var(--border);
+}
+
+.about-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.about-title {
+  font-family: var(--font-serif);
+  font-size: 34px;
+  color: var(--ink);
+  line-height: 1.15;
+  letter-spacing: -0.5px;
+  margin-bottom: 28px;
+}
+
+.about-body {
+  font-size: 15px;
+  color: var(--ink-mid);
+  line-height: 1.8;
+}
+
+.about-body p + p { margin-top: 18px; }
+
+.about-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  align-content: start;
+}
+
+.stat-card {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  transition: border-color 0.25s, transform 0.25s;
+}
+
+.stat-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+.stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+
+.stat-value {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+
+.stat-sub {
+  font-size: 12px;
+  color: var(--ink-mid);
+  margin-top: 4px;
+}
+
+/* CONTACT */
+.contact-strip {
+  background: var(--bg-dark);
+  padding: 64px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.5);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.contact-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  color: #f0ede4;
+  letter-spacing: -0.5px;
+}
+
+.contact-links {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.contact-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.6);
+  text-decoration: none;
+  padding: 10px 22px;
+  border: 1px solid rgba(240,237,228,0.2);
+  border-radius: 100px;
+  transition: all 0.2s;
+}
+
+.contact-link:hover { color: #f0ede4; border-color: rgba(240,237,228,0.5); }
+
+.contact-link.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+  font-weight: 600;
+}
+
+.contact-link.primary:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+/* FOOTER */
+footer {
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(240,237,228,0.1);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.3);
+  letter-spacing: 1px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.3);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--accent); }
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .nav-links { gap: 16px; }
+  .hero { grid-template-columns: 1fr; padding: 56px 20px 80px; min-height: auto; }
+  .hero-photo-wrap { display: none; }
+  .hero-bg-text { font-size: 100px; }
+  .hero-scroll-hint { left: 20px; }
+  .section-header { padding: 40px 20px 18px; }
+  .filter-bar { padding: 16px 20px; }
+  .work-list { padding: 0 20px; }
+  .work-card { grid-template-columns: 1fr; gap: 14px; }
+  .work-card:hover { transform: none; }
+  .about-section { grid-template-columns: 1fr; padding: 56px 20px; gap: 40px; }
+  .contact-strip { flex-direction: column; gap: 32px; padding: 56px 20px; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#work" data-section="work">Work</a></li>
+    <li><a href="#about" data-section="about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <div class="hero-eyebrow">Urban Data Scientist · Bangalore</div>
+    <h1 class="hero-name">I help planners<br>and designers make<br>sense of cities.</h1>
+    <p class="hero-tagline">Senior Urban Data Scientist, AEC tech automation specialist, and computational designer. M.Arch, Bartlett School of Architecture, UCL.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">Geospatial Intelligence</span>
+      <span class="hero-tag">BIM Automation</span>
+      <span class="hero-tag">Computational Design</span>
+      <span class="hero-tag">LEED® Green Associate™</span>
+    </div>
+  </div>
+  <div class="hero-photo-wrap" id="hero-photo-wrap">
+    <div class="hero-photo">
+      <span class="hero-photo-label">Photo — coming soon</span>
+    </div>
+  </div>
+  <div class="hero-bg-text" id="hero-bg">PS</div>
+  <div class="hero-scroll-hint">
+    <div class="hero-scroll-line"></div>
+    <span class="hero-scroll-text">Scroll</span>
+  </div>
+</section>
+
+<div id="work">
+  <div class="section-header reveal">
+    <h2 class="section-title">Projects &amp; Writing</h2>
+    <span class="section-meta">Work in progress</span>
+  </div>
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+    <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+    <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+    <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+  </div>
+  <div class="work-list" id="work-list"></div>
+</div>
+
+<section class="about-section" id="about">
+  <div class="about-text reveal">
+    <div class="about-label">About</div>
+    <h2 class="about-title">Architect by training.<br>Data scientist by practice.</h2>
+    <div class="about-body">
+      <p>My work sits at the intersection of cities, computation, and data. Over the past few years this has meant building geospatial workflows in Python, applying machine learning to urban systems, and developing Revit API automation tools.</p>
+      <p>I work across scales — from understanding how a single street performs to how different parts of a city relate to each other. The focus stays the same: turning complex spatial data into something useful for the people who design and plan cities.</p>
+      <p>M.Arch in Urban Design from the Bartlett School of Architecture, University College London. B.Arch from BMS College of Engineering. COA Registered Architect.</p>
+    </div>
+  </div>
+  <div class="about-stats reveal">
+    <div class="stat-card">
+      <div class="stat-label">Education</div>
+      <div class="stat-value">Bartlett</div>
+      <div class="stat-sub">UCL B-Pro Urban Design</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Specialisation</div>
+      <div class="stat-value">Urban Data</div>
+      <div class="stat-sub">Geospatial + ML</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Current focus</div>
+      <div class="stat-value">Bangalore</div>
+      <div class="stat-sub">Real-time sensing</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Credential</div>
+      <div class="stat-value">LEED®</div>
+      <div class="stat-sub">Green Associate™</div>
+    </div>
+  </div>
+</section>
+
+<div class="contact-strip reveal" id="contact">
+  <div>
+    <div class="contact-eyebrow">Let's talk</div>
+    <div class="contact-title">Get in touch today.</div>
+  </div>
+  <div class="contact-links">
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="contact-link" target="_blank">GitHub ↗</a>
+    <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary">prakritisrimal@gmail.com</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-name">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="mailto:prakritisrimal@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+const workItems = [
+  {
+    id: 1,
+    type: ['project'],
+    title: 'IsoChronic City',
+    excerpt: 'A master\'s thesis developed at the Bartlett School of Architecture, UCL. A post-pandemic urban response built on the 15-minute neighbourhood concept — proximity, walkability, and what reurbanisation actually means.',
+    tags: ['Thesis', 'Urban Design'],
+    date: 'UCL B-Pro · 2023',
+    status: null,
+    dark: false
+  },
+  {
+    id: 2,
+    type: ['bangalore', 'writing'],
+    title: 'How far can you go?',
+    excerpt: '5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible — and which ones depend entirely on a car.',
+    tags: ['Bangalore Series', 'Accessibility'],
+    date: 'May 2025',
+    status: null,
+    dark: true
+  },
+  {
+    id: 3,
+    type: ['bangalore', 'writing'],
+    title: 'What is Bangalore actually made up of?',
+    excerpt: 'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete area to the sprawling plots of the north — every neighbourhood has a morphological fingerprint.',
+    tags: ['Bangalore Series', 'Morphology'],
+    date: 'Apr 2025',
+    status: null,
+    dark: true
+  },
+  {
+    id: 4,
+    type: ['project', 'wip'],
+    title: 'Real Time Sensing Instrument',
+    excerpt: 'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio running on the NVIDIA Jetson Orin Nano Super. Documenting the build process as it happens.',
+    tags: ['Hardware', 'Sensing'],
+    date: 'Ongoing',
+    status: 'wip',
+    dark: false
+  },
+  {
+    id: 5,
+    type: ['project', 'wip'],
+    title: 'pyRevit BIM Automation Scripts',
+    excerpt: 'Ten Revit API tools built in Python using pyRevit, developed for large-scale residential and commercial AEC projects. Tools include: Create Worksets · Assign Worksets · Insert Workset · Wall Base · Wall Top · Door Base · Copy Units · Mirror Units · ParaControl · Unit Typology Parameter.',
+    tags: ['AEC Tech', 'Python', 'pyRevit'],
+    date: 'Ongoing',
+    status: 'wip',
+    dark: false
+  },
+  {
+    id: 6,
+    type: ['bangalore', 'writing', 'wip'],
+    title: 'Real Time Sensing — field notes from Bangalore',
+    excerpt: 'The instrument is taking shape. GPS, temperature, humidity, and audio now running simultaneously. First field tests in Bangalore — what the data looks like, what it reveals, and what it doesn\'t.',
+    tags: ['Bangalore Series', 'Hardware'],
+    date: 'Ongoing',
+    status: 'wip',
+    dark: true
+  }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+
+  list.innerHTML = filtered.map((item, idx) => `
+    <div class="work-card reveal" style="transition-delay:${idx * 70}ms" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-thumb ${item.dark ? 'dark' : ''}">
+        <div class="work-card-thumb-inner"></div>
+      </div>
+      <div class="work-card-body">
+        <div class="work-card-tags">
+          ${item.tags.map(t => `<span class="tag ${t.includes('Series') ? 'series' : ''}">${t}</span>`).join('')}
+          ${item.status === 'wip' ? '<span class="tag wip">WIP</span>' : ''}
+        </div>
+        <div class="work-card-title">${item.title}</div>
+        <div class="work-card-excerpt">${item.excerpt}</div>
+      </div>
+      <div class="work-card-right">
+        <span class="work-card-date">${item.date}</span>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+  `).join('');
+
+  setTimeout(observeReveal, 50);
+}
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// Intersection Observer for scroll reveal
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+  els.forEach(el => io.observe(el));
+}
+
+// Nav: scroll shadow + active section underline
+function updateNav() {
+  const nav = document.getElementById('main-nav');
+  const scrollY = window.scrollY;
+  nav.classList.toggle('scrolled', scrollY > 40);
+
+  const sections = [
+    { id: 'work', el: document.getElementById('work') },
+    { id: 'about', el: document.getElementById('about') },
+    { id: 'contact', el: document.getElementById('contact') }
+  ];
+
+  let current = '';
+  sections.forEach(s => {
+    if (s.el && scrollY >= s.el.offsetTop - 120) current = s.id;
+  });
+
+  document.querySelectorAll('.nav-links a[data-section]').forEach(a => {
+    a.classList.toggle('active', a.dataset.section === current);
+  });
+}
+
+// Hero parallax
+function heroParallax() {
+  const scrollY = window.scrollY;
+  if (scrollY > window.innerHeight) return;
+  const heroContent = document.querySelector('.hero-content');
+  const photoWrap = document.getElementById('hero-photo-wrap');
+  const bgText = document.getElementById('hero-bg');
+  if (heroContent) heroContent.style.transform = `translateY(${scrollY * 0.18}px)`;
+  if (photoWrap) photoWrap.style.transform = `translateY(${scrollY * 0.10}px)`;
+  if (bgText) bgText.style.transform = `translateY(${scrollY * 0.28}px)`;
+}
+
+renderWork('all');
+observeReveal();
+
+window.addEventListener('scroll', () => {
+  updateNav();
+  heroParallax();
+}, { passive: true });
+
+updateNav();
+</script>
+</body>
+</html>
