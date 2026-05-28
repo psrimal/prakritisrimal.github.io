@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --void:  #0a0a08;
+  --deep:  #0e0e0b;
+  --green: #1e4d2b;
+  --cream: #f0ede4;
+  --ink:   #1e4d2b;
+  --ink-mid:   #4a6b54;
+  --ink-faint: #9ab5a2;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans:  'Instrument Sans', sans-serif;
+  --font-mono:  'DM Mono', monospace;
+}
+
+html { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--void);
+  color: var(--cream);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════════
+   NAV
+══════════════════════════════════════════════ */
+#nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 52px;
+  transition: background 0.45s, backdrop-filter 0.45s, border-color 0.45s;
+  border-bottom: 1px solid transparent;
+}
+#nav.solid {
+  background: rgba(10,10,8,0.86);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border-color: rgba(240,237,228,0.07);
+}
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeIn 1s ease 2.2s forwards;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 1s ease 2.2s forwards;
+}
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--cream); }
+.nav-cta {
+  background: var(--green) !important;
+  color: var(--cream) !important;
+  padding: 8px 20px !important;
+  border-radius: 100px !important;
+  font-weight: 600 !important;
+}
+.nav-cta:hover { background: #163d22 !important; }
+
+/* ══════════════════════════════════════════════
+   HERO
+══════════════════════════════════════════════ */
+.s-hero {
+  position: relative;
+  height: 100vh;
+  min-height: 600px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  background: var(--void);
+}
+.s-hero__bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/images/IMG_0047.jpeg');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  filter: brightness(0.28);
+  will-change: transform;
+}
+.s-hero__content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+  will-change: transform, opacity;
+}
+.s-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.4);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.3s forwards;
+}
+.s-hero__name {
+  font-family: var(--font-serif);
+  font-size: clamp(64px, 11vw, 128px);
+  color: var(--cream);
+  line-height: 0.93;
+  letter-spacing: -3px;
+  margin-bottom: 36px;
+  overflow: hidden;
+}
+.s-hero__name-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(105%);
+  animation: lineUp 1s var(--ease) forwards;
+}
+.s-hero__name-line:nth-child(1) { animation-delay: 0.05s; }
+.s-hero__name-line:nth-child(2) { animation-delay: 0.2s; }
+.s-hero__tagline {
+  font-size: clamp(15px, 1.8vw, 18px);
+  color: rgba(240,237,228,0.6);
+  font-style: italic;
+  font-weight: 400;
+  max-width: 480px;
+  margin: 0 auto 56px;
+  line-height: 1.65;
+  opacity: 0;
+  animation: fadeUp 0.8s ease 0.7s forwards;
+}
+.s-hero__scroll {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 1s ease 1.8s forwards;
+}
+.s-hero__scroll-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(240,237,228,0.35));
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+.s-hero__scroll-label {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2.5px;
+  color: rgba(240,237,228,0.25);
+  text-transform: uppercase;
+}
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50%       { opacity: 1;   transform: scaleY(1.1); }
+}
+
+/* ══════════════════════════════════════════════
+   STICKY QUOTE REVEAL
+══════════════════════════════════════════════ */
+.s-quote { height: 400vh; background: var(--void); }
+.s-quote__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10vw;
+  text-align: center;
+}
+.s-quote__kicker {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.25);
+  margin-bottom: 36px;
+  opacity: 0;
+  transition: opacity 0.7s ease;
+}
+.s-quote__text {
+  font-family: var(--font-serif);
+  font-size: clamp(34px, 5.2vw, 72px);
+  line-height: 1.18;
+  letter-spacing: -1.5px;
+}
+.qw {
+  display: inline;
+  color: rgba(240,237,228,0.09);
+  transition: color 0.55s ease;
+}
+.qw.lit { color: var(--cream); }
+.qw.lit.em { color: var(--ink-faint); font-style: italic; }
+
+/* ══════════════════════════════════════════════
+   STORY  (green bg)
+══════════════════════════════════════════════ */
+.s-story {
+  background: var(--green);
+  padding: 120px 52px;
+}
+.s-story__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.s-story__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.3);
+  margin-bottom: 20px;
+}
+.s-story__title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 3.8vw, 50px);
+  color: var(--cream);
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+.s-story__body {
+  font-size: 15px;
+  color: rgba(240,237,228,0.6);
+  line-height: 1.85;
+}
+.s-story__body p + p { margin-top: 16px; }
+.s-story__img {
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+}
+.s-story__img img { width: 100%; display: block; border-radius: 4px; }
+.s-story__img-placeholder {
+  aspect-ratio: 3/4;
+  background: rgba(255,255,255,0.04);
+  border-radius: 4px;
+  border: 1px solid rgba(240,237,228,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.s-story__img-placeholder span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.2);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════
+   FULL BLEED
+══════════════════════════════════════════════ */
+.s-bleed {
+  position: relative;
+  height: 85vh;
+  overflow: hidden;
+  background: #111;
+}
+.s-bleed img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.05);
+  display: block;
+  will-change: transform;
+}
+.s-bleed__caption {
+  position: absolute;
+  bottom: 36px;
+  left: 52px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.38);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════
+   SPLIT  (deep dark bg)
+══════════════════════════════════════════════ */
+.s-split {
+  background: var(--deep);
+  padding: 120px 52px;
+  border-top: 1px solid rgba(240,237,228,0.05);
+}
+.s-split__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+.s-split__img {
+  border-radius: 4px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.03);
+}
+.s-split__img img { width: 100%; display: block; border-radius: 4px; }
+.s-split__img-placeholder {
+  aspect-ratio: 4/3;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(240,237,228,0.08);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.s-split__img-placeholder span {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.18);
+  text-transform: uppercase;
+}
+
+/* ══════════════════════════════════════════════
+   DISCIPLINES  (cream bg)
+══════════════════════════════════════════════ */
+.s-disc {
+  background: var(--cream);
+  padding: 120px 52px;
+}
+.s-disc__inner { max-width: 1100px; margin: 0 auto; }
+.s-disc__hd { margin-bottom: 72px; }
+.s-disc__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 16px;
+}
+.s-disc__title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4vw, 54px);
+  color: var(--ink);
+  letter-spacing: -1px;
+  line-height: 1.08;
+  max-width: 560px;
+}
+.s-disc__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(30,77,43,0.15);
+  border: 1px solid rgba(30,77,43,0.15);
+}
+.disc-item {
+  background: var(--cream);
+  padding: 44px 32px;
+  transition: background 0.3s;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.75s var(--ease), transform 0.75s var(--ease), background 0.3s;
+}
+.disc-item.in-view { opacity: 1; transform: none; }
+.disc-item:hover { background: rgba(30,77,43,0.035); }
+.disc-item__num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  margin-bottom: 22px;
+}
+.disc-item__name {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+  line-height: 1.15;
+  margin-bottom: 14px;
+}
+.disc-item__desc { font-size: 14px; color: var(--ink-mid); line-height: 1.75; }
+
+/* ══════════════════════════════════════════════
+   NOW
+══════════════════════════════════════════════ */
+.s-now {
+  position: relative;
+  background: var(--void);
+  padding: 120px 52px;
+  overflow: hidden;
+}
+.s-now__bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('assets/images/IMG_0048.jpeg');
+  background-size: cover;
+  background-position: center 30%;
+  filter: brightness(0.1);
+}
+.s-now__inner {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+.s-now__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.28);
+  margin-bottom: 24px;
+}
+.s-now__title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5.5vw, 72px);
+  color: var(--cream);
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin-bottom: 32px;
+}
+.s-now__body {
+  font-size: 16px;
+  color: rgba(240,237,228,0.5);
+  line-height: 1.82;
+  margin-bottom: 44px;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.s-now__tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.now-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.32);
+  border: 1px solid rgba(240,237,228,0.12);
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+/* ══════════════════════════════════════════════
+   WORK  (cream bg)
+══════════════════════════════════════════════ */
+.s-work { background: var(--cream); }
+.s-work__hd {
+  padding: 88px 52px 40px;
+  border-bottom: 1px solid rgba(30,77,43,0.15);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.s-work__title {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.5vw, 48px);
+  color: var(--ink);
+  letter-spacing: -1px;
+}
+.s-work__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.work-item {
+  border-bottom: 1px solid rgba(30,77,43,0.15);
+  opacity: 0;
+  transform: translateY(56px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.work-item.in-view { opacity: 1; transform: none; }
+.work-item:last-child { border-bottom: none; }
+.work-item--dark { background: var(--green); }
+
+.work-item__inner {
+  display: grid;
+  grid-template-columns: 72px 1fr 140px;
+  gap: 48px;
+  padding: 60px 52px;
+  align-items: start;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.work-item--dark .work-item__inner:hover { background: rgba(255,255,255,0.03); }
+.work-item:not(.work-item--dark) .work-item__inner:hover { background: rgba(30,77,43,0.025); }
+
+.work-item__num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--ink-faint);
+  padding-top: 6px;
+}
+.work-item--dark .work-item__num { color: rgba(240,237,228,0.25); }
+
+.work-item__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px; }
+.wi-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.07);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.work-item--dark .wi-tag { color: rgba(240,237,228,0.4); background: rgba(240,237,228,0.07); }
+.wi-tag--wip { color: #3a8050 !important; background: rgba(58,128,80,0.12) !important; }
+.work-item--dark .wi-tag--wip { color: #5fb87a !important; background: rgba(95,184,122,0.1) !important; }
+
+.work-item__title {
+  font-family: var(--font-serif);
+  font-size: clamp(26px, 3vw, 44px);
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 14px;
+  transition: color 0.2s;
+}
+.work-item--dark .work-item__title { color: var(--cream); }
+.work-item__inner:hover .work-item__title { color: var(--ink-mid); }
+.work-item--dark .work-item__inner:hover .work-item__title { color: rgba(240,237,228,0.7); }
+
+.work-item__excerpt { font-size: 14px; color: var(--ink-mid); line-height: 1.75; max-width: 540px; }
+.work-item--dark .work-item__excerpt { color: rgba(240,237,228,0.48); }
+
+.work-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding-top: 6px;
+}
+.work-item__date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.work-item--dark .work-item__date { color: rgba(240,237,228,0.22); }
+
+.work-item__arrow {
+  font-size: 22px;
+  color: var(--ink-faint);
+  display: inline-block;
+  margin-top: 48px;
+  transition: transform 0.35s var(--ease), color 0.2s;
+}
+.work-item--dark .work-item__arrow { color: rgba(240,237,228,0.22); }
+.work-item__inner:hover .work-item__arrow { transform: translate(6px,-6px); color: var(--ink); }
+.work-item--dark .work-item__inner:hover .work-item__arrow { color: rgba(240,237,228,0.7); }
+
+/* ══════════════════════════════════════════════
+   CONTACT  (green bg)
+══════════════════════════════════════════════ */
+.s-contact {
+  background: var(--green);
+  padding: 120px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  border-top: 1px solid rgba(240,237,228,0.06);
+}
+.s-contact__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.32);
+  margin-bottom: 16px;
+}
+.s-contact__title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4.5vw, 60px);
+  color: var(--cream);
+  letter-spacing: -1px;
+  line-height: 1.02;
+}
+.s-contact__links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.s-contact__link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.5);
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid rgba(240,237,228,0.14);
+  border-radius: 100px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.s-contact__link:hover { color: var(--cream); border-color: rgba(240,237,228,0.4); }
+.s-contact__link--primary {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+}
+.s-contact__link--primary:hover { background: #e0ddd4; }
+
+/* ══════════════════════════════════════════════
+   FOOTER
+══════════════════════════════════════════════ */
+footer {
+  background: #060605;
+  border-top: 1px solid rgba(240,237,228,0.05);
+  padding: 22px 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 11px; color: rgba(240,237,228,0.2); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-family: var(--font-mono); font-size: 11px; color: rgba(240,237,228,0.2); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: rgba(240,237,228,0.5); }
+
+/* ══════════════════════════════════════════════
+   UTILITIES
+══════════════════════════════════════════════ */
+.slide-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.85s var(--ease), transform 0.85s var(--ease);
+}
+.slide-up.in-view { opacity: 1; transform: none; }
+.delay-1 { transition-delay: 0.12s; }
+.delay-2 { transition-delay: 0.22s; }
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lineUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  to { opacity: 1; }
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVE
+══════════════════════════════════════════════ */
+@media (max-width: 900px) {
+  .work-item__inner { grid-template-columns: 48px 1fr; gap: 20px; }
+  .work-item__right { display: none; }
+  .s-disc__grid { grid-template-columns: 1fr; }
+}
+@media (max-width: 768px) {
+  #nav { padding: 0 20px; }
+  .s-story { padding: 72px 20px; }
+  .s-story__inner { grid-template-columns: 1fr; gap: 40px; }
+  .s-quote__sticky { padding: 0 20px; text-align: left; }
+  .s-split { padding: 72px 20px; }
+  .s-split__inner { grid-template-columns: 1fr; gap: 36px; }
+  .s-disc { padding: 72px 20px; }
+  .s-now { padding: 80px 20px; }
+  .s-work__hd { padding: 60px 20px 32px; }
+  .work-item__inner { padding: 40px 20px; grid-template-columns: 1fr; }
+  .work-item__num { display: none; }
+  .s-contact { padding: 72px 20px; flex-direction: column; align-items: flex-start; }
+  .s-contact__links { align-items: flex-start; }
+  .s-bleed__caption { left: 20px; bottom: 20px; }
+  footer { padding: 20px; flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────── -->
+<nav id="nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- ── 01 · HERO ─────────────────────────────────────── -->
+<section class="s-hero" id="s-hero">
+  <div class="s-hero__bg" id="hero-bg"></div>
+  <div class="s-hero__content" id="hero-content">
+    <div class="s-hero__eyebrow">Urban Data Scientist · AEC Tech · Computational Design</div>
+    <h1 class="s-hero__name">
+      <span class="s-hero__name-line">Prakriti</span>
+      <span class="s-hero__name-line">Srimal</span>
+    </h1>
+    <p class="s-hero__tagline">I've always wanted to design for people.<br>Data is how I get close enough to understand them.</p>
+    <div class="s-hero__scroll">
+      <div class="s-hero__scroll-line"></div>
+      <span class="s-hero__scroll-label">Scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 · STICKY QUOTE REVEAL ──────────────────────── -->
+<section class="s-quote" id="s-quote">
+  <div class="s-quote__sticky">
+    <div>
+      <span class="s-quote__kicker" id="quote-kicker">A belief</span>
+      <div class="s-quote__text">
+        <span class="qw" data-i="0">"The</span> <span class="qw" data-i="1">smallest</span> <span class="qw" data-i="2">things</span><br>
+        <span class="qw em" data-i="3">have</span> <span class="qw em" data-i="4">the</span> <span class="qw em" data-i="5">biggest</span> <span class="qw em" data-i="6">impact"</span><br>
+        <span class="qw" data-i="7">on</span> <span class="qw" data-i="8">people.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 03 · STORY ────────────────────────────────────── -->
+<section class="s-story" id="about">
+  <div class="s-story__inner">
+    <div class="slide-up">
+      <div class="s-story__label">The Work</div>
+      <h2 class="s-story__title">From architecture<br>to urban intelligence</h2>
+      <div class="s-story__body">
+        <p>I trained as an architect at BMS College of Engineering before going to the Bartlett School of Architecture at UCL, where my master's thesis — IsoChronic City — applied machine learning, space syntax, and generative design to rethink what the 15-minute neighbourhood could mean for a post-pandemic London.</p>
+        <p>It won the gold medal at WASA-WLS 2022, the MAB23 Student Award, and was featured in ArchDaily and ArchiDiaries. But more than the recognition, it convinced me that the most powerful design decisions are made at the data level — before a line is drawn.</p>
+      </div>
+    </div>
+    <div class="s-story__img slide-up delay-2">
+      <img src="assets/images/IMG_6653.jpeg" alt="Prakriti Srimal at Bartlett B-Pro show"
+           onerror="this.parentElement.innerHTML='<div class=\'s-story__img-placeholder\'><span>Photo — coming soon</span></div>'">
+    </div>
+  </div>
+</section>
+
+<!-- ── 04 · FULL BLEED ───────────────────────────────── -->
+<div class="s-bleed" id="bleed1">
+  <img id="bleed1-img"
+       src="assets/images/IMG_1330.jpeg"
+       alt="IsoChronic City physical model"
+       onerror="this.style.display='none'">
+  <span class="s-bleed__caption">IsoChronic City — Physical Model · Bartlett B-Pro · 2023</span>
+</div>
+
+<!-- ── 05 · SPLIT ────────────────────────────────────── -->
+<section class="s-split">
+  <div class="s-split__inner">
+    <div class="s-split__img slide-up">
+      <img src="assets/images/IMG_0047.jpeg" alt="Urban network analysis — Bangalore"
+           onerror="this.parentElement.innerHTML='<div class=\'s-split__img-placeholder\'><span>Image — coming soon</span></div>'">
+    </div>
+    <div class="slide-up delay-2">
+      <div class="s-story__label">Now</div>
+      <h2 class="s-story__title" style="color:var(--cream)">Same tools.<br>Different city.</h2>
+      <div class="s-story__body">
+        <p>The methodologies developed at UCL — spatial computation, machine learning, network analysis — were built on London. The next question is whether they hold anywhere else. Bangalore is the case study: a rapidly growing city with vast amounts of unread data and very little applied urban intelligence.</p>
+        <p>I'm building a real-time sensing instrument to collect ground-truth urban data, developing Python automation tools for AEC workflows, and writing a series of spatial analyses that apply the same rigour I used at the Bartlett to a city that hasn't been looked at this way.</p>
+        <p>Everything is work in progress. That's the point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 06 · DISCIPLINES ──────────────────────────────── -->
+<section class="s-disc">
+  <div class="s-disc__inner">
+    <div class="s-disc__hd slide-up">
+      <div class="s-disc__label">What I do</div>
+      <h2 class="s-disc__title">Three threads.<br>One question.</h2>
+    </div>
+    <div class="s-disc__grid">
+      <div class="disc-item">
+        <div class="disc-item__num">01</div>
+        <div class="disc-item__name">Geospatial Intelligence</div>
+        <div class="disc-item__desc">Python-based spatial workflows, machine learning applied to urban datasets, accessibility analysis, network analysis, and urban morphology classification.</div>
+      </div>
+      <div class="disc-item" style="transition-delay:0.12s">
+        <div class="disc-item__num">02</div>
+        <div class="disc-item__name">BIM Automation</div>
+        <div class="disc-item__desc">Revit API tools built in pyRevit for large-scale AEC projects. Workset management, element sorting, wall and door re-hosting, bulk parameter control.</div>
+      </div>
+      <div class="disc-item" style="transition-delay:0.24s">
+        <div class="disc-item__num">03</div>
+        <div class="disc-item__name">Computational Design</div>
+        <div class="disc-item__desc">Generative design systems, topo-geometric strategies, evolutionary optimisation algorithms, and data-driven spatial modelling for architectural and urban applications.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 · NOW ───────────────────────────────────────── -->
+<section class="s-now">
+  <div class="s-now__bg"></div>
+  <div class="s-now__inner slide-up">
+    <div class="s-now__label">Currently building</div>
+    <h2 class="s-now__title">Real Time Sensing<br>Instrument</h2>
+    <p class="s-now__body">A multi-sensor urban data collection instrument running GPS, temperature, humidity, and audio simultaneously on the NVIDIA Jetson Orin Nano Super. The goal: collect ground-truth data about how Bangalore actually feels to move through — not just how it looks on a map.</p>
+    <div class="s-now__tags">
+      <span class="now-tag">NVIDIA Jetson</span>
+      <span class="now-tag">GPS</span>
+      <span class="now-tag">Environmental Sensing</span>
+      <span class="now-tag">Urban Data</span>
+      <span class="now-tag">Bangalore</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 · WORK ──────────────────────────────────────── -->
+<section class="s-work" id="work">
+  <div class="s-work__hd slide-up">
+    <h2 class="s-work__title">Projects &amp; Writing</h2>
+    <span class="s-work__meta">Selected work</span>
+  </div>
+
+  <div class="work-item" onclick="window.location='isochronic-city.html'">
+    <div class="work-item__inner">
+      <span class="work-item__num">01</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">Thesis</span><span class="wi-tag">Urban Design</span></div>
+        <h3 class="work-item__title">IsoChronic City</h3>
+        <p class="work-item__excerpt">A master's thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">UCL B-Pro · 2023</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">02</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">Bangalore Series</span><span class="wi-tag">Accessibility</span></div>
+        <h3 class="work-item__title">How far can you go?</h3>
+        <p class="work-item__excerpt">5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible — and which ones depend entirely on a car.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">May 2025</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">03</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">Bangalore Series</span><span class="wi-tag">Morphology</span></div>
+        <h3 class="work-item__title">What is Bangalore actually made up of?</h3>
+        <p class="work-item__excerpt">Classifying Bangalore's urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north — every neighbourhood has a morphological fingerprint.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Apr 2025</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-item__inner">
+      <span class="work-item__num">04</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">Hardware</span><span class="wi-tag">Sensing</span><span class="wi-tag wi-tag--wip">WIP</span></div>
+        <h3 class="work-item__title">Real Time Sensing Instrument</h3>
+        <p class="work-item__excerpt">Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio running on the NVIDIA Jetson Orin Nano Super. Documenting the build process as it happens.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-item__inner">
+      <span class="work-item__num">05</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">AEC Tech</span><span class="wi-tag">Python</span><span class="wi-tag">pyRevit</span><span class="wi-tag wi-tag--wip">WIP</span></div>
+        <h3 class="work-item__title">pyRevit BIM Automation Scripts</h3>
+        <p class="work-item__excerpt">Ten Revit API tools built in Python using pyRevit for large-scale residential and commercial AEC projects. Tools include: Create Worksets · Assign Worksets · Wall Base · Wall Top · Door Base · Copy Units · Mirror Units · ParaControl.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">06</span>
+      <div>
+        <div class="work-item__tags"><span class="wi-tag">Bangalore Series</span><span class="wi-tag">Hardware</span><span class="wi-tag wi-tag--wip">WIP</span></div>
+        <h3 class="work-item__title">Real Time Sensing — field notes from Bangalore</h3>
+        <p class="work-item__excerpt">The instrument is taking shape. First field tests in Bangalore — what the data looks like, what it reveals, and what it doesn't.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 · CONTACT ──────────────────────────────────── -->
+<div class="s-contact slide-up" id="contact">
+  <div>
+    <div class="s-contact__eyebrow">Let's talk</div>
+    <div class="s-contact__title">Get in<br>touch.</div>
+  </div>
+  <div class="s-contact__links">
+    <a href="mailto:prakritisrimal@gmail.com" class="s-contact__link s-contact__link--primary">prakritisrimal@gmail.com</a>
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="s-contact__link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="s-contact__link" target="_blank">GitHub ↗</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="mailto:prakritisrimal@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+const nav          = document.getElementById('nav');
+const heroBg       = document.getElementById('hero-bg');
+const heroContent  = document.getElementById('hero-content');
+const quoteSection = document.getElementById('s-quote');
+const quoteKicker  = document.getElementById('quote-kicker');
+const qWords       = quoteSection.querySelectorAll('.qw');
+const QN           = qWords.length;
+let kickerShown    = false;
+
+// ── Sticky quote reveal ───────────────────────────────
+function updateQuote() {
+  const rect   = quoteSection.getBoundingClientRect();
+  const budget = quoteSection.scrollHeight - window.innerHeight;
+  const p      = Math.max(0, Math.min(1, -rect.top / budget));
+
+  if (p > 0.02 && !kickerShown) {
+    quoteKicker.style.opacity = '1';
+    kickerShown = true;
+  }
+  qWords.forEach((w, i) => {
+    w.classList.toggle('lit', p >= (i + 0.4) / QN);
+  });
+}
+
+// ── Hero parallax / fade ─────────────────────────────
+function updateHero() {
+  const scrollY = window.scrollY;
+  const vh      = window.innerHeight;
+  const p       = Math.min(1, scrollY / (vh * 0.75));
+
+  heroContent.style.opacity   = Math.max(0, 1 - p * 1.6).toString();
+  heroContent.style.transform = `translateY(${-p * 56}px)`;
+  if (heroBg) heroBg.style.transform = `scale(1.08) translateY(${scrollY * 0.18}px)`;
+}
+
+// ── Full-bleed parallax ───────────────────────────────
+function updateBleed() {
+  const bleed1 = document.getElementById('bleed1');
+  const img1   = document.getElementById('bleed1-img');
+  if (bleed1 && img1) {
+    const rect   = bleed1.getBoundingClientRect();
+    const offset = (rect.top / window.innerHeight) * 40;
+    img1.style.transform = `scale(1.05) translateY(${offset}px)`;
+  }
+}
+
+// ── IntersectionObserver ─────────────────────────────
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.slide-up, .work-item, .disc-item').forEach(el => io.observe(el));
+
+// ── Scroll handler ────────────────────────────────────
+window.addEventListener('scroll', () => {
+  const scrollY = window.scrollY;
+  nav.classList.toggle('solid', scrollY > 60);
+  if (scrollY < window.innerHeight * 1.5) updateHero();
+  updateQuote();
+  updateBleed();
+}, { passive: true });
+
+// Init
+nav.classList.toggle('solid', window.scrollY > 60);
+updateHero();
+updateQuote();
+updateBleed();
+</script>
+</body>
+</html>
