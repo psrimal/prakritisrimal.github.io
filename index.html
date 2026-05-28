@@ -719,7 +719,8 @@ const workItems = [
     tags: ['Thesis', 'Urban Design'],
     date: 'UCL B-Pro · 2023',
     status: null,
-    dark: false
+    dark: false,
+    link: 'isochronic-city.html'
   },
   {
     id: 2,
@@ -806,7 +807,6 @@ function filterWork(filter, btn) {
   renderWork(filter);
 }
 
-// Intersection Observer for scroll reveal
 function observeReveal() {
   const els = document.querySelectorAll('.reveal:not(.visible)');
   const io = new IntersectionObserver((entries) => {
@@ -820,7 +820,6 @@ function observeReveal() {
   els.forEach(el => io.observe(el));
 }
 
-// Nav: scroll shadow + active section underline
 function updateNav() {
   const nav = document.getElementById('main-nav');
   const scrollY = window.scrollY;
@@ -842,7 +841,6 @@ function updateNav() {
   });
 }
 
-// Hero parallax
 function heroParallax() {
   const scrollY = window.scrollY;
   if (scrollY > window.innerHeight) return;
