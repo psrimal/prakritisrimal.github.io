@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0ede4;
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --cream: #f0ede4;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: #0a0a08;
+  color: var(--cream);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ── */
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 200;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.4s, backdrop-filter 0.4s;
+}
+
+nav.solid {
+  background: rgba(10,10,8,0.88);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(240,237,228,0.06);
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.5s;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.5s;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.6);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--cream); }
+
+.nav-cta {
+  background: var(--ink) !important;
+  color: var(--cream) !important;
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+}
+
+/* ── OPENING ── */
+.opening {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.opening-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('IMG_0047.jpeg');
+  background-size: cover;
+  background-position: center;
+  transform: scale(1.08);
+  transition: transform 0.1s linear;
+  filter: brightness(0.35);
+}
+
+.opening-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 0 24px;
+}
+
+.opening-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.45);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.3s;
+}
+
+.opening-name {
+  font-family: var(--font-serif);
+  font-size: clamp(64px, 10vw, 120px);
+  color: var(--cream);
+  line-height: 0.95;
+  letter-spacing: -3px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.5s;
+}
+
+.opening-line {
+  font-size: clamp(16px, 2vw, 20px);
+  color: rgba(240,237,228,0.65);
+  font-weight: 400;
+  font-style: italic;
+  max-width: 480px;
+  margin: 0 auto 48px;
+  line-height: 1.6;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.9s;
+}
+
+.scroll-indicator {
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.scroll-indicator-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(240,237,228,0.4));
+  animation: scrollPulse 2s ease-in-out infinite;
+}
+
+.scroll-indicator-text {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+}
+
+@keyframes scrollPulse {
+  0%, 100% { opacity: 0.4; transform: scaleY(1); }
+  50% { opacity: 1; transform: scaleY(1.1); }
+}
+
+/* ── BELIEF SECTION ── */
+.belief {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #0a0a08;
+  padding: 120px 48px;
+}
+
+.belief-content {
+  max-width: 900px;
+  text-align: center;
+}
+
+.belief-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 64px);
+  color: var(--cream);
+  line-height: 1.15;
+  letter-spacing: -1px;
+  margin-bottom: 40px;
+}
+
+.belief-quote em {
+  color: var(--ink-faint);
+  font-style: italic;
+}
+
+.belief-sub {
+  font-size: 17px;
+  color: rgba(240,237,228,0.5);
+  line-height: 1.75;
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+/* ── FULL BLEED IMAGE ── */
+.full-bleed {
+  position: relative;
+  height: 90vh;
+  overflow: hidden;
+}
+
+.full-bleed-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.05);
+  transition: transform 0.1s linear;
+}
+
+.full-bleed-caption {
+  position: absolute;
+  bottom: 40px;
+  left: 48px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.4);
+  text-transform: uppercase;
+}
+
+/* ── STORY SECTION ── */
+.story {
+  background: var(--ink);
+  padding: 120px 48px;
+}
+
+.story-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.story-text {}
+
+.story-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: rgba(240,237,228,0.35);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.story-title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 48px);
+  color: var(--cream);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+  margin-bottom: 24px;
+}
+
+.story-body {
+  font-size: 15px;
+  color: rgba(240,237,228,0.6);
+  line-height: 1.85;
+}
+
+.story-body p + p { margin-top: 16px; }
+
+.story-image {
+  position: relative;
+}
+
+.story-image img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+/* ── SPLIT SECTION ── */
+.split {
+  background: #0e0e0b;
+  padding: 120px 48px;
+}
+
+.split-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.split-image img {
+  width: 100%;
+  border-radius: 4px;
+  display: block;
+}
+
+/* ── WHAT I DO ── */
+.disciplines {
+  background: var(--cream);
+  padding: 120px 48px;
+}
+
+.disciplines-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.disciplines-header {
+  margin-bottom: 72px;
+}
+
+.disciplines-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.disciplines-title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4vw, 52px);
+  color: var(--ink);
+  letter-spacing: -1px;
+  line-height: 1.1;
+  max-width: 600px;
+}
+
+.disciplines-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: rgba(30,77,43,0.15);
+  border: 1px solid rgba(30,77,43,0.15);
+}
+
+.discipline-item {
+  background: var(--cream);
+  padding: 40px 32px;
+  transition: background 0.3s;
+}
+
+.discipline-item:hover { background: rgba(30,77,43,0.04); }
+
+.discipline-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+}
+
+.discipline-name {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  color: var(--ink);
+  letter-spacing: -0.3px;
+  margin-bottom: 12px;
+  line-height: 1.2;
+}
+
+.discipline-desc {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.75;
+}
+
+/* ── NOW SECTION ── */
+.now {
+  background: #0a0a08;
+  padding: 120px 48px;
+  position: relative;
+  overflow: hidden;
+}
+
+.now-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('IMG_0048.jpeg');
+  background-size: cover;
+  background-position: center 30%;
+  filter: brightness(0.12);
+}
+
+.now-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.now-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.now-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5vw, 64px);
+  color: var(--cream);
+  line-height: 1.1;
+  letter-spacing: -1px;
+  margin-bottom: 32px;
+}
+
+.now-body {
+  font-size: 16px;
+  color: rgba(240,237,228,0.55);
+  line-height: 1.8;
+  margin-bottom: 48px;
+}
+
+.now-tags {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.now-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.35);
+  border: 1px solid rgba(240,237,228,0.12);
+  padding: 6px 14px;
+  border-radius: 100px;
+}
+
+/* ── WORK ── */
+.work-section {
+  background: var(--cream);
+  padding: 0;
+}
+
+.work-header {
+  padding: 80px 48px 32px;
+  border-bottom: 1px solid rgba(30,77,43,0.15);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  max-width: 100%;
+}
+
+.work-header-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.work-header-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.filter-bar {
+  padding: 20px 48px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(30,77,43,0.12);
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: none;
+  border: 1px solid rgba(30,77,43,0.2);
+  padding: 6px 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+.filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); font-weight: 500; }
+
+.work-list { padding: 0 48px; }
+
+.work-card {
+  display: grid;
+  grid-template-columns: 148px 1fr 120px;
+  gap: 32px;
+  align-items: start;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(30,77,43,0.12);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.work-card:last-child { border-bottom: none; }
+.work-card:hover { transform: translateX(5px); }
+.work-card:hover .work-card-title { color: var(--ink-mid); }
+.work-card:hover .work-arrow { transform: translate(4px, -4px); color: var(--ink); }
+.work-card:hover .work-card-thumb { border-color: rgba(30,77,43,0.4); }
+
+.work-card-thumb {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 4px;
+  border: 1px solid rgba(30,77,43,0.15);
+  overflow: hidden;
+  background: #dbd8cf;
+  transition: border-color 0.25s;
+}
+
+.work-card-thumb-inner {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(-45deg, #dbd8cf, #dbd8cf 4px, #cec9be 4px, #cec9be 8px);
+}
+
+.work-card-thumb.dark { background: #1a1916; }
+.work-card-thumb.dark .work-card-thumb-inner {
+  background: repeating-linear-gradient(-45deg, #1e1e1c, #1e1e1c 4px, #262624 4px, #262624 8px);
+}
+
+.work-card-body { padding-top: 2px; }
+
+.work-card-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.08);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.tag.wip { background: rgba(30,77,43,0.12); color: #3a8050; }
+.tag.series { background: rgba(30,77,43,0.08); color: var(--ink-mid); }
+
+.work-card-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.work-card-excerpt {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+
+.work-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+}
+
+.work-arrow {
+  font-size: 18px;
+  color: var(--ink-faint);
+  transition: transform 0.25s ease, color 0.2s;
+  display: inline-block;
+}
+
+/* ── CONTACT ── */
+.contact {
+  background: var(--ink);
+  padding: 120px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-left {}
+
+.contact-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.35);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.contact-title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 4vw, 54px);
+  color: var(--cream);
+  letter-spacing: -1px;
+  line-height: 1.05;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.contact-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.5);
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid rgba(240,237,228,0.15);
+  border-radius: 100px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.contact-link:hover { color: var(--cream); border-color: rgba(240,237,228,0.4); }
+
+.contact-link.primary {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.contact-link.primary:hover { background: #e0ddd4; }
+
+/* ── FOOTER ── */
+footer {
+  background: #060605;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(240,237,228,0.05);
+}
+
+.footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.2);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.2);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: rgba(240,237,228,0.5); }
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .opening-name { letter-spacing: -1px; }
+  .belief { padding: 80px 24px; }
+  .story { padding: 80px 24px; }
+  .story-inner { grid-template-columns: 1fr; gap: 40px; }
+  .split { padding: 80px 24px; }
+  .split-inner { grid-template-columns: 1fr; gap: 40px; }
+  .disciplines { padding: 80px 24px; }
+  .disciplines-grid { grid-template-columns: 1fr; }
+  .now { padding: 80px 24px; }
+  .work-header { padding: 48px 20px 24px; }
+  .filter-bar { padding: 16px 20px; }
+  .work-list { padding: 0 20px; }
+  .work-card { grid-template-columns: 1fr; }
+  .contact { padding: 80px 24px; flex-direction: column; gap: 48px; }
+  .contact-links { align-items: flex-start; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+  .full-bleed-caption { left: 20px; bottom: 20px; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- ── 01 OPENING ── -->
+<section class="opening" id="opening">
+  <div class="opening-bg" id="opening-bg"></div>
+  <div class="opening-content">
+    <div class="opening-eyebrow">Urban Data Scientist · AEC Tech · Computational Design</div>
+    <h1 class="opening-name">Prakriti<br>Srimal</h1>
+    <p class="opening-line">I've always wanted to design for people.<br>Data is how I get close enough to understand them.</p>
+    <div class="scroll-indicator">
+      <div class="scroll-indicator-line"></div>
+      <span class="scroll-indicator-text">Scroll</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 02 BELIEF ── -->
+<section class="belief" id="about">
+  <div class="belief-content reveal">
+    <h2 class="belief-quote">"The smallest things<br>have the <em>biggest impact</em><br>on people."</h2>
+    <p class="belief-sub">This is not a design philosophy I arrived at — it's the one I started with. It's why I moved from drawing buildings to analysing the data underneath them. Cities are made of decisions. Most of those decisions are invisible. I try to make them visible.</p>
+  </div>
+</section>
+
+<!-- ── 03 FULL BLEED — PHYSICAL MODEL ── -->
+<div class="full-bleed" id="bleed1">
+  <img class="full-bleed-img" id="bleed1-img" src="IMG_1330.jpeg" alt="IsoChronic City physical model">
+  <span class="full-bleed-caption">IsoChronic City — Physical Model · Bartlett B-Pro · 2023</span>
+</div>
+
+<!-- ── 04 STORY ── -->
+<section class="story">
+  <div class="story-inner">
+    <div class="story-text reveal">
+      <div class="story-label">The Work</div>
+      <h2 class="story-title">From architecture<br>to urban intelligence</h2>
+      <div class="story-body">
+        <p>I trained as an architect at BMS College of Engineering before going to the Bartlett School of Architecture at UCL, where my master's thesis — IsoChronic City — applied machine learning, space syntax, and generative design to rethink what the 15-minute neighbourhood could mean for a post-pandemic London.</p>
+        <p>It won the gold medal at WASA-WLS 2022, the MAB23 Student Award, and was featured in ArchDaily and ArchiDiaries. But more than the recognition, it convinced me that the most powerful design decisions are made at the data level — before a line is drawn.</p>
+      </div>
+    </div>
+    <div class="story-image reveal reveal-delay-2">
+      <img src="IMG_6653.jpeg" alt="Prakriti Srimal at Bartlett B-Pro show">
+    </div>
+  </div>
+</section>
+
+<!-- ── 05 FULL BLEED — RENDER ── -->
+<div class="full-bleed" id="bleed2">
+  <img class="full-bleed-img" id="bleed2-img" src="IMG_0048.jpeg" alt="IsoChronic City architectural render">
+  <span class="full-bleed-caption">IsoChronic City — Elevated Segment Render · 2023</span>
+</div>
+
+<!-- ── 06 SPLIT — BANGALORE ── -->
+<section class="split">
+  <div class="split-inner">
+    <div class="split-image reveal">
+      <img src="IMG_0047.jpeg" alt="Urban network analysis">
+    </div>
+    <div class="story-text reveal reveal-delay-2">
+      <div class="story-label">Now</div>
+      <h2 class="story-title" style="color:var(--cream);">Same tools.<br>Different city.</h2>
+      <div class="story-body">
+        <p>The methodologies developed at UCL — spatial computation, machine learning, network analysis — were built on London. The next question is whether they hold anywhere else. Bangalore is the case study: a rapidly growing city with vast amounts of unread data and very little applied urban intelligence.</p>
+        <p>I'm building a real-time sensing instrument to collect ground-truth urban data, developing Python automation tools for AEC workflows, and writing a series of spatial analyses that apply the same rigour I used at the Bartlett to a city that hasn't been looked at this way.</p>
+        <p>Everything is work in progress. That's the point.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 07 DISCIPLINES ── -->
+<section class="disciplines">
+  <div class="disciplines-inner">
+    <div class="disciplines-header reveal">
+      <div class="disciplines-label">What I do</div>
+      <h2 class="disciplines-title">Three threads.<br>One question.</h2>
+    </div>
+    <div class="disciplines-grid">
+      <div class="discipline-item reveal">
+        <div class="discipline-number">01</div>
+        <div class="discipline-name">Geospatial Intelligence</div>
+        <div class="discipline-desc">Python-based spatial workflows, machine learning applied to urban datasets, accessibility analysis, network analysis, and urban morphology classification.</div>
+      </div>
+      <div class="discipline-item reveal reveal-delay-1">
+        <div class="discipline-number">02</div>
+        <div class="discipline-name">BIM Automation</div>
+        <div class="discipline-desc">Revit API tools built in pyRevit for large-scale AEC projects. Workset management, element sorting, wall and door re-hosting, bulk parameter control.</div>
+      </div>
+      <div class="discipline-item reveal reveal-delay-2">
+        <div class="discipline-number">03</div>
+        <div class="discipline-name">Computational Design</div>
+        <div class="discipline-desc">Generative design systems, topo-geometric strategies, evolutionary optimisation algorithms, and data-driven spatial modelling for architectural and urban applications.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── 08 NOW ── -->
+<section class="now">
+  <div class="now-bg"></div>
+  <div class="now-inner reveal">
+    <div class="now-label">Currently building</div>
+    <h2 class="now-title">Real Time Sensing<br>Instrument</h2>
+    <p class="now-body">A multi-sensor urban data collection instrument running GPS, temperature, humidity, and audio simultaneously on the NVIDIA Jetson Orin Nano Super. The goal: collect ground-truth data about how Bangalore actually feels to move through — not just how it looks on a map.</p>
+    <div class="now-tags">
+      <span class="now-tag">NVIDIA Jetson</span>
+      <span class="now-tag">GPS</span>
+      <span class="now-tag">Environmental Sensing</span>
+      <span class="now-tag">Urban Data</span>
+      <span class="now-tag">Bangalore</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── 09 WORK ── -->
+<section class="work-section" id="work">
+  <div class="work-header reveal">
+    <h2 class="work-header-title">Projects &amp; Writing</h2>
+    <span class="work-header-meta">Work in progress</span>
+  </div>
+  <div class="filter-bar reveal">
+    <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+    <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+    <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+    <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+  </div>
+  <div class="work-list" id="work-list"></div>
+</section>
+
+<!-- ── 10 CONTACT ── -->
+<section class="contact" id="contact">
+  <div class="contact-left reveal">
+    <div class="contact-eyebrow">Let's talk</div>
+    <h2 class="contact-title">Get in<br>touch.</h2>
+  </div>
+  <div class="contact-links reveal reveal-delay-2">
+    <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary">prakritisrimal@gmail.com</a>
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="contact-link" target="_blank">GitHub ↗</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="mailto:prakritisrimal@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+// ── CONTENT ──
+const workItems = [
+  {
+    id: 1, type: ['project'],
+    title: 'IsoChronic City',
+    excerpt: 'A master\'s thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.',
+    tags: ['Thesis', 'Urban Design'], date: 'UCL B-Pro · 2023', status: null, dark: false, link: 'isochronic-city.html'
+  },
+  {
+    id: 2, type: ['bangalore', 'writing'],
+    title: 'How far can you go?',
+    excerpt: '5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible — and which ones depend entirely on a car.',
+    tags: ['Bangalore Series', 'Accessibility'], date: 'May 2025', status: null, dark: true, link: null
+  },
+  {
+    id: 3, type: ['bangalore', 'writing'],
+    title: 'What is Bangalore actually made up of?',
+    excerpt: 'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north.',
+    tags: ['Bangalore Series', 'Morphology'], date: 'Apr 2025', status: null, dark: true, link: null
+  },
+  {
+    id: 4, type: ['project', 'wip'],
+    title: 'Real Time Sensing Instrument',
+    excerpt: 'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio on the NVIDIA Jetson Orin Nano Super.',
+    tags: ['Hardware', 'Sensing'], date: 'Ongoing', status: 'wip', dark: false, link: null
+  },
+  {
+    id: 5, type: ['project', 'wip'],
+    title: 'pyRevit BIM Automation Scripts',
+    excerpt: 'Ten Revit API tools built in Python using pyRevit for large-scale residential and commercial AEC projects. Tools include: Create Worksets · Assign Worksets · Wall Base · Wall Top · Door Base · Copy Units · Mirror Units · ParaControl.',
+    tags: ['AEC Tech', 'Python', 'pyRevit'], date: 'Ongoing', status: 'wip', dark: false, link: null
+  },
+  {
+    id: 6, type: ['bangalore', 'writing', 'wip'],
+    title: 'Real Time Sensing — field notes from Bangalore',
+    excerpt: 'The instrument is taking shape. First field tests in Bangalore — what the data looks like, what it reveals, and what it doesn\'t.',
+    tags: ['Bangalore Series', 'Hardware'], date: 'Ongoing', status: 'wip', dark: true, link: null
+  }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+  list.innerHTML = filtered.map((item, idx) => `
+    <div class="work-card reveal" style="transition-delay:${idx * 60}ms" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-thumb ${item.dark ? 'dark' : ''}"><div class="work-card-thumb-inner"></div></div>
+      <div class="work-card-body">
+        <div class="work-card-tags">
+          ${item.tags.map(t => `<span class="tag ${t.includes('Series') ? 'series' : ''}">${t}</span>`).join('')}
+          ${item.status === 'wip' ? '<span class="tag wip">WIP</span>' : ''}
+        </div>
+        <div class="work-card-title">${item.title}</div>
+        <div class="work-card-excerpt">${item.excerpt}</div>
+      </div>
+      <div class="work-card-right">
+        <span class="work-card-date">${item.date}</span>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+  `).join('');
+  setTimeout(observeReveal, 50);
+}
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// ── SCROLL REVEAL ──
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.07 });
+  els.forEach(el => io.observe(el));
+}
+
+// ── PARALLAX ──
+function onScroll() {
+  const scrollY = window.scrollY;
+
+  // Nav solid on scroll
+  document.getElementById('main-nav').classList.toggle('solid', scrollY > 60);
+
+  // Opening bg parallax
+  const openingBg = document.getElementById('opening-bg');
+  if (openingBg && scrollY < window.innerHeight) {
+    openingBg.style.transform = `scale(1.08) translateY(${scrollY * 0.25}px)`;
+  }
+
+  // Full bleed parallax
+  const bleed1 = document.getElementById('bleed1-img');
+  const bleed2 = document.getElementById('bleed2-img');
+
+  if (bleed1) {
+    const rect = document.getElementById('bleed1').getBoundingClientRect();
+    const offset = (rect.top / window.innerHeight) * 40;
+    bleed1.style.transform = `scale(1.05) translateY(${offset}px)`;
+  }
+
+  if (bleed2) {
+    const rect = document.getElementById('bleed2').getBoundingClientRect();
+    const offset = (rect.top / window.innerHeight) * 40;
+    bleed2.style.transform = `scale(1.05) translateY(${offset}px)`;
+  }
+}
+
+renderWork('all');
+observeReveal();
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>

@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0ede4;
+  --bg-dark: #1e4d2b;
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --border: rgba(30,77,43,0.15);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: auto; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* ── NAV ────────────────────────────────────────── */
+#nav {
+  position: fixed;
+  inset: 0 0 auto 0;
+  z-index: 200;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  transition: background 0.4s, box-shadow 0.4s, backdrop-filter 0.4s;
+}
+#nav.scrolled {
+  background: rgba(240,237,228,0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  box-shadow: 0 1px 0 var(--border);
+}
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: #f0ede4;
+  text-decoration: none;
+  transition: color 0.4s;
+}
+#nav.scrolled .nav-logo { color: var(--ink); }
+
+.nav-links { display: flex; align-items: center; gap: 32px; list-style: none; }
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.65);
+  text-decoration: none;
+  transition: color 0.3s;
+}
+#nav.scrolled .nav-links a { color: var(--ink-mid); }
+.nav-links a:hover { color: #fff; }
+#nav.scrolled .nav-links a:hover { color: var(--ink); }
+
+.nav-cta {
+  padding: 8px 20px !important;
+  border-radius: 100px !important;
+  border: 1px solid rgba(240,237,228,0.25) !important;
+  font-weight: 600 !important;
+}
+#nav.scrolled .nav-cta {
+  background: var(--ink) !important;
+  border-color: var(--ink) !important;
+  color: #f0ede4 !important;
+}
+
+/* ── HERO ───────────────────────────────────────── */
+.s-hero {
+  height: 100vh;
+  min-height: 600px;
+  background: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 0 56px 88px;
+  position: relative;
+  overflow: hidden;
+}
+
+.s-hero__bg-text {
+  position: absolute;
+  bottom: -80px;
+  right: -3%;
+  font-family: var(--font-serif);
+  font-size: 38vw;
+  color: rgba(255,255,255,0.022);
+  line-height: 1;
+  pointer-events: none;
+  user-select: none;
+  letter-spacing: -12px;
+  will-change: transform;
+}
+
+.s-hero__content { position: relative; z-index: 1; will-change: transform, opacity; }
+
+.s-hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.3s forwards;
+}
+
+.s-hero__name {
+  font-family: var(--font-serif);
+  font-size: clamp(60px, 12vw, 148px);
+  color: #f0ede4;
+  line-height: 0.92;
+  letter-spacing: -3px;
+  margin-bottom: 32px;
+  overflow: hidden;
+}
+
+.s-hero__name-line {
+  display: block;
+  opacity: 0;
+  transform: translateY(105%);
+  animation: lineUp 1s var(--ease) forwards;
+}
+.s-hero__name-line:nth-child(1) { animation-delay: 0.05s; }
+.s-hero__name-line:nth-child(2) { animation-delay: 0.18s; }
+
+.s-hero__sub {
+  font-size: 15px;
+  color: rgba(240,237,228,0.5);
+  max-width: 420px;
+  line-height: 1.75;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.6s forwards;
+}
+
+.s-hero__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeUp 0.7s var(--ease) 0.8s forwards;
+}
+
+.s-hero__tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.3);
+  border: 1px solid rgba(240,237,228,0.12);
+  padding: 5px 14px;
+  border-radius: 100px;
+}
+
+.s-hero__scroll {
+  position: absolute;
+  bottom: 40px;
+  right: 56px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  opacity: 0;
+  animation: fadeUp 0.6s var(--ease) 1.3s forwards;
+}
+.s-hero__scroll-line {
+  width: 40px;
+  height: 1px;
+  background: rgba(240,237,228,0.2);
+  transform-origin: left;
+  animation: growLine 0.8s var(--ease) 1.6s both;
+}
+.s-hero__scroll-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.2);
+  text-transform: uppercase;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lineUp {
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes growLine {
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
+}
+
+/* ── MANIFESTO (sticky word reveal) ────────────── */
+.s-manifesto { height: 380vh; background: var(--bg); }
+
+.s-manifesto__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10vw;
+  text-align: center;
+}
+
+.s-manifesto__label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 36px;
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.s-manifesto__text {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5.5vw, 76px);
+  line-height: 1.18;
+  letter-spacing: -1.5px;
+  color: var(--ink);
+}
+
+.mw {
+  display: inline;
+  color: rgba(30,77,43,0.1);
+  transition: color 0.55s ease;
+}
+.mw.lit { color: var(--ink); }
+
+/* ── WORK ───────────────────────────────────────── */
+.s-work { background: var(--bg); }
+
+.s-work__header {
+  padding: 88px 56px 48px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+.s-work__title {
+  font-family: var(--font-serif);
+  font-size: clamp(32px, 4vw, 52px);
+  letter-spacing: -1px;
+  color: var(--ink);
+}
+.s-work__meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.work-item {
+  border-bottom: 1px solid var(--border);
+  opacity: 0;
+  transform: translateY(64px);
+  transition: opacity 0.9s var(--ease), transform 0.9s var(--ease);
+}
+.work-item.in-view { opacity: 1; transform: none; }
+.work-item:last-child { border-bottom: none; }
+.work-item--dark { background: var(--bg-dark); }
+
+.work-item__inner {
+  display: grid;
+  grid-template-columns: 72px 1fr 140px;
+  gap: 48px;
+  padding: 60px 56px;
+  align-items: start;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.work-item--dark .work-item__inner:hover { background: rgba(255,255,255,0.03); }
+.work-item:not(.work-item--dark) .work-item__inner:hover { background: rgba(30,77,43,0.025); }
+
+.work-item__num {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 1px;
+  color: var(--ink-faint);
+  padding-top: 6px;
+}
+.work-item--dark .work-item__num { color: rgba(240,237,228,0.25); }
+
+.work-item__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.wi-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.07);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+.work-item--dark .wi-tag { color: rgba(240,237,228,0.4); background: rgba(240,237,228,0.07); }
+.wi-tag--wip { color: #3a8050 !important; background: rgba(58,128,80,0.12) !important; }
+.work-item--dark .wi-tag--wip { color: #5fb87a !important; background: rgba(95,184,122,0.1) !important; }
+
+.work-item__title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 3.2vw, 46px);
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+  color: var(--ink);
+  margin-bottom: 16px;
+  transition: color 0.2s;
+}
+.work-item--dark .work-item__title { color: #f0ede4; }
+.work-item__inner:hover .work-item__title { color: var(--ink-mid); }
+.work-item--dark .work-item__inner:hover .work-item__title { color: rgba(240,237,228,0.75); }
+
+.work-item__excerpt {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.75;
+  max-width: 560px;
+}
+.work-item--dark .work-item__excerpt { color: rgba(240,237,228,0.5); }
+
+.work-item__right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  justify-content: space-between;
+  min-height: 100%;
+  padding-top: 6px;
+}
+.work-item__date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+.work-item--dark .work-item__date { color: rgba(240,237,228,0.25); }
+
+.work-item__arrow {
+  font-size: 22px;
+  color: var(--ink-faint);
+  transition: transform 0.35s var(--ease), color 0.2s;
+  display: inline-block;
+  margin-top: 48px;
+}
+.work-item--dark .work-item__arrow { color: rgba(240,237,228,0.25); }
+.work-item__inner:hover .work-item__arrow { transform: translate(6px,-6px); color: var(--ink); }
+.work-item--dark .work-item__inner:hover .work-item__arrow { color: rgba(240,237,228,0.7); }
+
+/* ── ABOUT ──────────────────────────────────────── */
+.s-about {
+  padding: 100px 56px;
+  border-top: 1px solid var(--border);
+}
+.s-about__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+.s-about__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 20px;
+}
+.s-about__heading {
+  font-family: var(--font-serif);
+  font-size: clamp(30px, 3.5vw, 46px);
+  letter-spacing: -0.5px;
+  line-height: 1.12;
+  color: var(--ink);
+  margin-bottom: 28px;
+}
+.s-about__body { font-size: 15px; color: var(--ink-mid); line-height: 1.85; }
+.s-about__body p + p { margin-top: 18px; }
+
+.s-about__stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+.stat-card {
+  padding: 26px 22px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.7s var(--ease), transform 0.7s var(--ease), border-color 0.25s;
+}
+.stat-card.in-view { opacity: 1; transform: none; transition: border-color 0.25s, transform 0.25s var(--ease); }
+.stat-card:hover { border-color: var(--ink); transform: translateY(-2px); }
+
+.stat-card__label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.stat-card__value {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  color: var(--ink);
+  line-height: 1.1;
+  letter-spacing: -0.5px;
+}
+.stat-card__sub { font-size: 12px; color: var(--ink-mid); margin-top: 4px; }
+
+/* ── CONTACT ────────────────────────────────────── */
+.s-contact {
+  background: var(--bg-dark);
+  padding: 100px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+}
+.s-contact__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.35);
+  margin-bottom: 14px;
+}
+.s-contact__title {
+  font-family: var(--font-serif);
+  font-size: clamp(36px, 5vw, 68px);
+  color: #f0ede4;
+  letter-spacing: -1px;
+  line-height: 1;
+}
+.s-contact__links {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+  flex-shrink: 0;
+}
+.s-contact__link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.5);
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid rgba(240,237,228,0.14);
+  border-radius: 100px;
+  transition: color 0.2s, border-color 0.2s, background 0.2s;
+  white-space: nowrap;
+}
+.s-contact__link:hover { color: #f0ede4; border-color: rgba(240,237,228,0.4); }
+.s-contact__link--primary {
+  color: #f0ede4;
+  border-color: rgba(240,237,228,0.2);
+  font-weight: 600;
+}
+.s-contact__link--primary:hover { background: rgba(240,237,228,0.08); }
+
+/* ── FOOTER ─────────────────────────────────────── */
+footer {
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(240,237,228,0.06);
+  padding: 20px 56px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.footer-copy { font-family: var(--font-mono); font-size: 11px; color: rgba(240,237,228,0.22); }
+.footer-links { display: flex; gap: 24px; }
+.footer-links a { font-family: var(--font-mono); font-size: 11px; color: rgba(240,237,228,0.22); text-decoration: none; transition: color 0.2s; }
+.footer-links a:hover { color: var(--ink-faint); }
+
+/* ── SLIDE-UP UTILITY ───────────────────────────── */
+.slide-up {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: opacity 0.8s var(--ease), transform 0.8s var(--ease);
+}
+.slide-up.in-view { opacity: 1; transform: none; }
+
+/* ── RESPONSIVE ─────────────────────────────────── */
+@media (max-width: 900px) {
+  .work-item__inner { grid-template-columns: 52px 1fr; gap: 20px; }
+  .work-item__right { display: none; }
+}
+@media (max-width: 768px) {
+  #nav { padding: 0 20px; }
+  .s-hero { padding: 0 20px 64px; }
+  .s-manifesto__sticky { padding: 0 20px; text-align: left; }
+  .s-work__header { padding: 60px 20px 32px; }
+  .work-item__inner { padding: 40px 20px; grid-template-columns: 1fr; }
+  .work-item__num { display: none; }
+  .s-about { padding: 60px 20px; }
+  .s-about__grid { grid-template-columns: 1fr; gap: 40px; }
+  .s-contact { padding: 60px 20px; flex-direction: column; align-items: flex-start; }
+  .s-contact__links { align-items: flex-start; }
+  footer { padding: 20px; flex-direction: column; gap: 10px; }
+}
+</style>
+</head>
+<body>
+
+<nav id="nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ─────────────────────────────────────── -->
+<section class="s-hero" id="s-hero">
+  <div class="s-hero__bg-text" id="hero-bg">PS</div>
+  <div class="s-hero__content" id="hero-content">
+    <div class="s-hero__eyebrow">Urban Data Scientist · Bangalore</div>
+    <h1 class="s-hero__name">
+      <span class="s-hero__name-line">Prakriti</span>
+      <span class="s-hero__name-line">Srimal</span>
+    </h1>
+    <p class="s-hero__sub">Senior Urban Data Scientist, AEC tech automation specialist, and computational designer. M.Arch, Bartlett School of Architecture, UCL.</p>
+    <div class="s-hero__tags">
+      <span class="s-hero__tag">Geospatial Intelligence</span>
+      <span class="s-hero__tag">BIM Automation</span>
+      <span class="s-hero__tag">Computational Design</span>
+      <span class="s-hero__tag">LEED® GA</span>
+    </div>
+  </div>
+  <div class="s-hero__scroll">
+    <div class="s-hero__scroll-line"></div>
+    <span class="s-hero__scroll-label">Scroll</span>
+  </div>
+</section>
+
+<!-- ── MANIFESTO ─────────────────────────────────── -->
+<section class="s-manifesto" id="s-manifesto">
+  <div class="s-manifesto__sticky">
+    <div>
+      <span class="s-manifesto__label" id="manifesto-label">What I do</span>
+      <div class="s-manifesto__text">
+        <span class="mw" data-i="0">I</span> <span class="mw" data-i="1">help</span> <span class="mw" data-i="2">planners</span><br>
+        <span class="mw" data-i="3">and</span> <span class="mw" data-i="4">designers</span> <span class="mw" data-i="5">make</span><br>
+        <span class="mw" data-i="6">sense</span> <span class="mw" data-i="7">of</span> <span class="mw" data-i="8">cities.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── WORK ──────────────────────────────────────── -->
+<section class="s-work" id="work">
+  <div class="s-work__header slide-up">
+    <h2 class="s-work__title">Projects &amp; Writing</h2>
+    <span class="s-work__meta">Selected work</span>
+  </div>
+
+  <div class="work-item" onclick="window.location='isochronic-city.html'">
+    <div class="work-item__inner">
+      <span class="work-item__num">01</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">Thesis</span>
+          <span class="wi-tag">Urban Design</span>
+        </div>
+        <h3 class="work-item__title">IsoChronic City</h3>
+        <p class="work-item__excerpt">A master's thesis developed at the Bartlett School of Architecture, UCL. A post-pandemic urban response built on the 15-minute neighbourhood concept — proximity, walkability, and what reurbanisation actually means.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">UCL B-Pro · 2023</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">02</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">Bangalore Series</span>
+          <span class="wi-tag">Accessibility</span>
+        </div>
+        <h3 class="work-item__title">How far can you go?</h3>
+        <p class="work-item__excerpt">5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible — and which ones depend entirely on a car.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">May 2025</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">03</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">Bangalore Series</span>
+          <span class="wi-tag">Morphology</span>
+        </div>
+        <h3 class="work-item__title">What is Bangalore actually made up of?</h3>
+        <p class="work-item__excerpt">Classifying Bangalore's urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete area to the sprawling plots of the north — every neighbourhood has a morphological fingerprint.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Apr 2025</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-item__inner">
+      <span class="work-item__num">04</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">Hardware</span>
+          <span class="wi-tag">Sensing</span>
+          <span class="wi-tag wi-tag--wip">WIP</span>
+        </div>
+        <h3 class="work-item__title">Real Time Sensing Instrument</h3>
+        <p class="work-item__excerpt">Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio running on the NVIDIA Jetson Orin Nano Super. Documenting the build process as it happens.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item">
+    <div class="work-item__inner">
+      <span class="work-item__num">05</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">AEC Tech</span>
+          <span class="wi-tag">Python</span>
+          <span class="wi-tag">pyRevit</span>
+          <span class="wi-tag wi-tag--wip">WIP</span>
+        </div>
+        <h3 class="work-item__title">pyRevit BIM Automation Scripts</h3>
+        <p class="work-item__excerpt">Ten Revit API tools built in Python using pyRevit, developed for large-scale residential and commercial AEC projects. Tools include: Create Worksets · Assign Worksets · Wall Base · Wall Top · Door Base · Copy Units · Mirror Units · ParaControl · Unit Typology Parameter.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="work-item work-item--dark">
+    <div class="work-item__inner">
+      <span class="work-item__num">06</span>
+      <div>
+        <div class="work-item__tags">
+          <span class="wi-tag">Bangalore Series</span>
+          <span class="wi-tag">Hardware</span>
+          <span class="wi-tag wi-tag--wip">WIP</span>
+        </div>
+        <h3 class="work-item__title">Real Time Sensing — field notes from Bangalore</h3>
+        <p class="work-item__excerpt">The instrument is taking shape. GPS, temperature, humidity, and audio now running simultaneously. First field tests in Bangalore — what the data looks like, what it reveals, and what it doesn't.</p>
+      </div>
+      <div class="work-item__right">
+        <span class="work-item__date">Ongoing</span>
+        <span class="work-item__arrow">↗</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ──────────────────────────────────────── -->
+<section class="s-about" id="about">
+  <div class="s-about__grid">
+    <div class="slide-up">
+      <div class="s-about__label">About</div>
+      <h2 class="s-about__heading">Architect by training.<br>Data scientist by practice.</h2>
+      <div class="s-about__body">
+        <p>My work sits at the intersection of cities, computation, and data. Over the past few years this has meant building geospatial workflows in Python, applying machine learning to urban systems, and developing Revit API automation tools.</p>
+        <p>I work across scales — from understanding how a single street performs to how different parts of a city relate to each other. The focus stays the same: turning complex spatial data into something useful for the people who design and plan cities.</p>
+        <p>M.Arch in Urban Design from the Bartlett School of Architecture, University College London. B.Arch from BMS College of Engineering. COA Registered Architect.</p>
+      </div>
+    </div>
+    <div class="s-about__stats">
+      <div class="stat-card" style="transition-delay:0.05s">
+        <div class="stat-card__label">Education</div>
+        <div class="stat-card__value">Bartlett</div>
+        <div class="stat-card__sub">UCL B-Pro Urban Design</div>
+      </div>
+      <div class="stat-card" style="transition-delay:0.15s">
+        <div class="stat-card__label">Specialisation</div>
+        <div class="stat-card__value">Urban Data</div>
+        <div class="stat-card__sub">Geospatial + ML</div>
+      </div>
+      <div class="stat-card" style="transition-delay:0.25s">
+        <div class="stat-card__label">Current focus</div>
+        <div class="stat-card__value">Bangalore</div>
+        <div class="stat-card__sub">Real-time sensing</div>
+      </div>
+      <div class="stat-card" style="transition-delay:0.35s">
+        <div class="stat-card__label">Credential</div>
+        <div class="stat-card__value">LEED®</div>
+        <div class="stat-card__sub">Green Associate™</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CONTACT ────────────────────────────────────── -->
+<div class="s-contact slide-up" id="contact">
+  <div>
+    <div class="s-contact__eyebrow">Let's talk</div>
+    <div class="s-contact__title">Get in touch<br>today.</div>
+  </div>
+  <div class="s-contact__links">
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="s-contact__link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="s-contact__link" target="_blank">GitHub ↗</a>
+    <a href="mailto:prakritisrimal@gmail.com" class="s-contact__link s-contact__link--primary">prakritisrimal@gmail.com</a>
+  </div>
+</div>
+
+<footer>
+  <span class="footer-copy">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="mailto:prakritisrimal@gmail.com">Contact</a>
+  </div>
+</footer>
+
+<script>
+const nav           = document.getElementById('nav');
+const heroContent   = document.getElementById('hero-content');
+const heroBg        = document.getElementById('hero-bg');
+const manifesto     = document.getElementById('s-manifesto');
+const manifestoLabel= document.getElementById('manifesto-label');
+const words         = manifesto.querySelectorAll('.mw');
+const N             = words.length;
+let labelShown      = false;
+
+// ── Manifesto word reveal ────────────────────────
+function updateManifesto() {
+  const rect   = manifesto.getBoundingClientRect();
+  const budget = manifesto.scrollHeight - window.innerHeight;
+  const p      = Math.max(0, Math.min(1, -rect.top / budget));
+
+  if (p > 0.02 && !labelShown) {
+    manifestoLabel.style.opacity = '1';
+    labelShown = true;
+  }
+
+  words.forEach((w, i) => {
+    w.classList.toggle('lit', p >= (i + 0.4) / N);
+  });
+}
+
+// ── Hero parallax / fade ─────────────────────────
+function updateHero() {
+  const scrollY = window.scrollY;
+  const vh      = window.innerHeight;
+  const p       = Math.min(1, scrollY / (vh * 0.75));
+
+  heroContent.style.opacity   = Math.max(0, 1 - p * 1.6).toString();
+  heroContent.style.transform = `translateY(${-p * 56}px)`;
+  if (heroBg) heroBg.style.transform = `translateY(${scrollY * 0.12}px)`;
+}
+
+// ── IntersectionObserver ─────────────────────────
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in-view');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.slide-up, .work-item, .stat-card').forEach(el => io.observe(el));
+
+// ── Nav state ────────────────────────────────────
+function updateNav() {
+  nav.classList.toggle('scrolled', window.scrollY > 60);
+}
+
+// ── Main scroll handler ──────────────────────────
+window.addEventListener('scroll', () => {
+  updateNav();
+  if (window.scrollY < window.innerHeight * 1.5) updateHero();
+  updateManifesto();
+}, { passive: true });
+
+// Run once on load
+updateNav();
+updateHero();
+updateManifesto();
+</script>
+</body>
+</html>

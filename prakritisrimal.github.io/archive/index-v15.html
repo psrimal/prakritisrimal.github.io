@@ -1,0 +1,1465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #050a07;
+  --bg-card:   #070d09;
+  --bg-card2:  #0b140d;
+  --border:    #122018;
+  --border-hi: #1e3828;
+  --text:      #f0ede4;
+  --text-mid:  #7a9a84;
+  --text-dim:  #3d5c46;
+  --accent:    #2db354;
+  --accent-lo: #1e6b35;
+  --accent-hi: #6de89a;
+  --cream:     #f0ede4;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: var(--accent);
+  z-index: 300;
+  transition: width 0.1s linear;
+  width: 0%;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s, background 0.4s;
+}
+
+nav.solid {
+  background: rgba(5,10,7,0.88);
+  backdrop-filter: blur(20px);
+  border-color: var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.2s;
+}
+
+.nav-logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.2s;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--accent) !important;
+  color: #050a07 !important;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-weight: 600 !important;
+}
+
+.nav-cta:hover { background: var(--accent-hi) !important; }
+
+/* HERO */
+#hero {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* canvas lives inside hero, not fixed */
+#particle-canvas {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding: 80px 40px 0;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-mid);
+  border: 1px solid var(--border-hi);
+  background: rgba(7,13,9,0.7);
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 10vw, 120px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -3px;
+  color: var(--text);
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.5s;
+}
+
+.hero-name span {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(240,237,228,0.18);
+}
+
+.hero-descriptor {
+  font-size: clamp(16px, 1.8vw, 20px);
+  color: var(--text-mid);
+  line-height: 1.6;
+  max-width: 500px;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.7s;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.9s;
+}
+
+.btn-primary {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--accent);
+  color: #050a07;
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.2s;
+  font-weight: 600;
+}
+
+.btn-primary:hover { background: var(--accent-hi); transform: translateY(-1px); }
+
+.btn-secondary {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-mid);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 1px solid var(--border-hi);
+  border-radius: 8px;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.btn-secondary:hover { color: var(--text); border-color: var(--text-mid); transform: translateY(-1px); }
+
+.hero-stats {
+  position: absolute;
+  right: 40px;
+  bottom: 60px;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-end;
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards 1.4s;
+}
+
+.hero-stat-item { text-align: right; }
+
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.scroll-line {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.8s;
+}
+
+.scroll-line-bar {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--accent));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* SECTIONS */
+section { position: relative; z-index: 1; }
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+.section-header { margin-bottom: 48px; }
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+/* ABOUT — Split-flap flip */
+#about {
+  padding: 0;
+  border-top: 1px solid var(--border);
+  background: var(--cream);
+  position: relative;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.story-header-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 40px 28px;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.story-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+
+.story-header .section-label { color: var(--accent-lo); }
+.story-header .section-title { color: #050a07; }
+
+.story-counter-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.story-counter {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(5,10,7,0.35);
+  letter-spacing: 1px;
+}
+
+/* STAGE — clips the card so it can slide in/out */
+.story-stage {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+/* PROGRESS BAR — thin line at bottom of stage */
+.story-progress {
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 2px;
+  background: var(--accent);
+  z-index: 20;
+  width: 100%;
+  transform-origin: left;
+  transform: scaleX(1);
+}
+
+/* CARD */
+.story-card {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+
+.card-image-half {
+  position: relative;
+  overflow: hidden;
+}
+
+/* entrance / exit states */
+.story-card.state-current  { transform: translateY(0);     opacity: 1; }
+.story-card.state-enter    { transform: translateY(100%);  opacity: 1; }
+.story-card.state-exit     { transform: translateY(-100%); opacity: 1; }
+.story-card.state-hidden   { transform: translateY(100%);  opacity: 0; pointer-events: none; }
+
+.story-card.animating {
+  transition: transform 0.55s cubic-bezier(0.77, 0, 0.175, 1);
+}
+
+/* IMAGE HALF */
+
+.card-image-half .story-card-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform 4s ease;
+}
+
+.story-card.state-current .card-image-half .story-card-bg {
+  transform: scale(1.04);
+}
+
+.story-card:not(.state-current) .card-image-half .story-card-bg {
+  transform: scale(1);
+}
+
+/* subtle vignette on the image */
+.card-image-half::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, transparent 60%, var(--cream) 100%);
+  pointer-events: none;
+}
+
+/* no-image fallback */
+.story-card.no-image .card-image-half {
+  background: #e2ded4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.no-image-glyph {
+  font-family: var(--font-mono);
+  font-size: 72px;
+  color: rgba(5,10,7,0.06);
+  letter-spacing: -4px;
+  user-select: none;
+}
+
+/* TEXT HALF */
+.card-text-half {
+  background: var(--cream);
+  padding: 60px 56px 60px 48px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 16px;
+  position: relative;
+}
+
+/* thin green left border accent */
+.card-text-half::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 15%; bottom: 15%;
+  width: 2px;
+  background: var(--accent);
+  opacity: 0.4;
+  border-radius: 2px;
+}
+
+.card-chapter {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(5,10,7,0.3);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.card-year {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--accent-lo);
+  letter-spacing: 1px;
+}
+
+.card-title {
+  font-family: var(--font-display);
+  font-size: clamp(22px, 2.6vw, 30px);
+  font-weight: 700;
+  color: #050a07;
+  line-height: 1.2;
+  letter-spacing: -0.4px;
+}
+
+.card-body {
+  font-size: 15px;
+  color: rgba(5,10,7,0.58);
+  line-height: 1.8;
+  font-weight: 300;
+  max-width: 420px;
+}
+
+.card-footer {
+  padding-top: 20px;
+  margin-top: 4px;
+  border-top: 1px solid rgba(5,10,7,0.08);
+}
+
+.card-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(5,10,7,0.35);
+  background: rgba(5,10,7,0.05);
+  padding: 4px 10px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* skills chips */
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(5,10,7,0.55);
+  border: 1px solid rgba(5,10,7,0.14);
+  padding: 5px 12px;
+  border-radius: 100px;
+}
+
+/* nav dots */
+.story-dots {
+  display: flex;
+  gap: 6px;
+  padding: 16px 40px 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.story-dot {
+  width: 24px; height: 3px;
+  border-radius: 2px;
+  background: rgba(5,10,7,0.12);
+  cursor: pointer;
+  transition: background 0.3s, width 0.3s;
+}
+
+.story-dot.active {
+  background: var(--accent);
+  width: 40px;
+}
+
+/* WORK — v5-style grid */
+#work {
+  height: 100vh;
+  border-top: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.work-header {
+  padding: 48px 48px 0;
+  flex-shrink: 0;
+}
+
+.work-header-grid {
+  display: grid;
+  grid-template-columns: 100px 1fr 1fr;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 24px;
+}
+
+.work-header-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  padding-bottom: 4px;
+}
+
+.work-header-title {
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 64px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -2px;
+  line-height: 0.95;
+}
+
+.work-header-meta {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  align-self: end;
+  padding-bottom: 4px;
+}
+
+/* filter bar */
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  padding: 0 48px 20px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { border-color: var(--border-hi); color: var(--text-mid); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: #050a07; font-weight: 600; }
+
+/* card grid */
+.work-list {
+  padding: 24px 48px 32px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+
+.work-list::-webkit-scrollbar { display: none; }
+
+.work-card {
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: transform 0.5s cubic-bezier(0.16,1,0.3,1),
+              box-shadow 0.5s cubic-bezier(0.16,1,0.3,1),
+              border-color 0.25s;
+}
+
+.work-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 24px 48px rgba(0,0,0,0.3);
+  border-color: var(--border-hi);
+}
+
+/* first card spans full width, horizontal layout */
+.work-card:first-child {
+  grid-column: 1 / -1;
+  flex-direction: row;
+}
+
+.work-card:first-child .work-card-thumb {
+  width: 38%;
+  flex-shrink: 0;
+  aspect-ratio: unset;
+  min-height: 200px;
+}
+
+.work-card:first-child .work-card-body {
+  padding: 28px 32px 28px 36px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  flex: 1;
+}
+
+.work-card-thumb {
+  width: 100%;
+  aspect-ratio: 16/9;
+  overflow: hidden;
+  background: #0e1c11;
+  flex-shrink: 0;
+}
+
+.work-card-thumb-inner {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    -45deg,
+    #0d1a10, #0d1a10 4px,
+    #0a1510 4px, #0a1510 8px
+  );
+  transition: transform 0.8s cubic-bezier(0.16,1,0.3,1);
+}
+
+.work-card:hover .work-card-thumb-inner { transform: scale(1.05); }
+
+.work-card-thumb.light { background: #1e3828; }
+.work-card-thumb.light .work-card-thumb-inner {
+  background: repeating-linear-gradient(
+    -45deg,
+    #1e3828, #1e3828 4px,
+    #243f2f 4px, #243f2f 8px
+  );
+}
+
+.work-card-body {
+  padding: 20px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.work-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(240,237,228,0.05);
+  padding: 3px 9px;
+  border-radius: 100px;
+}
+
+.tag.wip {
+  color: var(--accent-hi);
+  background: rgba(45,179,84,0.12);
+}
+
+.work-card-title {
+  font-family: var(--font-display);
+  font-size: clamp(16px, 1.6vw, 20px);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  transition: color 0.2s;
+}
+
+.work-card:hover .work-card-title { color: var(--text-mid); }
+
+.work-card-excerpt {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  font-weight: 300;
+  flex: 1;
+}
+
+.work-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.work-arrow {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--border-hi);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: var(--text-dim);
+  transition: all 0.35s cubic-bezier(0.16,1,0.3,1);
+  flex-shrink: 0;
+}
+
+.work-card:hover .work-arrow {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #050a07;
+  transform: rotate(-45deg);
+}
+
+/* CONTACT */
+#contact {
+  padding: 120px 0;
+  border-top: 1px solid var(--border);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.contact-heading {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -2px;
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+
+.contact-heading span { color: var(--accent); }
+
+.contact-sub {
+  font-size: 16px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-mid);
+  text-decoration: none;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.2s;
+  background: var(--bg-card);
+}
+
+.contact-link:hover {
+  border-color: var(--accent-lo);
+  color: var(--text);
+  background: rgba(45,179,84,0.04);
+  transform: translateX(4px);
+}
+
+.contact-link.primary {
+  border-color: var(--accent-lo);
+  color: var(--text);
+  background: rgba(45,179,84,0.07);
+}
+
+.contact-link-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.contact-link-value { font-size: 14px; color: inherit; }
+
+.contact-link-arrow {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.contact-link:hover .contact-link-arrow { transform: translate(3px, -3px); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.footer-links { display: flex; gap: 24px; }
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--text-mid); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  .hero-content { padding: 80px 20px 0; }
+  .container { padding: 0 20px; }
+  .hero-stats { display: none; }
+  .story-header-wrap { padding: 40px 20px 20px; }
+  .story-card { grid-template-columns: 1fr; grid-template-rows: 200px 1fr; }
+  .story-dots { padding: 12px 20px 16px; }
+  .card-text-half { padding: 24px 20px 28px; }
+  .work-header { padding: 32px 20px 0; }
+  .work-header-grid { grid-template-columns: 60px 1fr; }
+  .work-header-meta { display: none; }
+  .filter-bar { padding: 0 20px 16px; }
+  .work-list { padding: 16px 20px 24px; grid-template-columns: 1fr; }
+  .work-card:first-child { flex-direction: column; }
+  .work-card:first-child .work-card-thumb { width: 100%; min-height: unset; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">ps<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <canvas id="particle-canvas"></canvas>
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Available for collaboration
+    </div>
+    <h1 class="hero-name">Prakriti<br><span>Srimal</span></h1>
+    <p class="hero-descriptor">Urban data scientist working at the intersection of spatial analysis, automation, and the built environment.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">View work</a>
+      <a href="#about" class="btn-secondary">About me</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">B-Pro</div>
+      <div class="hero-stat-label">UCL Bartlett</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">6+</div>
+      <div class="hero-stat-label">Years practice</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">BLR</div>
+      <div class="hero-stat-label">Based in Bangalore</div>
+    </div>
+  </div>
+  <div class="scroll-line">
+    <div class="scroll-line-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT — Split-flap flip -->
+<section id="about">
+  <div class="story-header-wrap reveal">
+    <div class="story-header">
+      <div>
+        <div class="section-label">Background</div>
+        <h2 class="section-title">The path here</h2>
+      </div>
+      <div class="story-counter-wrap">
+        <span class="story-counter" id="story-counter">01 / 07</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="story-stage" id="story-stage">
+    <div class="story-progress" id="story-progress"></div>
+
+    <!-- CARD 0 -->
+    <div class="story-card state-current" data-index="0">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_1330.jpeg');filter:brightness(0.72) saturate(0.9);"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">Architecture</div>
+        <div class="card-year">2018</div>
+        <div class="card-title">The studio I loved most was urban design.</div>
+        <div class="card-body">Designing for people and thinking about how a design would have an impact on them. That was the part that felt real. Not the building. The life inside it.</div>
+        <div class="card-footer"><span class="card-tag">BMS College of Engineering · B.Arch</span></div>
+      </div>
+    </div>
+
+    <!-- CARD 1 -->
+    <div class="story-card state-hidden" data-index="1">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_6653.jpeg');filter:brightness(0.65);background-position:center top;"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">London</div>
+        <div class="card-year">2022</div>
+        <div class="card-title">I went to UCL not knowing what the course was about.</div>
+        <div class="card-body">Best university in the world. My dream city. That was enough reason. I generally just get excited by things not knowing what they hold. As they unfold, I keep falling in love with them.</div>
+        <div class="card-footer"><span class="card-tag">Bartlett School of Architecture · UCL B-Pro · MArch Urban Design</span></div>
+      </div>
+    </div>
+
+    <!-- CARD 2 -->
+    <div class="story-card state-hidden" data-index="2">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_0047.jpeg');filter:brightness(0.6);"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">IsoChronic City</div>
+        <div class="card-year">2023</div>
+        <div class="card-title">As it unfolded, I kept falling in love with it.</div>
+        <div class="card-body">Machine learning. Space syntax. Generative design. Applied to the 15-minute neighbourhood. The thesis that changed everything about how I understood what design could do.</div>
+        <div class="card-footer"><span class="card-tag">Master's Thesis · UCL B-Pro · 2023</span></div>
+      </div>
+    </div>
+
+    <!-- CARD 3 -->
+    <div class="story-card state-hidden" data-index="3">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_1330.jpeg');filter:brightness(0.5) hue-rotate(15deg);"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter"></div>
+        <div class="card-year">2023</div>
+        <div class="card-title">Came back. Did detail drawings for a year. Then I could see the ceiling.</div>
+        <div class="card-body">New things are always fun. The question is what happens after the novelty wears off.</div>
+        <div class="card-footer"><span class="card-tag"></span></div>
+      </div>
+    </div>
+
+    <!-- CARD 4 -->
+    <div class="story-card state-hidden" data-index="4">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_0048.jpeg');filter:brightness(0.55);"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">Automation</div>
+        <div class="card-year">2024</div>
+        <div class="card-title">I used to run away from coding my entire life. Then I got a call.</div>
+        <div class="card-body">Join a computational design team. Turned out to be an automation team. Zero coding background between all of us. Trained as architects, writing Python for Revit.</div>
+        <div class="card-footer"><span class="card-tag"></span></div>
+      </div>
+    </div>
+
+    <!-- CARD 5 -->
+    <div class="story-card state-hidden" data-index="5">
+      <div class="card-image-half">
+        <div class="story-card-bg" style="background-image:url('IMG_0047.jpeg');filter:brightness(0.45) hue-rotate(-10deg);"></div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">The Transfer</div>
+        <div class="card-year">2024</div>
+        <div class="card-title">I found a door. I walked through it.</div>
+        <div class="card-body">This is the job I've loved the most. Whenever something interesting appeared, I volunteered. Business development. Data visualisation. Analytics. Building a sensor. The freedom to explore is the thing.</div>
+        <div class="card-footer"><span class="card-tag">Senior Urban Data Scientist · AEC Tech Automation Specialist</span></div>
+      </div>
+    </div>
+
+    <!-- CARD 6 -->
+    <div class="story-card no-image state-hidden" data-index="6">
+      <div class="card-image-half">
+        <div class="no-image-glyph">{ }</div>
+      </div>
+      <div class="card-text-half">
+        <div class="card-chapter">Now</div>
+        <div class="card-year">Now</div>
+        <div class="card-title">Next in line. LLMs. ML. AI.</div>
+        <div class="card-body">Applying the same spatial rigour to Bangalore as a case study. A rapidly growing city with vast amounts of unread spatial data. Building a real-time sensing instrument. Writing spatial analyses. Exploring machine learning models. The tools I know are not enough yet. That is the point.</div>
+        <div class="card-footer"><span class="card-tag">Urban Data Scientist · AEC Tech Automation Specialist</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- dot nav -->
+  <div class="story-dots" id="story-dots"></div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="work-header reveal">
+    <div class="work-header-grid">
+      <div class="work-header-number">009</div>
+      <h2 class="work-header-title">Projects &amp;<br>Writing</h2>
+      <div class="work-header-meta">Work in progress</div>
+    </div>
+  </div>
+  <div class="filter-bar reveal reveal-d1">
+    <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+    <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+    <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+    <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+  </div>
+  <div class="work-list reveal reveal-d2" id="work-list"></div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="section-label">Contact</div>
+        <h2 class="contact-heading">Let's<br><span>talk.</span></h2>
+        <p class="contact-sub">Open to collaboration, research partnerships, and interesting problems at the edge of data and the built environment.</p>
+      </div>
+      <div class="contact-links reveal reveal-d2">
+        <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary">
+          <div>
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">prakritisrimal@gmail.com</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">
+          <div>
+            <div class="contact-link-label">LinkedIn</div>
+            <div class="contact-link-value">prakriti-srimal</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://github.com/" class="contact-link" target="_blank">
+          <div>
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/prakriti</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+// --- PARTICLES (hero-only canvas) ---
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let W, H;
+
+function resizeCanvas() {
+  const hero = document.getElementById('hero');
+  W = canvas.width = hero.offsetWidth;
+  H = canvas.height = hero.offsetHeight;
+}
+
+function initParticles() {
+  particles = [];
+  // ~1 particle per 1400px² — roughly 100x the previous density
+  const count = Math.floor((W * H) / 1400);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x:   Math.random() * W,
+      y:   Math.random() * H,
+      vx:  (Math.random() - 0.5) * 0.4,
+      vy:  (Math.random() - 0.5) * 0.4,
+      r:   Math.random() * 1.8 + 0.4,
+      // mix of forest green tones
+      hue: 130 + Math.random() * 30,
+      sat: 50 + Math.random() * 30,
+      lit: 55 + Math.random() * 20,
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  const maxDist = 90;
+
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, ${p.sat}%, ${p.lit}%, 0.85)`;
+    ctx.fill();
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dx = p.x - q.x, dy = p.y - q.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < maxDist) {
+        const alpha = (1 - dist / maxDist) * 0.35;
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `hsla(140, 60%, 50%, ${alpha})`;
+        ctx.lineWidth = 0.6;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+
+// init after fonts/layout settle
+window.addEventListener('load', () => {
+  resizeCanvas();
+  initParticles();
+  drawParticles();
+});
+
+window.addEventListener('resize', () => {
+  resizeCanvas();
+  initParticles();
+});
+
+// --- WORK DATA ---
+const workItems = [
+  { id:1, type:['project'], title:'IsoChronic City', excerpt:'Master\'s thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.', tags:['Thesis','Urban Design'], date:'UCL B-Pro · 2023', status:null, dark:false, link:'isochronic-city.html' },
+  { id:2, type:['bangalore','writing'], title:'How far can you go?', excerpt:'5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible and which depend entirely on a car.', tags:['Bangalore Series','Accessibility'], date:'May 2025', status:null, dark:true, link:null },
+  { id:3, type:['bangalore','writing'], title:'What is Bangalore actually made of?', excerpt:'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north.', tags:['Bangalore Series','Morphology'], date:'Apr 2025', status:null, dark:true, link:null },
+  { id:4, type:['project','wip'], title:'Real Time Sensing Instrument', excerpt:'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio on the NVIDIA Jetson Orin Nano Super.', tags:['Hardware','Sensing'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:5, type:['project','wip'], title:'pyRevit BIM Automation Scripts', excerpt:'Revit API tools built in Python using pyRevit for large-scale AEC projects. Workset management, wall and door tools, unit placement, and parameter control.', tags:['AEC Tech','Python'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:6, type:['bangalore','writing','wip'], title:'Sensing Bangalore — field notes', excerpt:'The instrument is taking shape. First field tests in Bangalore. What the data looks like, what it reveals, and what it does not.', tags:['Bangalore Series','Hardware'], date:'Ongoing', status:'wip', dark:true, link:null }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+  list.innerHTML = filtered.map(item => `
+    <div class="work-card" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-thumb ${item.dark ? 'light' : ''}">
+        <div class="work-card-thumb-inner"></div>
+      </div>
+      <div class="work-card-body">
+        <div>
+          <div class="work-card-tags">
+            ${item.tags.map(t => `<span class="tag">${t}</span>`).join('')}
+            ${item.status === 'wip' ? '<span class="tag wip">WIP</span>' : ''}
+          </div>
+          <div class="work-card-title">${item.title}</div>
+          <div class="work-card-excerpt">${item.excerpt}</div>
+        </div>
+        <div class="work-card-footer">
+          <span class="work-card-date">${item.date}</span>
+          <span class="work-arrow">↗</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// --- SPLIT-FLAP STORY ---
+(function () {
+  const DWELL    = 4500;   // ms each card stays visible
+  const FLIP_DUR = 550;    // ms transition (must match CSS)
+  const TOTAL    = 7;
+
+  const stage    = document.getElementById('story-stage');
+  const progress = document.getElementById('story-progress');
+  const counter  = document.getElementById('story-counter');
+  const dotsWrap = document.getElementById('story-dots');
+
+  if (!stage) return;
+
+  const cards = Array.from(stage.querySelectorAll('.story-card'));
+  let current = 0;
+  let timer, progAnim, busy = false;
+
+  // stage height is now driven by CSS (flex:1 in 100vh column)
+  function sizeStage() {}
+
+  // build dot nav
+  function buildDots() {
+    dotsWrap.innerHTML = '';
+    for (let i = 0; i < TOTAL; i++) {
+      const d = document.createElement('div');
+      d.className = 'story-dot' + (i === current ? ' active' : '');
+      d.addEventListener('click', () => { if (!busy) goTo(i); });
+      dotsWrap.appendChild(d);
+    }
+  }
+
+  function updateDots() {
+    dotsWrap.querySelectorAll('.story-dot').forEach((d, i) => {
+      d.classList.toggle('active', i === current);
+    });
+  }
+
+  function updateCounter() {
+    if (counter) counter.textContent =
+      String(current + 1).padStart(2, '0') + ' / ' + String(TOTAL).padStart(2, '0');
+  }
+
+  // progress bar: shrinks from full to 0 over DWELL ms
+  function startProgress() {
+    if (progress) {
+      progress.style.transition = 'none';
+      progress.style.transform  = 'scaleX(1)';
+      // force reflow
+      progress.offsetHeight;
+      progress.style.transition = `transform ${DWELL}ms linear`;
+      progress.style.transform  = 'scaleX(0)';
+    }
+  }
+
+  function goTo(next) {
+    if (busy || next === current) return;
+    busy = true;
+    clearTimeout(timer);
+
+    const outCard = cards[current];
+    const inCard  = cards[next];
+
+    // position incoming below stage
+    inCard.className = 'story-card state-enter';
+
+    // force reflow so the enter position registers
+    inCard.offsetHeight;
+
+    // animate both
+    outCard.classList.add('animating');
+    inCard.classList.add('animating');
+
+    outCard.className = 'story-card animating state-exit';
+    inCard.className  = 'story-card animating state-current';
+
+    current = next;
+    updateCounter();
+    updateDots();
+
+    setTimeout(() => {
+      outCard.classList.remove('animating');
+      outCard.className = 'story-card state-hidden';
+      inCard.classList.remove('animating');
+      busy = false;
+      startProgress();
+      timer = setTimeout(advance, DWELL);
+    }, FLIP_DUR);
+  }
+
+  function advance() {
+    goTo((current + 1) % TOTAL);
+  }
+
+  // init
+  window.addEventListener('load', () => {
+    sizeStage();
+    buildDots();
+    updateCounter();
+    startProgress();
+    timer = setTimeout(advance, DWELL);
+  });
+
+  window.addEventListener('resize', sizeStage);
+
+  // pause when section out of view
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        startProgress();
+        timer = setTimeout(advance, DWELL);
+      } else {
+        clearTimeout(timer);
+        if (progress) { progress.style.transition = 'none'; }
+      }
+    });
+  }, { threshold: 0.3 });
+  io.observe(document.getElementById('about'));
+})();
+
+// --- SCROLL ---
+function onScroll() {
+  const scrollY = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (scrollY / docH * 100) + '%';
+  document.getElementById('main-nav').classList.toggle('solid', scrollY > 60);
+}
+
+// --- REVEAL ---
+function observeReveal() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+renderWork('all');
+observeReveal();
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>

@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg:        #000000;
+  --bg-card:   #080808;
+  --bg-card2:  #0c0c0c;
+  --border:    #181818;
+  --border-hi: #2a2a2a;
+  --text:      #ffffff;
+  --text-mid:  #888888;
+  --text-dim:  #444444;
+  --accent:    #6d5aff;
+  --accent-lo: #3d2fc0;
+  --accent-hi: #a78bfa;
+  --green:     #22c55e;
+
+  --font-display: 'Syne', sans-serif;
+  --font-body:    'DM Sans', sans-serif;
+  --font-mono:    'JetBrains Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* PARTICLE CANVAS */
+#particle-canvas {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.45;
+}
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0; left: 0;
+  height: 1px;
+  background: var(--accent);
+  z-index: 300;
+  transition: width 0.1s linear;
+  width: 0%;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0 40px;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid transparent;
+  transition: border-color 0.4s, background 0.4s;
+}
+
+nav.solid {
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(20px);
+  border-color: var(--border);
+}
+
+.nav-logo {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.2s;
+}
+
+.nav-logo span { color: var(--accent); }
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.2s;
+}
+
+.nav-links a {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-mid);
+  text-decoration: none;
+  transition: color 0.2s;
+  letter-spacing: 0.3px;
+}
+
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  background: var(--accent) !important;
+  color: var(--text) !important;
+  padding: 7px 18px;
+  border-radius: 6px;
+  font-weight: 500 !important;
+}
+
+.nav-cta:hover { background: #7a6dff !important; }
+
+/* HERO */
+#hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  z-index: 1;
+  padding: 0 40px;
+}
+
+.hero-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  padding-top: 60px;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-mid);
+  border: 1px solid var(--border-hi);
+  padding: 6px 14px;
+  border-radius: 100px;
+  margin-bottom: 40px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.3s;
+  letter-spacing: 0.5px;
+}
+
+.hero-badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--green);
+  animation: blink 2s ease-in-out infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+.hero-name {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 10vw, 120px);
+  font-weight: 700;
+  line-height: 0.9;
+  letter-spacing: -3px;
+  color: var(--text);
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.5s;
+}
+
+.hero-name span {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(255,255,255,0.2);
+}
+
+.hero-descriptor {
+  font-size: clamp(16px, 1.8vw, 20px);
+  color: var(--text-mid);
+  line-height: 1.6;
+  max-width: 520px;
+  margin-bottom: 48px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.7s;
+  font-weight: 300;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.9s;
+}
+
+.btn-primary {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  background: var(--accent);
+  color: var(--text);
+  text-decoration: none;
+  padding: 12px 28px;
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.2s;
+  font-weight: 500;
+}
+
+.btn-primary:hover { background: #7a6dff; transform: translateY(-1px); }
+
+.btn-secondary {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--text-mid);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 1px solid var(--border-hi);
+  border-radius: 8px;
+  transition: color 0.2s, border-color 0.2s, transform 0.2s;
+}
+
+.btn-secondary:hover { color: var(--text); border-color: var(--text-mid); transform: translateY(-1px); }
+
+.hero-stats {
+  position: absolute;
+  right: 40px;
+  bottom: 60px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  align-items: flex-end;
+  opacity: 0;
+  animation: fadeIn 0.8s ease forwards 1.4s;
+}
+
+.hero-stat-item {
+  text-align: right;
+}
+
+.hero-stat-value {
+  font-family: var(--font-display);
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.hero-stat-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.scroll-line {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeIn 0.6s ease forwards 1.8s;
+}
+
+.scroll-line-bar {
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, var(--accent));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+/* SECTION BASE */
+section {
+  position: relative;
+  z-index: 1;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* SECTION HEADER */
+.section-header {
+  margin-bottom: 48px;
+}
+
+.section-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--accent);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 600;
+  color: var(--text);
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+/* ABOUT / STORY */
+#about {
+  padding: 120px 0;
+  border-top: 1px solid var(--border);
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+}
+
+.about-timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 0;
+  position: relative;
+  padding-bottom: 32px;
+}
+
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 35px;
+  top: 28px;
+  bottom: 0;
+  width: 1px;
+  background: var(--border);
+}
+
+.timeline-year {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  padding-top: 2px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: 32px;
+  top: 4px;
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--border-hi);
+  border: 1px solid var(--border-hi);
+}
+
+.timeline-item.current .timeline-dot {
+  background: var(--accent);
+  border-color: var(--accent);
+  box-shadow: 0 0 8px rgba(109,90,255,0.5);
+}
+
+.timeline-body {
+  padding-left: 20px;
+}
+
+.timeline-title {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.timeline-desc {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.6;
+}
+
+.about-right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.about-statement {
+  font-family: var(--font-display);
+  font-size: clamp(20px, 2.5vw, 26px);
+  font-weight: 500;
+  color: var(--text);
+  line-height: 1.4;
+  letter-spacing: -0.3px;
+}
+
+.about-statement em {
+  font-style: normal;
+  color: var(--accent-hi);
+}
+
+.about-body {
+  font-size: 15px;
+  color: var(--text-mid);
+  line-height: 1.8;
+  font-weight: 300;
+}
+
+.about-body p + p { margin-top: 14px; }
+
+.skill-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.chip {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-mid);
+  border: 1px solid var(--border-hi);
+  padding: 5px 12px;
+  border-radius: 100px;
+  transition: color 0.2s, border-color 0.2s;
+}
+
+.chip:hover { color: var(--accent-hi); border-color: var(--accent-lo); }
+
+/* WORK SECTION */
+#work {
+  padding: 120px 0;
+  border-top: 1px solid var(--border);
+}
+
+.filter-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: none;
+  border: 1px solid var(--border);
+  padding: 6px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { border-color: var(--border-hi); color: var(--text-mid); }
+.filter-btn.active { background: var(--accent); border-color: var(--accent); color: var(--text); }
+
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.work-card {
+  background: var(--bg-card);
+  padding: 28px;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-height: 220px;
+}
+
+.work-card:hover { background: var(--bg-card2); }
+
+.work-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.work-card-tags {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  background: rgba(255,255,255,0.04);
+  padding: 3px 8px;
+  border-radius: 4px;
+}
+
+.tag.wip {
+  color: var(--accent-hi);
+  background: rgba(109,90,255,0.1);
+}
+
+.work-card-arrow {
+  font-size: 16px;
+  color: var(--text-dim);
+  transition: transform 0.2s, color 0.2s;
+  flex-shrink: 0;
+}
+
+.work-card:hover .work-card-arrow {
+  transform: translate(3px,-3px);
+  color: var(--text-mid);
+}
+
+.work-card-title {
+  font-family: var(--font-display);
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.25;
+  letter-spacing: -0.2px;
+}
+
+.work-card-excerpt {
+  font-size: 13px;
+  color: var(--text-mid);
+  line-height: 1.65;
+  font-weight: 300;
+  flex: 1;
+}
+
+.work-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--border);
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 0.5px;
+}
+
+/* CONTACT */
+#contact {
+  padding: 120px 0;
+  border-top: 1px solid var(--border);
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: center;
+}
+
+.contact-heading {
+  font-family: var(--font-display);
+  font-size: clamp(40px, 6vw, 72px);
+  font-weight: 700;
+  color: var(--text);
+  letter-spacing: -2px;
+  line-height: 0.95;
+  margin-bottom: 20px;
+}
+
+.contact-heading span { color: var(--accent); }
+
+.contact-sub {
+  font-size: 16px;
+  color: var(--text-mid);
+  line-height: 1.7;
+  font-weight: 300;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.contact-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-mid);
+  text-decoration: none;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: all 0.2s;
+  background: var(--bg-card);
+}
+
+.contact-link:hover {
+  border-color: var(--accent-lo);
+  color: var(--text);
+  background: rgba(109,90,255,0.05);
+  transform: translateX(4px);
+}
+
+.contact-link.primary {
+  border-color: var(--accent);
+  color: var(--text);
+  background: rgba(109,90,255,0.08);
+}
+
+.contact-link-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 3px;
+}
+
+.contact-link-value {
+  font-size: 14px;
+  color: inherit;
+}
+
+.contact-link-arrow {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+
+.contact-link:hover .contact-link-arrow { transform: translate(3px, -3px); }
+
+/* FOOTER */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 24px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  z-index: 1;
+}
+
+.footer-copy {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--text-mid); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(30px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.3; }
+  50%       { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.7s ease, transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0); }
+.reveal-d1 { transition-delay: 0.1s; }
+.reveal-d2 { transition-delay: 0.2s; }
+.reveal-d3 { transition-delay: 0.3s; }
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  nav { padding: 0 20px; }
+  #hero { padding: 0 20px; }
+  .container { padding: 0 20px; }
+  .hero-stats { display: none; }
+  .about-grid { grid-template-columns: 1fr; gap: 48px; }
+  .contact-grid { grid-template-columns: 1fr; gap: 48px; }
+  .work-grid { grid-template-columns: 1fr; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+}
+
+@media (max-width: 640px) {
+  .work-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<canvas id="particle-canvas"></canvas>
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">ps<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-content">
+    <div class="hero-badge">
+      <span class="hero-badge-dot"></span>
+      Available for collaboration
+    </div>
+    <h1 class="hero-name">Prakriti<br><span>Srimal</span></h1>
+    <p class="hero-descriptor">Urban data scientist working at the intersection of spatial analysis, automation, and the built environment.</p>
+    <div class="hero-actions">
+      <a href="#work" class="btn-primary">View work</a>
+      <a href="#about" class="btn-secondary">About me</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">B-Pro</div>
+      <div class="hero-stat-label">UCL Bartlett</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">6+</div>
+      <div class="hero-stat-label">Years practice</div>
+    </div>
+    <div class="hero-stat-item">
+      <div class="hero-stat-value">BLR</div>
+      <div class="hero-stat-label">Based in Bangalore</div>
+    </div>
+  </div>
+  <div class="scroll-line">
+    <div class="scroll-line-bar"></div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Background</div>
+      <h2 class="section-title">The path here</h2>
+    </div>
+    <div class="about-grid">
+      <div class="about-timeline reveal">
+        <div class="timeline-item">
+          <div class="timeline-year">2018</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-title">B.Arch — BMS College of Engineering</div>
+            <div class="timeline-desc">Architecture degree. Fell in love with urban design — the life inside the building, not the building itself.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2022</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-title">MArch Urban Design — UCL Bartlett</div>
+            <div class="timeline-desc">B-Pro program, London. Thesis: IsoChronic City — 15-minute neighbourhoods via ML and generative design. That's when it clicked.</div>
+          </div>
+        </div>
+        <div class="timeline-item">
+          <div class="timeline-year">2023</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-title">AEC Automation — pyRevit + Python</div>
+            <div class="timeline-desc">Joined a computational design team as an architect. Ended up writing Python for Revit with zero prior coding background.</div>
+          </div>
+        </div>
+        <div class="timeline-item current">
+          <div class="timeline-year">Now</div>
+          <div class="timeline-dot"></div>
+          <div class="timeline-body">
+            <div class="timeline-title">Urban Data Scientist — UIL R&D</div>
+            <div class="timeline-desc">Spatial analysis, ML, real-time sensing. Bangalore as a case study. The tools I know are not enough yet. That's the point.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-right reveal reveal-d2">
+        <p class="about-statement">I've always wanted to design for people. The smallest things have the <em>biggest impact.</em></p>
+        <div class="about-body">
+          <p>Trained as an architect, I ran away from coding my entire life — then got a call to join an automation team. We were all architects writing Python. It stuck.</p>
+          <p>Now I apply the same spatial rigour to data: geospatial pipelines, machine learning models, and hardware sensing instruments built from scratch. Bangalore is my current case study — a rapidly growing city with vast amounts of unread spatial data.</p>
+        </div>
+        <div class="skill-chips">
+          <span class="chip">Python</span>
+          <span class="chip">GeoPandas</span>
+          <span class="chip">QGIS</span>
+          <span class="chip">pyRevit</span>
+          <span class="chip">Machine Learning</span>
+          <span class="chip">Space Syntax</span>
+          <span class="chip">Jetson Orin</span>
+          <span class="chip">SQL</span>
+          <span class="chip">Urban Design</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section id="work">
+  <div class="container">
+    <div class="section-header reveal">
+      <div class="section-label">Selected work</div>
+      <h2 class="section-title">Projects &amp; Writing</h2>
+    </div>
+    <div class="filter-bar reveal reveal-d1">
+      <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+      <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+      <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+      <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+      <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+    </div>
+    <div class="work-grid reveal reveal-d2" id="work-list"></div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <div class="section-label">Contact</div>
+        <h2 class="contact-heading">Let's<br><span>talk.</span></h2>
+        <p class="contact-sub">Open to collaboration, research partnerships, and interesting problems at the edge of data and the built environment.</p>
+      </div>
+      <div class="contact-links reveal reveal-d2">
+        <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary">
+          <div>
+            <div class="contact-link-label">Email</div>
+            <div class="contact-link-value">prakritisrimal@gmail.com</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">
+          <div>
+            <div class="contact-link-label">LinkedIn</div>
+            <div class="contact-link-value">prakriti-srimal</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+        <a href="https://github.com/" class="contact-link" target="_blank">
+          <div>
+            <div class="contact-link-label">GitHub</div>
+            <div class="contact-link-value">github.com/prakriti</div>
+          </div>
+          <span class="contact-link-arrow">↗</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-copy">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#about">About</a>
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+// --- PARTICLES ---
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let W, H;
+
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+}
+
+function initParticles() {
+  particles = [];
+  const count = Math.floor((W * H) / 14000);
+  for (let i = 0; i < count; i++) {
+    particles.push({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      vx: (Math.random() - 0.5) * 0.3,
+      vy: (Math.random() - 0.5) * 0.3,
+      r: Math.random() * 1.5 + 0.3,
+      hue: Math.random() < 0.6 ? 250 : 270,
+    });
+  }
+}
+
+function drawParticles() {
+  ctx.clearRect(0, 0, W, H);
+  const maxDist = 120;
+
+  for (let i = 0; i < particles.length; i++) {
+    const p = particles[i];
+    p.x += p.vx;
+    p.y += p.vy;
+    if (p.x < 0) p.x = W;
+    if (p.x > W) p.x = 0;
+    if (p.y < 0) p.y = H;
+    if (p.y > H) p.y = 0;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${p.hue}, 70%, 65%, 0.7)`;
+    ctx.fill();
+
+    for (let j = i + 1; j < particles.length; j++) {
+      const q = particles[j];
+      const dx = p.x - q.x, dy = p.y - q.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < maxDist) {
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+        ctx.lineTo(q.x, q.y);
+        ctx.strokeStyle = `hsla(255, 65%, 60%, ${(1 - dist/maxDist) * 0.15})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+    }
+  }
+  requestAnimationFrame(drawParticles);
+}
+
+window.addEventListener('resize', () => { resize(); initParticles(); });
+resize();
+initParticles();
+drawParticles();
+
+// --- WORK DATA ---
+const workItems = [
+  { id:1, type:['project'], title:'IsoChronic City', excerpt:'Master\'s thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.', tags:['Thesis','Urban Design'], date:'UCL B-Pro · 2023', status:null, link:'isochronic-city.html' },
+  { id:2, type:['bangalore','writing'], title:'How far can you go?', excerpt:'5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible and which depend entirely on a car.', tags:['Bangalore Series','Accessibility'], date:'May 2025', status:null, link:null },
+  { id:3, type:['bangalore','writing'], title:'What is Bangalore actually made of?', excerpt:'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north.', tags:['Bangalore Series','Morphology'], date:'Apr 2025', status:null, link:null },
+  { id:4, type:['project','wip'], title:'Real Time Sensing Instrument', excerpt:'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio on the NVIDIA Jetson Orin Nano Super.', tags:['Hardware','Sensing'], date:'Ongoing', status:'wip', link:null },
+  { id:5, type:['project','wip'], title:'pyRevit BIM Automation Scripts', excerpt:'Ten Revit API tools built in Python using pyRevit for large-scale AEC projects. Workset management, wall and door tools, unit placement, and parameter control.', tags:['AEC Tech','Python'], date:'Ongoing', status:'wip', link:null },
+  { id:6, type:['bangalore','writing','wip'], title:'Sensing Bangalore — field notes', excerpt:'The instrument is taking shape. First field tests in Bangalore. What the data looks like, what it reveals, and what it does not.', tags:['Bangalore Series','Hardware'], date:'Ongoing', status:'wip', link:null }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+  list.innerHTML = filtered.map(item => `
+    <div class="work-card" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-top">
+        <div class="work-card-tags">
+          ${item.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+          ${item.status==='wip'?'<span class="tag wip">WIP</span>':''}
+        </div>
+        <span class="work-card-arrow">↗</span>
+      </div>
+      <div class="work-card-title">${item.title}</div>
+      <div class="work-card-excerpt">${item.excerpt}</div>
+      <div class="work-card-footer">
+        <span class="work-card-date">${item.date}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// --- SCROLL ---
+function onScroll() {
+  const scrollY = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  document.getElementById('progress-bar').style.width = (scrollY / docH * 100) + '%';
+  document.getElementById('main-nav').classList.toggle('solid', scrollY > 60);
+}
+
+// --- REVEAL ---
+function observeReveal() {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.06 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+}
+
+renderWork('all');
+observeReveal();
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>

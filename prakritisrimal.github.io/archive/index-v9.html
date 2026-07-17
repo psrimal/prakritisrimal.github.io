@@ -1,0 +1,1115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --cream: #f0ede4;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: #0d2416;
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.5s;
+}
+
+nav.solid {
+  background: rgba(10,30,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(240,237,228,0.06);
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.8s;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.8s;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--cream); }
+
+.nav-cta {
+  background: var(--ink) !important;
+  color: var(--cream) !important;
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+/* HERO */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: #0a1e12;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('IMG_1330.jpeg');
+  background-size: cover;
+  background-position: center;
+  filter: brightness(0.18) hue-rotate(10deg);
+  will-change: transform;
+}
+
+/* STORY SECTION */
+.story-section {
+  background: #0d2416;
+  padding: 120px 48px;
+  border-top: 1px solid rgba(240,237,228,0.04);
+}
+
+.story-header {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 32px;
+  align-items: end;
+  margin-bottom: 80px;
+}
+
+.story-header-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.2);
+  text-transform: uppercase;
+}
+
+.story-header-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 80px);
+  color: var(--cream);
+  letter-spacing: -2px;
+  line-height: 0.95;
+}
+
+.story-header-desc {
+  font-size: 15px;
+  color: rgba(240,237,228,0.4);
+  line-height: 1.75;
+  padding-bottom: 6px;
+  align-self: end;
+}
+
+/* TIMELINE */
+.story-timeline {
+  display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 0;
+}
+
+.timeline-item {
+  display: contents;
+}
+
+.timeline-marker {
+  padding-top: 4px;
+  padding-right: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.timeline-node {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(154,181,162,0.5);
+  margin-top: 8px;
+  flex-shrink: 0;
+}
+
+.timeline-year {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.2);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.timeline-body {
+  padding-bottom: 56px;
+  border-left: 1px solid rgba(240,237,228,0.05);
+  padding-left: 40px;
+  position: relative;
+}
+
+.timeline-item:last-child .timeline-body {
+  border-left-color: transparent;
+}
+
+.timeline-label {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: rgba(154,181,162,0.5);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.timeline-title {
+  font-family: var(--font-serif);
+  font-size: clamp(24px, 2.8vw, 36px);
+  color: var(--cream);
+  line-height: 1.1;
+  letter-spacing: -0.8px;
+  margin-bottom: 16px;
+}
+
+.timeline-text {
+  font-size: 15px;
+  color: rgba(240,237,228,0.5);
+  line-height: 1.8;
+  max-width: 520px;
+}
+
+.timeline-credential {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.18);
+  text-transform: uppercase;
+  margin-top: 14px;
+}
+
+/* SCROLL HINT */
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.5s;
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(240,237,228,0.35));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.25);
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.opening-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.35);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.3s;
+}
+
+.opening-name {
+  font-family: var(--font-serif);
+  font-size: clamp(88px, 15vw, 172px);
+  color: var(--cream);
+  line-height: 0.88;
+  letter-spacing: -6px;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.5s;
+}
+
+.opening-line {
+  font-size: clamp(15px, 1.6vw, 18px);
+  color: rgba(240,237,228,0.5);
+  line-height: 1.7;
+  font-style: italic;
+  max-width: 460px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1s;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 140px 48px 120px;
+}
+
+/* MARQUEE */
+.marquee-section {
+  background: #091a10;
+  border-top: 1px solid rgba(240,237,228,0.05);
+  border-bottom: 1px solid rgba(240,237,228,0.05);
+  padding: 18px 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.marquee-track {
+  display: inline-flex;
+  gap: 0;
+  animation: marquee 28s linear infinite;
+}
+
+.marquee-track:hover { animation-play-state: paused; }
+
+.marquee-item {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.22);
+  padding: 0 40px;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  white-space: nowrap;
+}
+
+.marquee-item::after {
+  content: '·';
+  color: rgba(154,181,162,0.3);
+  font-size: 16px;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+/* WORK SECTION */
+.work-section {
+  background: var(--cream);
+  margin-top: -48px;
+  border-radius: 32px 32px 0 0;
+  position: relative;
+  z-index: 10;
+}
+
+.work-header {
+  padding: 80px 48px 48px;
+  border-bottom: 1px solid rgba(30,77,43,0.1);
+}
+
+.work-header-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  gap: 32px;
+  align-items: end;
+}
+
+.work-header-number {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: rgba(30,77,43,0.35);
+  text-transform: uppercase;
+  padding-bottom: 6px;
+}
+
+.work-header-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 80px);
+  color: var(--ink);
+  letter-spacing: -2px;
+  line-height: 0.95;
+}
+
+.work-header-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding-bottom: 6px;
+  gap: 12px;
+}
+
+.work-header-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.filter-bar {
+  padding: 20px 48px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(30,77,43,0.08);
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: none;
+  border: 1px solid rgba(30,77,43,0.18);
+  padding: 7px 18px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.25s;
+}
+
+.filter-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+.filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); font-weight: 500; }
+
+/* HORIZONTAL SCROLL CAROUSEL */
+.work-list {
+  padding: 36px 48px 48px;
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  cursor: grab;
+}
+
+.work-list::-webkit-scrollbar { display: none; }
+.work-list.grabbing { cursor: grabbing; }
+
+.work-card {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f7f4ed;
+  border: 1px solid rgba(30,77,43,0.1);
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.25s;
+}
+
+.work-card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 48px rgba(10,30,18,0.12);
+  border-color: rgba(30,77,43,0.2);
+}
+
+.work-card-thumb {
+  width: 100%;
+  aspect-ratio: 4/3;
+  overflow: hidden;
+  background: #dbd8cf;
+  flex-shrink: 0;
+}
+
+.work-card-thumb-inner {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(-45deg, #d4d1c8, #d4d1c8 4px, #c8c5bc 4px, #c8c5bc 8px);
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.work-card:hover .work-card-thumb-inner {
+  transform: scale(1.04);
+}
+
+.work-card-thumb.dark { background: #0f2318; }
+.work-card-thumb.dark .work-card-thumb-inner {
+  background: repeating-linear-gradient(-45deg, #112b19, #112b19 4px, #163220 4px, #163220 8px);
+}
+
+.work-card-body {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  flex: 1;
+}
+
+.work-card-tags {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.07);
+  padding: 3px 8px;
+  border-radius: 100px;
+}
+
+.tag.wip { background: rgba(30,77,43,0.12); color: #3a8050; }
+
+.work-card-title {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  transition: color 0.2s;
+}
+
+.work-card:hover .work-card-title { color: var(--ink-mid); }
+
+.work-card-excerpt {
+  font-size: 12px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+  flex: 1;
+}
+
+.work-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(30,77,43,0.1);
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.work-arrow {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 1px solid rgba(30,77,43,0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  color: var(--ink-mid);
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  flex-shrink: 0;
+}
+
+.work-card:hover .work-arrow {
+  background: var(--ink);
+  border-color: var(--ink);
+  color: var(--cream);
+  transform: rotate(-45deg);
+}
+
+/* CONTACT */
+.contact {
+  background: var(--ink);
+  padding: 120px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.contact-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 6vw, 80px);
+  color: var(--cream);
+  letter-spacing: -2px;
+  line-height: 0.95;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.contact-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.5);
+  text-decoration: none;
+  padding: 12px 28px;
+  border: 1px solid rgba(240,237,228,0.15);
+  border-radius: 100px;
+  transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  white-space: nowrap;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.contact-link:hover {
+  color: var(--cream);
+  border-color: rgba(240,237,228,0.4);
+  transform: translateY(-2px);
+}
+
+.contact-link.primary {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.contact-link.primary:hover {
+  background: #e0ddd4;
+  transform: translateY(-3px);
+  box-shadow: 0 12px 32px rgba(0,0,0,0.25);
+}
+
+/* MAGNETIC BUTTON (nav CTA + contact primary) */
+.magnetic {
+  display: inline-block;
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform;
+}
+
+/* FOOTER */
+footer {
+  background: #091a10;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(240,237,228,0.04);
+}
+
+.footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.18);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.18);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: rgba(240,237,228,0.45); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(70px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(100px) scale(0.96);
+  transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+.reveal-d1 { transition-delay: 0.18s; }
+.reveal-d2 { transition-delay: 0.38s; }
+.reveal-d3 { transition-delay: 0.58s; }
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ink-faint);
+  z-index: 300;
+  transition: width 0.1s linear;
+  width: 0%;
+}
+
+/* CHAPTER INDICATOR */
+.chapter-indicator {
+  position: fixed;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 3s;
+}
+
+.ch-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(240,237,228,0.2);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.ch-dot.active {
+  background: rgba(240,237,228,0.7);
+  transform: scale(1.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero-content { padding: 120px 24px 80px; }
+  .opening-name { letter-spacing: -3px; }
+  .chapter-indicator { display: none; }
+  .story-section { padding: 80px 24px; }
+  .story-header { grid-template-columns: 1fr; gap: 16px; }
+  .story-header-number { display: none; }
+  .story-header-desc { display: none; }
+  .story-timeline { grid-template-columns: 80px 1fr; }
+  .timeline-body { padding-left: 24px; }
+  .work-header { padding: 56px 20px 40px; }
+  .work-header-grid { grid-template-columns: 1fr; gap: 16px; }
+  .work-header-number { display: none; }
+  .filter-bar { padding: 16px 20px; }
+  .work-list { padding: 20px; }
+  .work-card { flex: 0 0 240px; }
+  .contact { padding: 80px 24px; flex-direction: column; gap: 48px; }
+  .contact-links { align-items: flex-start; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#story">Story</a></li>
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta magnetic">Get in touch</a></li>
+  </ul>
+</nav>
+
+<div class="chapter-indicator" id="chapter-indicator"></div>
+
+<!-- HERO -->
+<section class="hero" id="ch01" data-chapter="1">
+  <div class="hero-bg" id="bg01"></div>
+  <div class="hero-content">
+    <div class="opening-eyebrow">Urban Data Scientist · AEC Tech · Computational Design</div>
+    <h1 class="opening-name">Prakriti<br>Srimal</h1>
+    <p class="opening-line">I've always wanted to design for people. The smallest things have the biggest impact.</p>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-hint-line"></div>
+    <span class="scroll-hint-text">Scroll</span>
+  </div>
+</section>
+
+<!-- MY STORY -->
+<section class="story-section" id="story" data-chapter="2">
+  <div class="story-header">
+    <div class="story-header-number reveal">008</div>
+    <h2 class="story-header-title reveal reveal-d1">My<br>Story</h2>
+    <p class="story-header-desc reveal reveal-d2">Architecture to urban data science. A thread that runs through everything.</p>
+  </div>
+
+  <div class="story-timeline">
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2018</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">Architecture</div>
+        <div class="timeline-title">The studio I loved most was urban design.</div>
+        <div class="timeline-text">Designing for people and thinking about how a design would have an impact on them. That was the part that felt real. Not the building. The life inside it.</div>
+        <div class="timeline-credential">BMS College of Engineering · B.Arch</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2022</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">London</div>
+        <div class="timeline-title">I went to UCL not knowing what the course was about.</div>
+        <div class="timeline-text">Best university in the world. My dream city. That was enough reason. I generally just get excited by things not knowing what they hold. As they unfold, I keep falling in love with them.</div>
+        <div class="timeline-credential">Bartlett School of Architecture · UCL B-Pro · MArch Urban Design</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2023</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">IsoChronic City</div>
+        <div class="timeline-title">As it unfolded, I kept falling in love with it.</div>
+        <div class="timeline-text">Machine learning. Space syntax. Generative design. Applied to the 15-minute neighbourhood. The thesis that changed everything about how I understood what design could do.</div>
+        <div class="timeline-credential">Master's Thesis · UCL B-Pro · 2023</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2023</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-title">Came back. Did detail drawings for a year. Then I could see the ceiling.</div>
+        <div class="timeline-text">New things are always fun. The question is what happens after the novelty wears off.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2024</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">Automation</div>
+        <div class="timeline-title">I used to run away from coding my entire life. Then I got a call.</div>
+        <div class="timeline-text">Join a computational design team. Turned out to be an automation team. Zero coding background between all of us. Trained as architects, writing Python for Revit.</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">2024</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">The Transfer</div>
+        <div class="timeline-title">I found a door. I walked through it.</div>
+        <div class="timeline-text">This is the job I've loved the most. Whenever something interesting appeared, I volunteered. Business development. Data visualisation. Analytics. Building a sensor. The freedom to explore is the thing.</div>
+        <div class="timeline-credential">Senior Urban Data Scientist · AEC Tech Automation Specialist</div>
+      </div>
+    </div>
+
+    <div class="timeline-item">
+      <div class="timeline-marker">
+        <div class="timeline-node"></div>
+        <div class="timeline-year">Now</div>
+      </div>
+      <div class="timeline-body reveal">
+        <div class="timeline-label">Now</div>
+        <div class="timeline-title">Next in line. LLMs. ML. AI.</div>
+        <div class="timeline-text">Applying the same spatial rigour to Bangalore as a case study. A rapidly growing city with vast amounts of unread spatial data. Building a real-time sensing instrument. Writing spatial analyses. Exploring machine learning models. The tools I know are not enough yet. That is the point.</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-section">
+  <div class="marquee-track" id="marquee-track">
+    <span class="marquee-item">Urban Data Science</span>
+    <span class="marquee-item">Computational Design</span>
+    <span class="marquee-item">AEC Automation</span>
+    <span class="marquee-item">Space Syntax</span>
+    <span class="marquee-item">Machine Learning</span>
+    <span class="marquee-item">Generative Design</span>
+    <span class="marquee-item">Python · QGIS · Revit API</span>
+    <span class="marquee-item">Bangalore City Research</span>
+    <span class="marquee-item">Sensor Hardware</span>
+    <span class="marquee-item">15-Minute City</span>
+    <span class="marquee-item">Urban Data Science</span>
+    <span class="marquee-item">Computational Design</span>
+    <span class="marquee-item">AEC Automation</span>
+    <span class="marquee-item">Space Syntax</span>
+    <span class="marquee-item">Machine Learning</span>
+    <span class="marquee-item">Generative Design</span>
+    <span class="marquee-item">Python · QGIS · Revit API</span>
+    <span class="marquee-item">Bangalore City Research</span>
+    <span class="marquee-item">Sensor Hardware</span>
+    <span class="marquee-item">15-Minute City</span>
+  </div>
+</div>
+
+<!-- WORK -->
+<section class="work-section" id="work">
+  <div class="work-header">
+    <div class="work-header-grid">
+      <div class="work-header-number">009</div>
+      <h2 class="work-header-title">Projects &amp;<br>Writing</h2>
+      <div class="work-header-right">
+        <span class="work-header-meta">Work in progress</span>
+      </div>
+    </div>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+    <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+    <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+    <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+  </div>
+  <div class="work-list" id="work-list"></div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <div class="contact-eyebrow">Let's talk</div>
+    <h2 class="contact-title">Get in<br>touch.</h2>
+  </div>
+  <div class="contact-links">
+    <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary magnetic">prakritisrimal@gmail.com</a>
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="contact-link" target="_blank">GitHub ↗</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+const workItems = [
+  { id:1, type:['project'], title:'IsoChronic City', excerpt:'Master\'s thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.', tags:['Thesis','Urban Design'], date:'UCL B-Pro · 2023', status:null, dark:false, link:'isochronic-city.html' },
+  { id:2, type:['bangalore','writing'], title:'How far can you go?', excerpt:'5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible and which ones depend entirely on a car.', tags:['Bangalore Series','Accessibility'], date:'May 2025', status:null, dark:true, link:null },
+  { id:3, type:['bangalore','writing'], title:'What is Bangalore actually made up of?', excerpt:'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north.', tags:['Bangalore Series','Morphology'], date:'Apr 2025', status:null, dark:true, link:null },
+  { id:4, type:['project','wip'], title:'Real Time Sensing Instrument', excerpt:'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio on the NVIDIA Jetson Orin Nano Super.', tags:['Hardware','Sensing'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:5, type:['project','wip'], title:'pyRevit BIM Automation Scripts', excerpt:'Ten Revit API tools built in Python using pyRevit for large-scale AEC projects. Workset management, wall and door tools, unit placement, and parameter control.', tags:['AEC Tech','Python','pyRevit'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:6, type:['bangalore','writing','wip'], title:'Real Time Sensing — field notes from Bangalore', excerpt:'The instrument is taking shape. First field tests in Bangalore. What the data looks like, what it reveals, and what it does not.', tags:['Bangalore Series','Hardware'], date:'Ongoing', status:'wip', dark:true, link:null }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+  list.innerHTML = filtered.map((item, idx) => `
+    <div class="work-card" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-thumb ${item.dark?'dark':''}"><div class="work-card-thumb-inner"></div></div>
+      <div class="work-card-body">
+        <div>
+          <div class="work-card-tags">
+            ${item.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+            ${item.status==='wip'?'<span class="tag wip">WIP</span>':''}
+          </div>
+          <div class="work-card-title">${item.title}</div>
+          <div class="work-card-excerpt">${item.excerpt}</div>
+        </div>
+        <div class="work-card-footer">
+          <span class="work-card-date">${item.date}</span>
+          <span class="work-arrow">↗</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  observeReveal();
+}
+
+// Drag-to-scroll on work list
+(function() {
+  let isDown = false, startX, scrollLeft;
+  const slider = document.getElementById('work-list');
+  // wait for it to exist (rendered by renderWork)
+  function initDrag(el) {
+    el.addEventListener('mousedown', e => {
+      isDown = true; el.classList.add('grabbing');
+      startX = e.pageX - el.offsetLeft; scrollLeft = el.scrollLeft;
+    });
+    el.addEventListener('mouseleave', () => { isDown = false; el.classList.remove('grabbing'); });
+    el.addEventListener('mouseup', () => { isDown = false; el.classList.remove('grabbing'); });
+    el.addEventListener('mousemove', e => {
+      if (!isDown) return; e.preventDefault();
+      const x = e.pageX - el.offsetLeft;
+      el.scrollLeft = scrollLeft - (x - startX) * 1.2;
+    });
+  }
+  // init after first render
+  requestAnimationFrame(() => {
+    const el = document.getElementById('work-list');
+    if (el) initDrag(el);
+  });
+})();
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// Chapter dots — hero only
+const chapters = document.querySelectorAll('[data-chapter]');
+const indicator = document.getElementById('chapter-indicator');
+chapters.forEach((ch, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'ch-dot';
+  dot.onclick = () => ch.scrollIntoView({ behavior: 'smooth' });
+  indicator.appendChild(dot);
+});
+
+const dots = document.querySelectorAll('.ch-dot');
+
+// Scroll reveal
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  els.forEach(el => io.observe(el));
+}
+
+// Parallax backgrounds
+const bgParallax = [
+  { el: document.getElementById('bg01'), speed: 0.45 },
+];
+
+function onScroll() {
+  const scrollY = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const vh = window.innerHeight;
+
+  // Progress bar
+  document.getElementById('progress-bar').style.width = (scrollY / docH * 100) + '%';
+
+  // Nav
+  document.getElementById('main-nav').classList.toggle('solid', scrollY > 80);
+
+  // Parallax — center-based formula gives ~2x more movement than the old one
+  bgParallax.forEach(({ el, speed }) => {
+    if (!el) return;
+    const rect = el.parentElement.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > vh) return;
+    const centerOffset = (rect.top + rect.height / 2) - vh / 2;
+    el.style.transform = `translateY(${centerOffset * speed}px)`;
+  });
+
+  // Hero exit: content floats up and fades as you scroll away
+  const heroEl = document.querySelector('.hero');
+  const ch01Rect = heroEl ? heroEl.getBoundingClientRect() : null;
+  if (ch01Rect && ch01Rect.top < vh && ch01Rect.bottom > 0) {
+    const progress = Math.max(0, Math.min(1, -ch01Rect.top / ch01Rect.height));
+    const heroContent = document.querySelector('.hero-content');
+    if (heroContent) {
+      heroContent.style.transform = `translateY(${progress * -140}px)`;
+      heroContent.style.opacity = Math.max(0, 1 - progress * 2.8);
+    }
+  }
+
+  // Active dot
+  let activeIdx = 0;
+  chapters.forEach((ch, i) => {
+    const rect = ch.getBoundingClientRect();
+    if (rect.top <= vh * 0.5) activeIdx = i;
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+}
+
+renderWork('all');
+observeReveal();
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+
+// Magnetic buttons
+function initMagnetic() {
+  document.querySelectorAll('.magnetic').forEach(el => {
+    el.addEventListener('mousemove', e => {
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const dx = (e.clientX - cx) * 0.28;
+      const dy = (e.clientY - cy) * 0.28;
+      el.style.transform = `translate(${dx}px, ${dy}px)`;
+    });
+    el.addEventListener('mouseleave', () => {
+      el.style.transform = 'translate(0,0)';
+    });
+  });
+}
+initMagnetic();
+</script>
+</body>
+</html>

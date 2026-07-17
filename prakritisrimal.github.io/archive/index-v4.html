@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --cream: #f0ede4;
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: #0d2416;
+  color: var(--cream);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  padding: 0 48px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  transition: background 0.5s;
+}
+
+nav.solid {
+  background: rgba(10,30,18,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(240,237,228,0.06);
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 17px;
+  color: var(--cream);
+  text-decoration: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.8s;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  list-style: none;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.8s;
+}
+
+.nav-links a {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.55);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.nav-links a:hover { color: var(--cream); }
+
+.nav-cta {
+  background: var(--ink) !important;
+  color: var(--cream) !important;
+  padding: 8px 20px;
+  border-radius: 100px;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+}
+
+/* CHAPTER BASE */
+.chapter {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+/* CHAPTER BG */
+.chapter-bg {
+  position: absolute;
+  left: 0; right: 0;
+  top: -20%;
+  height: 140%;
+  background-size: cover;
+  background-position: center;
+  will-change: transform;
+}
+
+.chapter-overlay {
+  position: absolute;
+  inset: 0;
+}
+
+/* CHAPTER CONTENT */
+.chapter-content {
+  position: relative;
+  z-index: 2;
+  padding: 120px 48px;
+  max-width: 780px;
+}
+
+.chapter-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+
+.chapter-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.45);
+  text-transform: uppercase;
+  margin-bottom: 24px;
+}
+
+.chapter-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 6vw, 72px);
+  color: var(--cream);
+  line-height: 1.05;
+  letter-spacing: -1.5px;
+  margin-bottom: 28px;
+}
+
+.chapter-title.large {
+  font-size: clamp(56px, 9vw, 110px);
+  letter-spacing: -3px;
+}
+
+.chapter-body {
+  font-size: clamp(16px, 1.8vw, 19px);
+  color: rgba(240,237,228,0.65);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+.chapter-body p + p { margin-top: 16px; }
+
+.chapter-aside {
+  position: absolute;
+  right: 48px;
+  bottom: 48px;
+  z-index: 2;
+  text-align: right;
+}
+
+.chapter-aside-text {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.25);
+  text-transform: uppercase;
+  line-height: 1.8;
+}
+
+/* SCROLL HINT */
+.scroll-hint {
+  position: absolute;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 2.5s;
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 48px;
+  background: linear-gradient(to bottom, transparent, rgba(240,237,228,0.35));
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.scroll-hint-text {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.25);
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+/* CHAPTER 01: OPENING */
+#ch01 { background: #0a1e12; }
+
+#ch01 .chapter-bg {
+  background-image: url('IMG_1330.jpeg');
+  filter: brightness(0.18) hue-rotate(10deg);
+}
+
+#ch01 .chapter-content { padding-top: 140px; }
+
+.opening-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: rgba(240,237,228,0.35);
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.3s;
+}
+
+.opening-name {
+  font-family: var(--font-serif);
+  font-size: clamp(72px, 12vw, 140px);
+  color: var(--cream);
+  line-height: 0.92;
+  letter-spacing: -4px;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 1s ease forwards 0.5s;
+}
+
+.opening-line {
+  font-size: clamp(15px, 1.6vw, 18px);
+  color: rgba(240,237,228,0.5);
+  line-height: 1.7;
+  font-style: italic;
+  max-width: 460px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1s;
+}
+
+/* CHAPTER 02: ARCHITECTURE */
+#ch02 {
+  background: var(--cream);
+}
+
+#ch02 .chapter-bg {
+  background-image: url('IMG_1330.jpeg');
+  background-position: center right;
+  filter: brightness(0.06) saturate(0.2);
+  opacity: 0.4;
+}
+
+#ch02 .chapter-overlay {
+  background: linear-gradient(to right, rgba(240,237,228,0.98) 55%, rgba(240,237,228,0.6));
+}
+
+#ch02 .chapter-title { color: var(--ink); }
+#ch02 .chapter-body { color: var(--ink-mid); }
+#ch02 .chapter-number { color: rgba(30,77,43,0.3); }
+#ch02 .chapter-label { color: var(--ink-faint); }
+
+/* CHAPTER 03: BARTLETT */
+#ch03 {
+  background: #0a1e12;
+}
+
+#ch03 .chapter-bg {
+  background-image: url('IMG_6653.jpeg');
+  filter: brightness(0.28);
+  background-position: center top;
+}
+
+#ch03 .chapter-overlay {
+  background: linear-gradient(to right, rgba(10,26,16,0.92) 50%, rgba(10,26,16,0.3));
+}
+
+/* CHAPTER 04: ISOCHRONIC */
+#ch04 {
+  background: #0a1e12;
+  justify-content: center;
+  text-align: center;
+}
+
+#ch04 .chapter-bg {
+  background-image: url('IMG_0047.jpeg');
+  filter: brightness(0.22);
+}
+
+#ch04 .chapter-overlay {
+  background: rgba(10,26,16,0.55);
+}
+
+#ch04 .chapter-content {
+  max-width: 860px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* CHAPTER 05: CEILING */
+#ch05 {
+  background: #0f2318;
+  justify-content: center;
+  text-align: center;
+}
+
+#ch05 .chapter-content {
+  max-width: 700px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+#ch05 .chapter-title {
+  font-size: clamp(32px, 4vw, 52px);
+  color: rgba(240,237,228,0.55);
+  letter-spacing: -0.5px;
+}
+
+#ch05 .chapter-body {
+  color: rgba(240,237,228,0.35);
+  font-size: 15px;
+}
+
+/* CHAPTER 06: CODING */
+#ch06 {
+  background: #0a1e12;
+  justify-content: center;
+}
+
+#ch06 .chapter-content {
+  max-width: 860px;
+  text-align: left;
+}
+
+.code-lines {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: rgba(240,237,228,0.15);
+  line-height: 2;
+  margin-bottom: 40px;
+  letter-spacing: 0.3px;
+}
+
+.code-lines span { color: rgba(154,181,162,0.4); }
+
+/* CHAPTER 07: TRANSFER */
+#ch07 { background: var(--ink); }
+
+#ch07 .chapter-bg {
+  background-image: url('IMG_0048.jpeg');
+  filter: brightness(0.14);
+}
+
+#ch07 .chapter-overlay {
+  background: linear-gradient(to right, rgba(30,77,43,0.95) 50%, rgba(30,77,43,0.5));
+}
+
+/* CHAPTER 08: NOW */
+#ch08 {
+  background: #0a1e12;
+  justify-content: center;
+  text-align: center;
+}
+
+#ch08 .chapter-bg {
+  background-image: url('IMG_0047.jpeg');
+  filter: brightness(0.12) hue-rotate(40deg);
+}
+
+#ch08 .chapter-content {
+  max-width: 800px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+/* WORK SECTION */
+.work-section {
+  background: var(--cream);
+}
+
+.work-header {
+  padding: 80px 48px 32px;
+  border-bottom: 1px solid rgba(30,77,43,0.15);
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.work-header-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+}
+
+.work-header-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+}
+
+.filter-bar {
+  padding: 20px 48px;
+  display: flex;
+  gap: 8px;
+  border-bottom: 1px solid rgba(30,77,43,0.12);
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: none;
+  border: 1px solid rgba(30,77,43,0.2);
+  padding: 6px 16px;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover { border-color: var(--ink-mid); color: var(--ink); }
+.filter-btn.active { background: var(--ink); border-color: var(--ink); color: var(--cream); font-weight: 500; }
+
+.work-list { padding: 0 48px; }
+
+.work-card {
+  display: grid;
+  grid-template-columns: 148px 1fr 120px;
+  gap: 32px;
+  align-items: start;
+  padding: 32px 0;
+  border-bottom: 1px solid rgba(30,77,43,0.12);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.work-card:last-child { border-bottom: none; }
+.work-card:hover { transform: translateX(5px); }
+.work-card:hover .work-card-title { color: var(--ink-mid); }
+.work-card:hover .work-arrow { transform: translate(4px,-4px); color: var(--ink); }
+.work-card:hover .work-card-thumb { border-color: rgba(30,77,43,0.4); }
+
+.work-card-thumb {
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 4px;
+  border: 1px solid rgba(30,77,43,0.15);
+  overflow: hidden;
+  background: #dbd8cf;
+  transition: border-color 0.25s;
+}
+
+.work-card-thumb-inner {
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(-45deg, #dbd8cf, #dbd8cf 4px, #cec9be 4px, #cec9be 8px);
+}
+
+.work-card-thumb.dark { background: #0f2318; }
+.work-card-thumb.dark .work-card-thumb-inner {
+  background: repeating-linear-gradient(-45deg, #132b1a, #132b1a 4px, #173520 4px, #173520 8px);
+}
+
+.work-card-tags {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--ink-mid);
+  background: rgba(30,77,43,0.08);
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.tag.wip { background: rgba(30,77,43,0.12); color: #3a8050; }
+
+.work-card-title {
+  font-family: var(--font-serif);
+  font-size: 22px;
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.3px;
+  margin-bottom: 10px;
+  transition: color 0.2s;
+}
+
+.work-card-excerpt {
+  font-size: 14px;
+  color: var(--ink-mid);
+  line-height: 1.7;
+}
+
+.work-card-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 12px;
+  padding-top: 4px;
+}
+
+.work-card-date {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  white-space: nowrap;
+}
+
+.work-arrow {
+  font-size: 18px;
+  color: var(--ink-faint);
+  transition: transform 0.25s, color 0.2s;
+  display: inline-block;
+}
+
+/* CONTACT */
+.contact {
+  background: var(--ink);
+  padding: 120px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.contact-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+.contact-title {
+  font-family: var(--font-serif);
+  font-size: clamp(40px, 5vw, 60px);
+  color: var(--cream);
+  letter-spacing: -1px;
+  line-height: 1.05;
+}
+
+.contact-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-end;
+}
+
+.contact-link {
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(240,237,228,0.5);
+  text-decoration: none;
+  padding: 10px 24px;
+  border: 1px solid rgba(240,237,228,0.15);
+  border-radius: 100px;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.contact-link:hover { color: var(--cream); border-color: rgba(240,237,228,0.4); }
+
+.contact-link.primary {
+  background: var(--cream);
+  border-color: var(--cream);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.contact-link.primary:hover { background: #e0ddd4; }
+
+/* FOOTER */
+footer {
+  background: #091a10;
+  padding: 24px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid rgba(240,237,228,0.04);
+}
+
+.footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.18);
+}
+
+.footer-links {
+  display: flex;
+  gap: 24px;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.18);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: rgba(240,237,228,0.45); }
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(55px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(70px) scale(0.97);
+  transition: opacity 1s ease, transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.reveal.visible { opacity: 1; transform: translateY(0) scale(1); }
+.reveal-d1 { transition-delay: 0.15s; }
+.reveal-d2 { transition-delay: 0.35s; }
+
+/* PROGRESS BAR */
+.progress-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ink-faint);
+  z-index: 300;
+  transition: width 0.1s linear;
+  width: 0%;
+}
+
+/* CHAPTER INDICATOR */
+.chapter-indicator {
+  position: fixed;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 150;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  opacity: 0;
+  animation: fadeIn 1s ease forwards 3s;
+}
+
+.ch-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: rgba(240,237,228,0.2);
+  transition: background 0.3s, transform 0.3s;
+  cursor: pointer;
+}
+
+.ch-dot.active {
+  background: rgba(240,237,228,0.7);
+  transform: scale(1.4);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .chapter-content { padding: 100px 24px 80px; }
+  .opening-name { letter-spacing: -2px; }
+  .chapter-aside { display: none; }
+  .chapter-indicator { display: none; }
+  .work-header { padding: 48px 20px 24px; }
+  .filter-bar { padding: 16px 20px; }
+  .work-list { padding: 0 20px; }
+  .work-card { grid-template-columns: 1fr; gap: 14px; }
+  .contact { padding: 80px 24px; flex-direction: column; gap: 48px; }
+  .contact-links { align-items: flex-start; }
+  footer { padding: 20px; flex-direction: column; gap: 12px; }
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progress-bar"></div>
+
+<nav id="main-nav">
+  <a href="#" class="nav-logo">Prakriti Srimal</a>
+  <ul class="nav-links">
+    <li><a href="#work">Work</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <li><a href="#contact" class="nav-cta">Get in touch</a></li>
+  </ul>
+</nav>
+
+<div class="chapter-indicator" id="chapter-indicator"></div>
+
+<!-- 01: OPENING -->
+<section class="chapter" id="ch01" data-chapter="1">
+  <div class="chapter-bg" id="bg01"></div>
+  <div class="chapter-content">
+    <div class="opening-eyebrow">Urban Data Scientist · AEC Tech · Computational Design</div>
+    <h1 class="opening-name">Prakriti<br>Srimal</h1>
+    <p class="opening-line">I've always wanted to design for people. The smallest things have the biggest impact.</p>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-hint-line"></div>
+    <span class="scroll-hint-text">Scroll</span>
+  </div>
+</section>
+
+<!-- 02: ARCHITECTURE -->
+<section class="chapter" id="ch02" data-chapter="2">
+  <div class="chapter-bg" id="bg02"></div>
+  <div class="chapter-overlay"></div>
+  <div class="chapter-content">
+    <div class="chapter-number reveal">01</div>
+    <div class="chapter-label reveal reveal-d1">Architecture</div>
+    <h2 class="chapter-title reveal reveal-d1">The studio I loved most<br>was urban design.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      Designing for people and thinking about how a design would have an impact on them. That was the part that felt real. Not the building. The life inside it.
+    </div>
+  </div>
+  <div class="chapter-aside">
+    <div class="chapter-aside-text">BMS College of Engineering<br>B.Arch</div>
+  </div>
+</section>
+
+<!-- 03: BARTLETT -->
+<section class="chapter" id="ch03" data-chapter="3">
+  <div class="chapter-bg" id="bg03"></div>
+  <div class="chapter-overlay"></div>
+  <div class="chapter-content">
+    <div class="chapter-number reveal">02</div>
+    <div class="chapter-label reveal reveal-d1">London</div>
+    <h2 class="chapter-title reveal reveal-d1">I went to UCL not<br>knowing what the<br>course was about.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      Best university in the world. My dream city. That was enough reason. I generally just get excited by things not knowing what they hold. As they unfold, I keep falling in love with them.
+    </div>
+  </div>
+  <div class="chapter-aside">
+    <div class="chapter-aside-text" style="color:rgba(240,237,228,0.3);">Bartlett School of Architecture<br>UCL B-Pro · MArch Urban Design</div>
+  </div>
+</section>
+
+<!-- 04: ISOCHRONIC -->
+<section class="chapter" id="ch04" data-chapter="4">
+  <div class="chapter-bg" id="bg04"></div>
+  <div class="chapter-overlay"></div>
+  <div class="chapter-content">
+    <div class="chapter-number reveal">03</div>
+    <div class="chapter-label reveal reveal-d1">IsoChronic City</div>
+    <h2 class="chapter-title large reveal reveal-d1">As it unfolded,<br>I kept falling<br>in love with it.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      Machine learning. Space syntax. Generative design. Applied to the 15-minute neighbourhood. The thesis that changed everything about how I understood what design could do.
+    </div>
+  </div>
+</section>
+
+<!-- 05: THE CEILING -->
+<section class="chapter" id="ch05" data-chapter="5">
+  <div class="chapter-content">
+    <div class="chapter-number reveal" style="color:rgba(240,237,228,0.2);">04</div>
+    <h2 class="chapter-title reveal reveal-d1">Came back. Did detail<br>drawings for a year.<br>It was fun. Then I could<br>see the ceiling.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      New things are always fun. The question is what happens after the novelty wears off.
+    </div>
+  </div>
+</section>
+
+<!-- 06: CODING -->
+<section class="chapter" id="ch06" data-chapter="6">
+  <div class="chapter-content">
+    <div class="chapter-number reveal" style="color:rgba(240,237,228,0.2);">05</div>
+    <div class="chapter-label reveal reveal-d1" style="color:rgba(154,181,162,0.5);">Automation</div>
+    <div class="code-lines reveal reveal-d1">
+      <span># def prakriti():</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;background = "architecture"<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;relationship_with_code = <span>"ran away from it my entire life"</span><br>
+      &nbsp;&nbsp;&nbsp;&nbsp;<span>return</span> "got a call anyway"
+    </div>
+    <h2 class="chapter-title reveal reveal-d1">I used to run away from<br>coding my entire life.<br>Then I got a call.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      Join a computational design team. Turned out to be an automation team. Zero coding background between all of us. Trained as architects, writing Python for Revit.
+    </div>
+  </div>
+</section>
+
+<!-- 07: THE TRANSFER -->
+<section class="chapter" id="ch07" data-chapter="7">
+  <div class="chapter-bg" id="bg07"></div>
+  <div class="chapter-overlay"></div>
+  <div class="chapter-content">
+    <div class="chapter-number reveal">06</div>
+    <div class="chapter-label reveal reveal-d1">The Transfer</div>
+    <h2 class="chapter-title reveal reveal-d1">I found a door.<br>I walked through it.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      This is the job I've loved the most. Whenever something interesting appeared, I volunteered. Business development. Data visualisation. Analytics. Building a sensor. The freedom to explore is the thing.
+    </div>
+  </div>
+  <div class="chapter-aside">
+    <div class="chapter-aside-text">Senior Urban Data Scientist<br>AEC Tech Automation Specialist</div>
+  </div>
+</section>
+
+<!-- 08: NOW -->
+<section class="chapter" id="ch08" data-chapter="8">
+  <div class="chapter-bg" id="bg08"></div>
+  <div class="chapter-overlay"></div>
+  <div class="chapter-content">
+    <div class="chapter-number reveal">07</div>
+    <div class="chapter-label reveal reveal-d1">Now</div>
+    <h2 class="chapter-title reveal reveal-d1">Next in line.<br>LLMs. ML. AI.</h2>
+    <div class="chapter-body reveal reveal-d2">
+      <p>Applying the same spatial rigour to Bangalore as a case study. A rapidly growing city with vast amounts of unread spatial data.</p>
+      <p>Building a real-time sensing instrument. Writing spatial analyses. Exploring machine learning models. The tools I know are not enough yet. That is the point.</p>
+    </div>
+  </div>
+</section>
+
+<!-- WORK -->
+<section class="work-section" id="work">
+  <div class="work-header">
+    <h2 class="work-header-title">Projects &amp; Writing</h2>
+    <span class="work-header-meta">Work in progress</span>
+  </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" onclick="filterWork('all',this)">All</button>
+    <button class="filter-btn" onclick="filterWork('project',this)">Projects</button>
+    <button class="filter-btn" onclick="filterWork('writing',this)">Writing</button>
+    <button class="filter-btn" onclick="filterWork('bangalore',this)">Bangalore Series</button>
+    <button class="filter-btn" onclick="filterWork('wip',this)">WIP</button>
+  </div>
+  <div class="work-list" id="work-list"></div>
+</section>
+
+<!-- CONTACT -->
+<section class="contact" id="contact">
+  <div>
+    <div class="contact-eyebrow">Let's talk</div>
+    <h2 class="contact-title">Get in<br>touch.</h2>
+  </div>
+  <div class="contact-links">
+    <a href="mailto:prakritisrimal@gmail.com" class="contact-link primary">prakritisrimal@gmail.com</a>
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" class="contact-link" target="_blank">LinkedIn ↗</a>
+    <a href="https://github.com/" class="contact-link" target="_blank">GitHub ↗</a>
+  </div>
+</section>
+
+<footer>
+  <span class="footer-name">© 2025 Prakriti Srimal</span>
+  <div class="footer-links">
+    <a href="#work">Work</a>
+    <a href="#contact">Contact</a>
+  </div>
+</footer>
+
+<script>
+const workItems = [
+  { id:1, type:['project'], title:'IsoChronic City', excerpt:'Master\'s thesis at the Bartlett School of Architecture, UCL. Post-pandemic reurbanisation through 15-minute neighbourhood principles, machine learning, and generative design.', tags:['Thesis','Urban Design'], date:'UCL B-Pro · 2023', status:null, dark:false, link:'isochronic-city.html' },
+  { id:2, type:['bangalore','writing'], title:'How far can you go?', excerpt:'5, 10, and 15 minute walk catchments and 20 and 30 minute drive catchments mapped across Bangalore. Which neighbourhoods are truly accessible and which ones depend entirely on a car.', tags:['Bangalore Series','Accessibility'], date:'May 2025', status:null, dark:true, link:null },
+  { id:3, type:['bangalore','writing'], title:'What is Bangalore actually made up of?', excerpt:'Classifying Bangalore\'s urban fabric by the shape of its streets, blocks, and buildings. From the organic grain of the old pete to the sprawling plots of the north.', tags:['Bangalore Series','Morphology'], date:'Apr 2025', status:null, dark:true, link:null },
+  { id:4, type:['project','wip'], title:'Real Time Sensing Instrument', excerpt:'Building a multi-sensor urban data collection instrument from scratch. GPS, temperature, humidity, and audio on the NVIDIA Jetson Orin Nano Super.', tags:['Hardware','Sensing'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:5, type:['project','wip'], title:'pyRevit BIM Automation Scripts', excerpt:'Ten Revit API tools built in Python using pyRevit for large-scale AEC projects. Workset management, wall and door tools, unit placement, and parameter control.', tags:['AEC Tech','Python','pyRevit'], date:'Ongoing', status:'wip', dark:false, link:null },
+  { id:6, type:['bangalore','writing','wip'], title:'Real Time Sensing — field notes from Bangalore', excerpt:'The instrument is taking shape. First field tests in Bangalore. What the data looks like, what it reveals, and what it does not.', tags:['Bangalore Series','Hardware'], date:'Ongoing', status:'wip', dark:true, link:null }
+];
+
+function renderWork(filter) {
+  const list = document.getElementById('work-list');
+  const filtered = filter === 'all' ? workItems : workItems.filter(i => i.type.includes(filter));
+  list.innerHTML = filtered.map((item, idx) => `
+    <div class="work-card" style="transition-delay:${idx*60}ms" ${item.link ? `onclick="window.location='${item.link}'"` : ''}>
+      <div class="work-card-thumb ${item.dark?'dark':''}"><div class="work-card-thumb-inner"></div></div>
+      <div>
+        <div class="work-card-tags">
+          ${item.tags.map(t=>`<span class="tag">${t}</span>`).join('')}
+          ${item.status==='wip'?'<span class="tag wip">WIP</span>':''}
+        </div>
+        <div class="work-card-title">${item.title}</div>
+        <div class="work-card-excerpt">${item.excerpt}</div>
+      </div>
+      <div class="work-card-right">
+        <span class="work-card-date">${item.date}</span>
+        <span class="work-arrow">↗</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function filterWork(filter, btn) {
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWork(filter);
+}
+
+// Chapter dots
+const chapters = document.querySelectorAll('.chapter');
+const indicator = document.getElementById('chapter-indicator');
+chapters.forEach((ch, i) => {
+  const dot = document.createElement('div');
+  dot.className = 'ch-dot';
+  dot.onclick = () => ch.scrollIntoView({ behavior: 'smooth' });
+  indicator.appendChild(dot);
+});
+
+const dots = document.querySelectorAll('.ch-dot');
+
+// Scroll reveal
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); } });
+  }, { threshold: 0.08 });
+  els.forEach(el => io.observe(el));
+}
+
+// Parallax backgrounds
+const bgParallax = [
+  { el: document.getElementById('bg01'), speed: 0.45 },
+  { el: document.getElementById('bg02'), speed: 0.3 },
+  { el: document.getElementById('bg03'), speed: 0.4 },
+  { el: document.getElementById('bg04'), speed: 0.4 },
+  { el: document.getElementById('bg07'), speed: 0.4 },
+  { el: document.getElementById('bg08'), speed: 0.35 },
+];
+
+function onScroll() {
+  const scrollY = window.scrollY;
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  const vh = window.innerHeight;
+
+  // Progress bar
+  document.getElementById('progress-bar').style.width = (scrollY / docH * 100) + '%';
+
+  // Nav
+  document.getElementById('main-nav').classList.toggle('solid', scrollY > 80);
+
+  // Parallax — center-based formula gives ~2x more movement than the old one
+  bgParallax.forEach(({ el, speed }) => {
+    if (!el) return;
+    const rect = el.parentElement.getBoundingClientRect();
+    if (rect.bottom < 0 || rect.top > vh) return;
+    const centerOffset = (rect.top + rect.height / 2) - vh / 2;
+    el.style.transform = `translateY(${centerOffset * speed}px)`;
+  });
+
+  // Hero exit: content floats up and fades as you scroll away
+  const ch01Rect = document.getElementById('ch01').getBoundingClientRect();
+  if (ch01Rect.top < vh && ch01Rect.bottom > 0) {
+    const progress = Math.max(0, Math.min(1, -ch01Rect.top / ch01Rect.height));
+    const heroContent = document.querySelector('#ch01 .chapter-content');
+    if (heroContent) {
+      heroContent.style.transform = `translateY(${progress * -140}px)`;
+      heroContent.style.opacity = Math.max(0, 1 - progress * 2.8);
+    }
+  }
+
+  // Active dot
+  let activeIdx = 0;
+  chapters.forEach((ch, i) => {
+    const rect = ch.getBoundingClientRect();
+    if (rect.top <= vh * 0.5) activeIdx = i;
+  });
+  dots.forEach((d, i) => d.classList.toggle('active', i === activeIdx));
+}
+
+renderWork('all');
+observeReveal();
+window.addEventListener('scroll', onScroll, { passive: true });
+onScroll();
+</script>
+</body>
+</html>
