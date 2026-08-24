@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IsoChronic City — Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #f0ede4;
+  --bg-dark: #1e4d2b;
+  --ink: #1e4d2b;
+  --ink-mid: #4a6b54;
+  --ink-faint: #9ab5a2;
+  --border: rgba(30,77,43,0.15);
+  --font-serif: 'DM Serif Display', Georgia, serif;
+  --font-sans: 'Instrument Sans', sans-serif;
+  --font-mono: 'DM Mono', monospace;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* NAV */
+nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(240,237,228,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 48px;
+  height: 60px;
+}
+
+.nav-logo {
+  font-family: var(--font-serif);
+  font-size: 18px;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.nav-back {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-mid);
+  text-decoration: none;
+  letter-spacing: 0.5px;
+  transition: color 0.2s;
+}
+
+.nav-back:hover { color: var(--ink); }
+
+/* HERO */
+.hero {
+  background: var(--bg-dark);
+  padding: 80px 48px 72px;
+  position: relative;
+  overflow: hidden;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.hero-bg {
+  position: absolute;
+  inset: 0;
+  background: 
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(240,237,228,0.03) 40px, rgba(240,237,228,0.03) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(240,237,228,0.03) 40px, rgba(240,237,228,0.03) 41px);
+  pointer-events: none;
+}
+
+.hero-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: rgba(240,237,228,0.4);
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  opacity: 0;
+  animation: fadeUp 0.6s ease forwards 0.1s;
+}
+
+.hero-title {
+  font-family: var(--font-serif);
+  font-size: clamp(48px, 7vw, 88px);
+  color: #f0ede4;
+  line-height: 1.0;
+  letter-spacing: -2px;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+
+.hero-intro {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  opacity: 0;
+  animation: fadeUp 0.7s ease forwards 0.4s;
+}
+
+.hero-desc {
+  font-size: 15px;
+  color: rgba(240,237,228,0.7);
+  line-height: 1.75;
+}
+
+.hero-credits {
+  font-size: 14px;
+  color: rgba(240,237,228,0.5);
+  line-height: 1.75;
+}
+
+.hero-credits strong {
+  color: rgba(240,237,228,0.8);
+  font-weight: 500;
+}
+
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+}
+
+.hero-tag {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(240,237,228,0.4);
+  border: 1px solid rgba(240,237,228,0.15);
+  padding: 4px 12px;
+  border-radius: 100px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.visible { opacity: 1; transform: translateY(0); }
+
+/* CONTENT */
+.content { max-width: 1100px; margin: 0 auto; padding: 0 48px; }
+
+/* SECTION */
+.project-section {
+  padding: 72px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.project-section:last-child { border-bottom: none; }
+
+.section-number {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: var(--ink-faint);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.section-title {
+  font-family: var(--font-serif);
+  font-size: 32px;
+  color: var(--ink);
+  letter-spacing: -0.5px;
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.section-body {
+  font-size: 15px;
+  color: var(--ink-mid);
+  line-height: 1.8;
+  max-width: 680px;
+  margin-bottom: 36px;
+}
+
+.section-body p + p { margin-top: 14px; }
+
+/* MEDIA */
+.media-block {
+  width: 100%;
+  background: #111;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 36px;
+}
+
+.media-block img {
+  width: 100%;
+  display: block;
+}
+
+/* VIDEO */
+.video-block {
+  width: 100%;
+  background: #111;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 36px;
+  position: relative;
+}
+
+.video-block video {
+  width: 100%;
+  display: block;
+  max-height: 600px;
+  object-fit: contain;
+  background: #000;
+}
+
+.video-placeholder {
+  width: 100%;
+  aspect-ratio: 16/9;
+  background: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  border-radius: 4px;
+  border: 1px dashed rgba(240,237,228,0.15);
+}
+
+.video-placeholder-icon {
+  width: 48px;
+  height: 48px;
+  border: 1.5px solid rgba(240,237,228,0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.video-placeholder-icon::after {
+  content: '';
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 14px solid rgba(240,237,228,0.3);
+  margin-left: 3px;
+}
+
+.video-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.25);
+  text-transform: uppercase;
+}
+
+.video-filename {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  color: rgba(240,237,228,0.15);
+  letter-spacing: 0.5px;
+}
+
+/* CAPTION */
+.caption {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  letter-spacing: 0.5px;
+  margin-top: -24px;
+  margin-bottom: 36px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+}
+
+/* TWO COL */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  margin-bottom: 36px;
+}
+
+/* AWARDS */
+.awards-section {
+  background: var(--bg-dark);
+  padding: 72px 48px;
+  margin-top: 0;
+}
+
+.awards-title {
+  font-family: var(--font-serif);
+  font-size: 36px;
+  color: #f0ede4;
+  letter-spacing: -0.5px;
+  text-align: center;
+  margin-bottom: 12px;
+}
+
+.awards-subtitle {
+  font-size: 15px;
+  color: rgba(240,237,228,0.5);
+  text-align: center;
+  margin-bottom: 56px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.awards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  max-width: 1000px;
+  margin: 0 auto 40px;
+}
+
+.award-card {
+  background: rgba(240,237,228,0.04);
+  border: 1px solid rgba(240,237,228,0.1);
+  border-radius: 4px;
+  padding: 28px 24px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.award-card:hover {
+  border-color: rgba(240,237,228,0.2);
+  background: rgba(240,237,228,0.06);
+}
+
+.award-name {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  color: #f0ede4;
+  line-height: 1.3;
+  margin-bottom: 10px;
+}
+
+.award-desc {
+  font-size: 13px;
+  color: rgba(240,237,228,0.45);
+  line-height: 1.65;
+  margin-bottom: 12px;
+}
+
+.award-link {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.5px;
+  color: rgba(240,237,228,0.35);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.award-link:hover { color: rgba(240,237,228,0.7); }
+
+/* BACK */
+.back-strip {
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(240,237,228,0.08);
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-strip-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: rgba(240,237,228,0.3);
+  text-transform: uppercase;
+}
+
+.back-link {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ink);
+  text-decoration: none;
+  padding: 10px 24px;
+  background: #f0ede4;
+  border-radius: 100px;
+  transition: background 0.2s;
+}
+
+.back-link:hover { background: #e0ddd4; }
+
+footer {
+  background: var(--bg-dark);
+  border-top: 1px solid rgba(240,237,228,0.05);
+  padding: 20px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.footer-name {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: rgba(240,237,228,0.25);
+}
+
+@media (max-width: 768px) {
+  nav { padding: 0 20px; }
+  .hero { padding: 48px 20px; min-height: auto; }
+  .hero-intro { grid-template-columns: 1fr; gap: 24px; }
+  .content { padding: 0 20px; }
+  .project-section { padding: 48px 0; }
+  .two-col { grid-template-columns: 1fr; }
+  .awards-section { padding: 48px 20px; }
+  .awards-grid { grid-template-columns: 1fr; }
+  .back-strip { padding: 32px 20px; flex-direction: column; gap: 16px; }
+  footer { padding: 20px; }
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="index.html" class="nav-logo">Prakriti Srimal</a>
+  <a href="index.html" class="nav-back">← Back to work</a>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-meta">Master's Thesis · Bartlett School of Architecture · UCL B-Pro · 2023</div>
+  <h1 class="hero-title">IsoChronic<br>City</h1>
+  <div class="hero-intro">
+    <div>
+      <p class="hero-desc">An urban response to the evolving question of what reurbanisation should look like in the post-pandemic era. Rooted in the principles of the 15-minute neighbourhood, IsoChronic City seeks to extend the accessibility and functionality of urban living through machine learning, spatial computation, and generative design.</p>
+      <div class="hero-tags">
+        <span class="hero-tag">Urban Design</span>
+        <span class="hero-tag">Machine Learning</span>
+        <span class="hero-tag">Computational Design</span>
+        <span class="hero-tag">Space Syntax</span>
+        <span class="hero-tag">London</span>
+      </div>
+    </div>
+    <div class="hero-credits">
+      <strong>Team</strong><br>
+      Prakriti Srimal<br>
+      Sonali Bordia<br>
+      Shuyao Li<br>
+      Siyang Zheng<br><br>
+      <strong>Institution</strong><br>
+      Bartlett School of Architecture<br>
+      University College London<br>
+      B-Pro Urban Design, 2023
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- 01 -->
+  <div class="project-section reveal">
+    <div class="section-number">01 — Context</div>
+    <h2 class="section-title">The Urban Problem</h2>
+    <div class="section-body">
+      <p>Leveraging datasets processed through machine learning techniques such as Principal Component Analysis, K-Means Clustering, and Convolutional Neural Networks, combined with spatial computational methods, the project establishes an IsoChronic Generative Loop — a framework for urban transformation.</p>
+      <p>This proposal involves reconfiguring existing network centrality, designing responsive public spaces through topo-geometric strategies, and repurposing underutilised open areas into interactive zones equipped with essential amenities. Through these interventions, the project reshapes both the physical and spatial fabric of the city to promote sustainability, inclusivity, and accessibility.</p>
+    </div>
+
+    <!-- VIDEO PLACEHOLDER 1 — replace src with your actual file -->
+    <div class="video-block">
+      <video controls poster="">
+        <source src="videos/isochronic-intro.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+      </video>
+    </div>
+    <!-- To use: place your .mp4 in a /videos/ folder next to this HTML file and update the src above -->
+  </div>
+
+  <!-- 02 -->
+  <div class="project-section reveal">
+    <div class="section-number">02 — Analysis</div>
+    <h2 class="section-title">Formation and Selection of Spatial Signature</h2>
+    <div class="section-body">
+      Spatial signatures are created based on parameters such as population density, landuse, accessibility, deprivation and connectivity. The dense urban signature is selected as it is predominantly residential in nature with access to jobs and services.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/spatial-signature.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 03 -->
+  <div class="project-section reveal">
+    <div class="section-number">03 — Decay</div>
+    <h2 class="section-title">Urban Decay</h2>
+    <div class="section-body">
+      Various layers of datasets are examined indicating the areas affected by reurbanisation. By overlaying these layers a correlation is established between the datasets from the years 2010, 2015 and 2019 — analysing the parts of London facing Urban Decay.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/urban-decay.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 04 -->
+  <div class="project-section reveal">
+    <div class="section-number">04 — Framework</div>
+    <h2 class="section-title">Design Goals</h2>
+    <div class="section-body">
+      The design intends to achieve a sustainable, inclusive and accessible city which repeats itself at regular intervals. A 15-minute neighbourhood is defined by identifying the amenities required within a certain radius and mode of transport.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/design-goals.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 05 -->
+  <div class="project-section reveal">
+    <div class="section-number">05 — Method</div>
+    <h2 class="section-title">Grading the City</h2>
+    <div class="section-body">
+      A computational model is devised to evaluate the city. The process of grading shows the various stages of identifying the count and distance to amenities within varying radii to determine areas with least scores.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/grading-city.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 06 -->
+  <div class="project-section reveal">
+    <div class="section-number">06 — Spatial Analysis</div>
+    <h2 class="section-title">Space Syntax Method: Angular Step Depth</h2>
+    <div class="section-body">
+      Segmentation of the site network is performed using angular step depth to create a detailed model of how the definition of a 15-minute city changes as an individual moves along the streets.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/space-syntax.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 07 -->
+  <div class="project-section reveal">
+    <div class="section-number">07 — Selection</div>
+    <h2 class="section-title">Optimisation Algorithm</h2>
+    <div class="section-body">
+      An optimisation algorithm is used to select segments based on a multi-objective approach. Four street segments with poor spatial characteristics are identified as the areas of interest.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/optimisation.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 08 -->
+  <div class="project-section reveal">
+    <div class="section-number">08 — Generative System</div>
+    <h2 class="section-title">IsoChronic Generative Loop</h2>
+    <div class="section-body">
+      The 20 segments derived from spatial computational modelling are influenced through an IsoChronic Generative Loop created on the selected 4 segments, coupled with data extracted from traditional data analysis and deep learning networks.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/generative-loop.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 09 -->
+  <div class="project-section reveal">
+    <div class="section-number">09 — Proposal</div>
+    <h2 class="section-title">Masterplan</h2>
+    <div class="section-body">
+      The strategy is proposed by evaluating the existing and using the theoretical background of a 15-minute city.
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/masterplan.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+  <!-- 10 -->
+  <div class="project-section reveal">
+    <div class="section-number">10 — Interventions</div>
+    <h2 class="section-title">Emplacement of Interventions</h2>
+    <div class="section-body">
+      <p>The design consists of interventions of varying scale: Elevated Segments, Void Segments, and Mobile Segments.</p>
+      <p>Void segments are developed using spatial modelling processes and data extracted from spatial computational techniques to introduce placemaking elements along with interaction spaces and landscaping details.</p>
+      <p>Mobile segments consist of units designed with adaptability and positioned using a steady state island generative algorithm based on footfall trends. These modules are arranged on site to serve as pop-up markets containing amenities.</p>
+      <p>Elevated segments reduce the time taken to travel in the city, linking together the built environment while distancing the pedestrian from vehicular pollution and congestion.</p>
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/interventions.mp4" type="video/mp4">
+      </video>
+    </div>
+    <div class="video-block">
+      <video controls>
+        <source src="videos/design-detail.mp4" type="video/mp4">
+      </video>
+    </div>
+  </div>
+
+</div>
+
+<!-- AWARDS -->
+<div class="awards-section reveal">
+  <h2 class="awards-title">Awards &amp; Publications</h2>
+  <p class="awards-subtitle">IsoChronic City has been recognised for its innovation and impact in urban intelligence.</p>
+
+  <div class="awards-grid">
+    <div class="award-card">
+      <div class="award-name">World Architecture Student Awards — World League Series (WASA–WLS) 2022</div>
+      <div class="award-desc">Gold medal at the World Architecture Student Association World League Series, November 2022.</div>
+      <a href="https://www.wasa-wls.com" class="award-link" target="_blank">WASA-WLS Winning Works 2022 ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">Media Architecture Biennale 2023</div>
+      <div class="award-desc">Student Award for Equitable and Sustainable Media Architecture, June 2023.</div>
+      <a href="https://mab23.org" class="award-link" target="_blank">MAB23 ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">Inspireli Awards</div>
+      <div class="award-desc">Presented at the Media Architecture Biennale through Inspireli Awards.</div>
+      <a href="https://inspireli.com" class="award-link" target="_blank">Inspireli.com ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">Arch Hive</div>
+      <div class="award-desc">Featured for innovative vision in shaping urban futures.</div>
+      <a href="#" class="award-link">IsoChronic City | Arch Hive ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">ArchDaily</div>
+      <div class="award-desc">Featured as part of the MAB23 Award, November 2023.</div>
+      <a href="#" class="award-link">Winners of the MAB23 Student Awards ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">ArchiDiaries</div>
+      <div class="award-desc">Published for forward-thinking approach to urban design and spatial intelligence.</div>
+      <a href="#" class="award-link">Masters Design Thesis on Urban Revitalization ↗</a>
+    </div>
+  </div>
+
+  <div class="awards-grid" style="grid-template-columns: 1fr 1fr; max-width: 680px;">
+    <div class="award-card">
+      <div class="award-name">University College London</div>
+      <div class="award-desc">Urban Design MArch graduates honoured at World Architecture Student Awards.</div>
+      <a href="#" class="award-link">Bartlett Faculty of the Built Environment ↗</a>
+    </div>
+    <div class="award-card">
+      <div class="award-name">Bartlett School of Architecture — B-Pro</div>
+      <div class="award-desc">Featured in the B-Pro Annual Show.</div>
+      <a href="#" class="award-link">BPro Show: IsoChronic City ↗</a>
+    </div>
+  </div>
+</div>
+
+<div class="back-strip">
+  <span class="back-strip-label">Next project</span>
+  <a href="index.html" class="back-link">← Back to all work</a>
+</div>
+
+<footer>
+  <span class="footer-name">© 2025 Prakriti Srimal</span>
+</footer>
+
+<script>
+function observeReveal() {
+  const els = document.querySelectorAll('.reveal:not(.visible)');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.06 });
+  els.forEach(el => io.observe(el));
+}
+observeReveal();
+</script>
+</body>
+</html>
