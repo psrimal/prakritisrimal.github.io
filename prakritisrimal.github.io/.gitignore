@@ -1,0 +1,19 @@
+# Original media exports. Compressed versions go in assets/ instead.
+# Git keeps every version of every binary forever, so committing raw exports
+# bloats the repo permanently.
+media-src/
+
+# OS and editor noise
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*~
+
+# Node, if you ever add tooling beyond check-assets.js
+node_modules/
+package-lock.json
+
+# Local previews and scratch
+.cache/
+*.log

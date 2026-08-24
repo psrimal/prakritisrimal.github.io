@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Speed of a City | Prakriti Srimal</title>
+<meta name="description" content="Why London felt warmer than Dubai, and why it might have less to do with people than with speed.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --body: 'DM Sans', system-ui, sans-serif;
+  --bg: #060807; --ink: #f0ede4; --ink-mid: #929e96; --ink-dim: #5c6a62;
+  --accent: #2db354; --rule: #171d19;
+  --gut: clamp(20px, 6vw, 90px);
+}
+html { scroll-behavior: smooth; background: var(--bg); }
+body { font-family: var(--body); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+img { display: block; width: 100%; height: auto; }
+
+nav {
+  position: sticky; top: 0; z-index: 50; background: rgba(6,8,7,0.92);
+  backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 var(--gut); height: 56px;
+  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+}
+nav a { text-decoration: none; color: var(--ink-mid); transition: color 160ms; }
+nav a:hover { color: var(--accent); }
+nav .back { color: var(--ink); }
+
+/* ---------- title card: the same dot field as the landing page ---------- */
+header.hero {
+  position: relative; min-height: min(62svh, 560px);
+  display: flex; align-items: center; overflow: hidden;
+  padding: clamp(72px, 9vw, 110px) var(--gut) clamp(30px, 4vw, 48px);
+}
+.hero-inner { width: 100%; max-width: 62ch; margin: 0 auto; }
+#hero-canvas { position: absolute; inset: 0; width: 100%; height: 100%; z-index: 0; }
+.hero-inner { position: relative; z-index: 2; }
+.kicker { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+h1 {
+  font-family: var(--mono); font-weight: 700;
+  font-size: clamp(2rem, 7.6vw, 5.2rem); line-height: 0.95;
+  letter-spacing: -0.045em; text-transform: uppercase;
+}
+.standfirst {
+  margin-top: clamp(22px, 3vw, 32px); max-width: 46ch;
+  font-family: var(--mono); font-size: clamp(0.82rem, 1.5vw, 1.02rem);
+  line-height: 1.62; color: var(--ink-mid);
+}
+.byline {
+  margin-top: clamp(22px, 3vw, 30px); font-family: var(--mono); font-size: 10px;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim);
+}
+
+/* ---------- article ---------- */
+/* A 62ch measure is the right line length. Pinned to the left edge of a
+   1900px screen it leaves two thirds of the page empty, so the column is
+   centred and figures break out wider than the text. */
+article { padding: clamp(56px, 8vw, 104px) 0 clamp(70px, 9vw, 120px); }
+.prose {
+  display: grid;
+  grid-template-columns:
+    [full-start] minmax(var(--gut), 1fr)
+    [wide-start] minmax(0, 150px)
+    [text-start] minmax(0, 62ch) [text-end]
+    minmax(0, 150px) [wide-end]
+    minmax(var(--gut), 1fr) [full-end];
+}
+.prose > * { grid-column: text; }
+.prose > .wide { grid-column: wide; }
+.prose > .full { grid-column: full; }
+@media (max-width: 900px) {
+  .prose { display: block; padding: 0 var(--gut); }
+  .prose > .wide, .prose > .full { max-width: none; }
+}
+.prose p { font-size: clamp(1rem, 1.55vw, 1.12rem); line-height: 1.8; color: var(--ink-mid); }
+.prose p + p { margin-top: 1.5em; }
+.prose p.lead { color: var(--ink); }
+.pull {
+  margin: clamp(40px, 5vw, 64px) 0; padding-left: clamp(18px, 2.4vw, 28px);
+  border-left: 2px solid var(--accent); max-width: 40ch;
+  font-family: var(--mono); font-weight: 700;
+  font-size: clamp(1.1rem, 2.6vw, 1.72rem); line-height: 1.24;
+  letter-spacing: -0.025em; color: var(--ink);
+}
+.close { margin-top: clamp(40px, 5vw, 64px); max-width: 46ch; }
+.close p {
+  font-family: var(--mono); font-size: clamp(0.95rem, 1.9vw, 1.22rem);
+  line-height: 1.5; letter-spacing: -0.02em; color: var(--ink);
+}
+.close p + p { margin-top: 0.7em; }
+
+/* ---------- figures ---------- */
+figure { margin: clamp(40px, 5vw, 66px) 0; }
+.slot { position: relative; background: #0b100d; border: 1px solid var(--rule); aspect-ratio: 4 / 3; overflow: hidden; }
+.slot img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.slot::after {
+  content: attr(data-slot); position: absolute; left: 12px; bottom: 10px;
+  font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--ink-dim); pointer-events: none;
+}
+.slot.has-img::after { display: none; }
+figcaption {
+  margin-top: 12px; font-family: var(--mono); font-size: 10.5px;
+  letter-spacing: 0.04em; line-height: 1.7; color: var(--ink-dim);
+}
+.pair { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.pair .slot { aspect-ratio: 4 / 5; }
+.pair-label {
+  font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: 9px;
+}
+@media (max-width: 620px) { .pair { grid-template-columns: 1fr; } }
+
+footer {
+  border-top: 1px solid var(--rule); padding: 34px var(--gut);
+  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: var(--ink-dim); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between;
+}
+footer a { text-decoration: none; }
+footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="back" href="index.html">&lsaquo; Prakriti Srimal</a>
+  <a href="mailto:prakritisrimal@gmail.com">Get in touch</a>
+</nav>
+
+<header class="hero">
+  <canvas id="hero-canvas" aria-hidden="true"></canvas>
+  <div class="hero-inner">
+    <div class="kicker">Writing &nbsp;/&nbsp; London and Dubai</div>
+    <h1>The Speed<br>of a City</h1>
+    <p class="standfirst">Why London felt warmer than Dubai, and why it might have less to do with people than with speed.</p>
+    <div class="byline">Prakriti Srimal</div>
+  </div>
+</header>
+
+<article>
+  <div class="prose">
+    <p class="lead">I recently spent time in both Dubai and London, back to back. I have friends in both, enjoyed both. But London felt warmer, not in temperature, in the way strangers interact. A nod on the pavement. A "cheers" to the bus driver. A barista who actually talks to you. Tiny stuff, but it accumulates into a feeling that the city notices you.</p>
+
+    <p>My first instinct was culture. But I think it's speed.</p>
+
+    <div class="pair" style="margin: clamp(36px,4.5vw,58px) 0">
+      <div>
+        <div class="pair-label">60 km/h</div>
+        <figure class="slot" data-slot="dubai-street.jpg" style="margin:0">
+          <img src="assets/speed/dubai-street.jpg" alt="A street in Dubai at eye level" onerror="this.remove()">
+        </figure>
+      </div>
+      <div>
+        <div class="pair-label">5 km/h</div>
+        <figure class="slot" data-slot="london-street.jpg" style="margin:0">
+          <img src="assets/speed/london-street.jpg" alt="A street in London at eye level" onerror="this.remove()">
+        </figure>
+      </div>
+    </div>
+
+    <p>Dubai is built around cars moving at 60+ km/h between air-conditioned boxes, car to elevator to office to mall. It's incredibly efficient. London moves at walking pace. People share pavements, wait at crossings, stand on platforms together. And when you're doing five kilometres an hour instead of sixty, you have time to notice the person holding the door, or the guy wrestling a suitcase up the Tube stairs.</p>
+
+    <div class="pull">Cities don't just determine how we move. They determine how often we're available to each other.</div>
+
+    <p>We measure cities by travel time, congestion, density, accessibility, all important. But none of those capture the likelihood of a human encounter. A wider pavement isn't just pedestrian capacity. A slower street isn't just road safety. They're invitations to linger and actually see another person.</p>
+
+    <div class="close">
+      <p>Maybe warmth isn't only a characteristic of people.</p>
+      <p>Maybe it's also a characteristic of streets.</p>
+    </div>
+  </div>
+</article>
+
+<footer>
+  <span>Prakriti Srimal &nbsp;/&nbsp; Bangalore</span>
+  <span>
+    <a href="mailto:prakritisrimal@gmail.com">Email</a> &nbsp;/&nbsp;
+    <a href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" target="_blank" rel="noopener">LinkedIn</a> &nbsp;/&nbsp;
+    <a href="https://github.com/psrimal" target="_blank" rel="noopener">GitHub</a>
+  </span>
+</footer>
+
+<script>
+'use strict';
+document.querySelectorAll('.slot img').forEach(function (img) {
+  var done = function () { if (img.naturalWidth) img.closest('.slot').classList.add('has-img'); };
+  if (img.complete) done(); else img.addEventListener('load', done);
+});
+
+/* Title card: the same city-at-night dot field used for this chapter on the
+   landing page, so the two pages read as one system. Ornament, not data. */
+(function () {
+  var REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cv = document.getElementById('hero-canvas'), ctx = cv.getContext('2d');
+  var W, H, X, Y, S, A, P, N = 0, t = 0, raf = null;
+  var dpr = function () { return Math.min(window.devicePixelRatio || 1, 2); };
+  var hsh = function (n, k) { var v = Math.sin(n * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+  var seeded = function (s) { return function () { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; }; };
+
+  function nightlights(r, W, H) {
+    var cx = 0.44 * W, cy = 0.62 * H;
+    var coastY = function (x) { return (0.17 - (x / W) * 0.13 + Math.sin((x / W) * 4.1) * 0.028) * H; };
+    var dry = function (x, y) { return (y < coastY(x)) ? [x, coastY(x) + (coastY(x) - y) * 0.55 + 2] : [x, y]; };
+    var k = r();
+    if (k < 0.56) {
+      var seg = Math.floor(r() * 420);
+      var rad = Math.pow(hsh(seg, 1), 1.55) * 0.44, ang = hsh(seg, 2) * 6.2832;
+      var ox = cx + Math.cos(ang) * rad * W * 1.24, oy = cy + Math.sin(ang) * rad * H * 1.16;
+      var dir = hsh(seg, 3) * 3.1416;
+      var len = (0.012 + hsh(seg, 4) * 0.055) * W * (0.45 + rad * 1.8);
+      var u = r() - 0.5;
+      return dry(ox + Math.cos(dir) * len * u + (r() - 0.5) * 3, oy + Math.sin(dir) * len * u + (r() - 0.5) * 3);
+    }
+    if (k < 0.71) {
+      var a = r() * 6.2832, rr = Math.pow(r(), 1.0) * 0.062;
+      return dry(cx + Math.cos(a) * rr * W * 1.3, cy + Math.sin(a) * rr * H * 1.3);
+    }
+    if (k < 0.84) {
+      var s2 = Math.floor(r() * 8), a2 = 0.2 + hsh(s2, 5) * 5.85;
+      var tt = 0.26 + Math.pow(r(), 0.62) * 0.80, bend = Math.sin(tt * 2.9 + s2) * 0.06;
+      return dry(cx + Math.cos(a2 + bend) * tt * W * 0.90, cy + Math.sin(a2 + bend) * tt * H * 0.84);
+    }
+    if (k < 0.93) {
+      var x3 = (0.03 + r() * 0.94) * W;
+      return [x3, coastY(x3) + (0.005 + Math.pow(r(), 2.6) * 0.042) * H];
+    }
+    var s4 = Math.floor(r() * 26);
+    var ox4 = (0.02 + hsh(s4, 6) * 0.96) * W, oy4 = (0.22 + hsh(s4, 7) * 0.74) * H;
+    var a4 = r() * 6.2832, rad4 = Math.pow(r(), 0.55) * (0.006 + hsh(s4, 8) * 0.014);
+    return dry(ox4 + Math.cos(a4) * rad4 * W * 1.8, oy4 + Math.sin(a4) * rad4 * H * 2.2);
+  }
+
+  function build() {
+    N = W < 720 ? 1600 : 3600;
+    X = new Float32Array(N); Y = new Float32Array(N);
+    S = new Uint8Array(N); A = new Float32Array(N); P = new Float32Array(N);
+    var r = seeded(20260823 + 7919);
+    for (var i = 0; i < N; i++) { var p = nightlights(r, W, H); X[i] = p[0]; Y[i] = p[1]; }
+    /* same framing normalisation as the landing page */
+    var pct = function (arr, q) { var c = Float32Array.from(arr); c.sort(); return c[Math.round(q * (c.length - 1))]; };
+    var x0 = pct(X, 0.012), x1 = pct(X, 0.988), y0 = pct(Y, 0.012), y1 = pct(Y, 0.988);
+    var mx = W * 0.035, my = H * 0.045;
+    var sx = (W - mx * 2) / Math.max(x1 - x0, 1), sy = (H - my * 2) / Math.max(y1 - y0, 1);
+    var r2 = seeded(424242);
+    for (var j = 0; j < N; j++) {
+      X[j] = mx + (X[j] - x0) * sx; Y[j] = my + (Y[j] - y0) * sy;
+      var b = r2(); S[j] = b < 0.09 ? 5 : (b < 0.37 ? 4 : 3);
+      A[j] = 0.18 + r2() * 0.5; P[j] = r2() * 6.2832;
+    }
+  }
+  function resize() {
+    var r = dpr(); W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W * r; cv.height = H * r; ctx.setTransform(r, 0, 0, r, 0, 0);
+    build(); draw();
+  }
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    var tints = ['#1c6e37', '#2db354', '#6de89a'];
+    for (var g = 0; g < 3; g++) {
+      ctx.fillStyle = tints[g];
+      for (var i = g; i < N; i += 3) {
+        ctx.globalAlpha = A[i] * (REDUCED ? 1 : 0.62 + 0.38 * Math.sin(t * 0.85 + P[i]));
+        var jx = REDUCED ? 0 : Math.sin(t * 0.6 + P[i]) * 2.6;
+        var jy = REDUCED ? 0 : Math.cos(t * 0.5 + P[i] * 1.3) * 2.2;
+        ctx.fillRect((X[i] + jx) | 0, (Y[i] + jy) | 0, S[i], S[i]);
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  function loop() { t += 0.016; draw(); raf = requestAnimationFrame(loop); }
+  resize();
+  window.addEventListener('resize', resize);
+  if (!REDUCED) new IntersectionObserver(function (es) {
+    es.forEach(function (e) {
+      if (e.isIntersecting && !raf) loop();
+      else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = null; }
+    });
+  }, { threshold: 0.01 }).observe(cv);
+})();
+</script>
+</body>
+</html>
