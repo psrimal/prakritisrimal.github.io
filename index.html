@@ -52,11 +52,32 @@ a { color: inherit; }
 .field-readout.on { opacity: 1; }
 .field-readout b { color: var(--accent); font-weight: 500; }
 
+/* Chapters glide past too easily on a fast wheel/trackpad flick.
+   scroll-snap-type has to sit on the element that actually scrolls,
+   which on this page is html itself — .field-flow has no overflow set,
+   so it is not a scroll container and snap rules on it are ignored.
+
+   "mandatory" + scroll-snap-stop: always on each chapter forces the
+   browser to land on every chapter in sequence, even on a hard fling
+   that would otherwise cover two or three screens in one gesture.
+   "proximity" was tried first and rejected: it only checks for a snap
+   point once a scroll has already come to rest, so a fast flick still
+   sails straight past several chapters before proximity gets a say.
+
+   Only #hero and .sc-step declare scroll-snap-align, so the index and
+   graph sections further down have no snap points and scroll freely
+   once you're past the last chapter. */
+html { scroll-snap-type: y mandatory; }
 .field-flow { position: relative; z-index: 2; margin-top: -100svh; pointer-events: none; }
+#hero, .sc-step {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
 
 /* --- title card --- */
 #hero { min-height: 100svh; display: flex; align-items: center; padding: 96px clamp(20px, 6vw, 90px) 84px; }
 .hero-type { max-width: 1000px; pointer-events: auto; }
+.masthead { position: absolute; top: 26px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; }
 .hero-name { font-family: var(--mono); font-weight: 700; font-size: clamp(3.1rem, 12vw, 9.6rem); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; }
 .gl { position: relative; display: block; }
 .gl::before, .gl::after { content: attr(data-t); position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; user-select: none; clip-path: inset(100% 0 0 0); }
@@ -72,7 +93,9 @@ a { color: inherit; }
 .hero-deck { margin-top: clamp(22px, 2.8vw, 32px); font-family: var(--mono); font-size: clamp(0.82rem, 1.6vw, 1.08rem); line-height: 1.55; color: var(--ink-mid); max-width: 36ch; }
 
 /* --- chapter cards riding over the same field --- */
-.sc-step { min-height: 100svh; display: flex; align-items: center; padding: 0 clamp(20px, 6vw, 90px); }
+.sc-step {
+  min-height: 100svh; display: flex; align-items: center; padding: 0 clamp(20px, 6vw, 90px);
+}
 .sc-step:nth-child(even) { justify-content: flex-end; }
 .sc-card { max-width: 420px; pointer-events: auto; background: rgba(6,8,7,0.86); border-left: 2px solid var(--accent); padding: clamp(22px, 2.4vw, 30px); opacity: 0.2; transition: opacity 300ms ease; }
 .sc-step.on .sc-card { opacity: 1; }
@@ -189,7 +212,7 @@ a.ix-row:hover .ix-q { color: var(--accent); }
 footer { position: relative; z-index: 3; background: var(--bg); padding: 34px clamp(20px, 6vw, 90px); border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; }
 
 @media (prefers-reduced-motion: reduce) {
-  html { scroll-behavior: auto; }
+  html { scroll-behavior: auto; scroll-snap-type: none; }
   .sc-card { transition: none; opacity: 1; transform: none; }
   .glitching .gl, .glitching .gl::before, .glitching .gl::after { animation: none; }
 }
@@ -207,6 +230,7 @@ footer { position: relative; z-index: 3; background: var(--bg); padding: 34px cl
 
   <div class="field-flow">
     <section id="hero">
+      <div class="masthead">Portfolio</div>
       <div class="hero-type">
         <h1 class="hero-name" id="hero-name">
           <span class="gl" data-t="Prakriti">Prakriti</span>
