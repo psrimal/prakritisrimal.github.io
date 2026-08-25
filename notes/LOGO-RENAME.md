@@ -14,7 +14,7 @@ you want in a portfolio URL.
 | `P.png` | `ucl.png` | University College London | certain |
 | `Bartlett-School-of-Architecture-logo-….jpg` | `bartlett.jpg` | Bartlett School of Architecture | likely |
 | `f0de8c67714761.58c046a2091da.png` | **see note** | ? | ambiguous |
-| *(nothing)* | `archidiaries.jpg` | ArchiDiaries | **missing** |
+|  `archidiaries.jpg`| `archidiaries.jpg` | ArchiDiaries | **missing** |
 
 ## The note
 
