@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>IsoChronic City | Prakriti Srimal</title>
 <meta name="description" content="IsoChronic City is an urban response to what reurbanization should look like in the post-pandemic era, built on the principles of the 15-minute neighbourhood. Master's thesis, Bartlett School of Architecture, UCL B-Pro.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,15 +13,23 @@
 :root {
   --mono: 'JetBrains Mono', ui-monospace, monospace;
   --body: 'DM Sans', system-ui, sans-serif;
-  --bg: #060807; --ink: #f0ede4; --ink-mid: #929e96; --ink-dim: #5c6a62;
+  --bg: #060807; --ink: #f0ede4; --ink-mid: #929e96; --ink-dim: #7d8c83;
   --accent: #2db354; --rule: #171d19;
+  --edge: #5c6a62;   /* 3.53:1, for control borders */
   --gut: clamp(20px, 6vw, 90px);
 }
 html { scroll-behavior: smooth; background: var(--bg); }
 body { font-family: var(--body); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
 a { color: inherit; }
-:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+:focus:not(:focus-visible) { outline: none; }
 img { display: block; width: 100%; height: auto; }
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 99;
+  background: var(--ink); color: var(--bg); padding: 12px 18px;
+  font-family: var(--mono); font-size: 12px;
+}
+.skip:focus { left: 12px; top: 12px; }
 
 /* ---------- nav ---------- */
 nav {
@@ -29,7 +37,7 @@ nav {
   backdrop-filter: blur(8px); border-bottom: 1px solid var(--rule);
   display: flex; align-items: center; justify-content: space-between;
   padding: 0 var(--gut); height: 56px;
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.18em; text-transform: uppercase;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase;
 }
 nav a { text-decoration: none; color: var(--ink-mid); transition: color 160ms; }
 nav a:hover { color: var(--accent); }
@@ -37,7 +45,7 @@ nav .back { color: var(--ink); }
 
 /* ---------- hero ---------- */
 header.hero { padding: clamp(52px, 8vw, 110px) var(--gut) clamp(40px, 5vw, 64px); }
-.kicker { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
+.kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 20px; }
 h1 {
   font-family: var(--mono); font-weight: 700;
   font-size: clamp(2.2rem, 8vw, 5.6rem); line-height: 0.94;
@@ -49,7 +57,7 @@ h1 {
   gap: 18px 32px; border-top: 1px solid var(--rule); padding-top: 26px;
   font-family: var(--mono); font-size: 11.5px; line-height: 1.7;
 }
-.credit-grid dt { font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 7px; }
+.credit-grid dt { font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ink-dim); margin-bottom: 7px; }
 .credit-grid dd { color: var(--ink-mid); }
 
 /* ---------- image slots ---------- */
@@ -64,13 +72,13 @@ h1 {
 }
 .slot.reduced .replay { background: rgba(6,8,7,0.35); }
 .slot.reduced .replay::after {
-  content: 'Play'; color: var(--ink); font-family: var(--mono); font-size: 10.5px;
+  content: 'Play'; color: var(--ink); font-family: var(--mono); font-size: 11px;
   letter-spacing: 0.18em; text-transform: uppercase; border: 1px solid var(--accent);
   padding: 11px 18px; background: rgba(6,8,7,0.85);
 }
 .slot::after {
   content: attr(data-slot); position: absolute; left: 12px; bottom: 10px;
-  font-family: var(--mono); font-size: 9px; letter-spacing: 0.16em;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
   text-transform: uppercase; color: var(--ink-dim); pointer-events: none;
 }
 .slot.has-img::after { display: none; }
@@ -122,7 +130,7 @@ h2 {
 /* ---------- gallery ---------- */
 .plate { border-top: 1px solid var(--rule); padding-top: clamp(30px, 4vw, 48px); margin-top: clamp(44px, 6vw, 80px); }
 .plate:first-of-type { border-top: none; margin-top: 0; padding-top: 0; }
-.plate-n { font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; color: var(--accent); }
+.plate-n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; color: var(--accent); }
 .plate-t { font-family: var(--mono); font-weight: 700; font-size: clamp(1rem, 2.1vw, 1.35rem); line-height: 1.2; letter-spacing: -0.02em; }
 /* the caption sits under the media and spans its full width.
    three columns keeps the measure readable instead of running a
@@ -163,18 +171,18 @@ h2 {
 }
 .award-logo::after {
   content: attr(data-missing); padding: 6px;
-  font-family: var(--mono); font-size: 8px; letter-spacing: 0.08em;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em;
   line-height: 1.5; color: #8a8574; text-align: center; word-break: break-all;
 }
 .award-logo.ok::after { content: none; }
 .award-logo.mono { background: #0b100d; }
 .award-logo.mono img { filter: brightness(0) invert(1); opacity: 0.86; max-width: 82%; max-height: 70%; }
-.award-yr { font-family: var(--mono); font-size: 9.5px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
+.award-yr { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 9px; }
 .award-t { font-family: var(--mono); font-weight: 700; font-size: clamp(0.98rem, 1.9vw, 1.2rem); line-height: 1.24; letter-spacing: -0.02em; margin-bottom: 11px; }
 .award-p { font-size: 14px; line-height: 1.68; color: var(--ink-mid); max-width: 62ch; }
 .award-link {
   display: inline-block; margin-top: 13px; font-family: var(--mono);
-  font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 160ms;
 }
 .award-link:hover { border-color: var(--accent); }
@@ -183,8 +191,8 @@ h2 {
 /* ---------- cta + footer ---------- */
 .cta { display: flex; flex-wrap: wrap; gap: 12px; margin-top: clamp(34px, 4vw, 50px); }
 .btn {
-  font-family: var(--mono); font-size: 10.5px; letter-spacing: 0.16em; text-transform: uppercase;
-  text-decoration: none; padding: 15px 24px; border: 1px solid var(--rule); color: var(--ink);
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  text-decoration: none; padding: 15px 24px; min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--edge); color: var(--ink);
   transition: border-color 160ms, color 160ms;
 }
 .btn:hover { border-color: var(--accent); color: var(--accent); }
@@ -192,7 +200,7 @@ h2 {
 .btn.solid:hover { color: #050a07; }
 footer {
   border-top: 1px solid var(--rule); padding: 34px var(--gut);
-  font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
   color: var(--ink-dim); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between;
 }
 footer a { text-decoration: none; }
@@ -200,6 +208,7 @@ footer a:hover { color: var(--accent); }
 </style>
 </head>
 <body>
+<a class="skip" href="#process">Skip to content</a>
 
 <nav>
   <a class="back" href="index.html">&lsaquo; Prakriti Srimal</a>
@@ -386,7 +395,7 @@ footer a:hover { color: var(--accent); }
     </article>
 
     <article class="award">
-      <div class="award-logo" data-logo="assets/isochroniccity/logos/archidiaries.jpg" data-alt="ArchiDiaries"></div>
+      <div class="award-logo wordmark">ArchiDiaries</div>
       <div>
         <div class="award-yr">Publication</div>
         <div class="award-t">ArchiDiaries</div>
