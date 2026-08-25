@@ -53,32 +53,65 @@ a { color: inherit; }
 .field-readout b { color: var(--accent); font-weight: 500; }
 
 /* Chapters glide past too easily on a fast wheel/trackpad flick.
+
    scroll-snap-type has to sit on the element that actually scrolls,
-   which on this page is html itself — .field-flow has no overflow set,
-   so it is not a scroll container and snap rules on it are ignored.
+   which on this page is html itself, not .field-flow, since that div
+   has no overflow set, so snap rules on it are ignored.
 
-   "mandatory" + scroll-snap-stop: always on each chapter forces the
-   browser to land on every chapter in sequence, even on a hard fling
-   that would otherwise cover two or three screens in one gesture.
-   "proximity" was tried first and rejected: it only checks for a snap
-   point once a scroll has already come to rest, so a fast flick still
-   sails straight past several chapters before proximity gets a say.
+   Snap is applied via a class toggled from JS, not statically, because
+   both static options fail here:
 
-   Only #hero and .sc-step declare scroll-snap-align, so the index and
-   graph sections further down have no snap points and scroll freely
-   once you're past the last chapter. */
-html { scroll-snap-type: y mandatory; }
+   - "mandatory" alone traps the page. It requires the scroll to rest
+     on a snap point, and only the hero and four chapters have any, so
+     scrolling down from the last chapter found nothing below it and
+     got dragged back. Adding snap points to the sections below does
+     not help either: they are several viewports tall, and mandatory
+     would then fight any attempt to read the middle of one.
+
+   - "proximity" alone does not do the job asked for. It only pulls in
+     once a scroll has already come to rest near a snap point, so a
+     hard flick still passes straight through several chapters.
+
+   So: snap is released while a gesture is in flight, re-applied once
+   it settles (which is what makes a chapter hold), and switched off
+   entirely once the last chapter's top has passed the viewport, which
+   is what keeps the exit into the sections below always open. */
+html { scroll-snap-type: none; }
+html.snap { scroll-snap-type: y mandatory; }
 .field-flow { position: relative; z-index: 2; margin-top: -100svh; pointer-events: none; }
-#hero, .sc-step {
+.intro-step, .sc-step {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
 
-/* --- title card --- */
-#hero { min-height: 100svh; display: flex; align-items: center; padding: 96px clamp(20px, 6vw, 90px) 84px; }
-.hero-type { max-width: 1000px; pointer-events: auto; }
-.masthead { position: absolute; top: 26px; left: 0; right: 0; text-align: center; font-family: var(--mono); font-weight: 700; font-size: 12.5px; letter-spacing: 0.06em; }
-.hero-name { font-family: var(--mono); font-weight: 700; font-size: clamp(3.1rem, 12vw, 9.6rem); line-height: 0.9; letter-spacing: -0.035em; text-transform: uppercase; }
+/* --- three-part intro: hook, stakes, introduction --- */
+.intro-step {
+  min-height: 100svh; display: flex; align-items: center;
+  padding: 96px clamp(20px, 6vw, 90px) 84px;
+}
+.intro-type { max-width: 1000px; pointer-events: auto; }
+.intro-lead {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: clamp(18px, 2.4vw, 28px);
+}
+.intro-line {
+  font-family: var(--mono); font-weight: 700;
+  font-size: clamp(1.7rem, 5.4vw, 4.2rem); line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+.intro-stat { font-size: clamp(1.9rem, 6.4vw, 4.8rem); line-height: 1.02; }
+.intro-sub {
+  margin-top: clamp(22px, 2.8vw, 32px); font-family: var(--mono);
+  font-size: clamp(0.82rem, 1.6vw, 1.02rem); line-height: 1.6;
+  color: var(--ink-mid); max-width: 44ch;
+}
+.intro-sub strong { color: var(--ink); font-weight: 500; }
+.intro-roles { max-width: 50ch; }
+.intro-tag {
+  margin-top: clamp(10px, 1.4vw, 16px);
+  font-size: clamp(1.3rem, 3.4vw, 2.3rem); letter-spacing: -0.03em;
+}
+.intro-tag em { font-style: italic; color: var(--accent); }
+#intro-3 .intro-line { text-transform: none; }
 .gl { position: relative; display: block; }
 .gl::before, .gl::after { content: attr(data-t); position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; user-select: none; clip-path: inset(100% 0 0 0); }
 .gl::before { color: #ff4fa0; }
@@ -89,8 +122,6 @@ html { scroll-snap-type: y mandatory; }
 @keyframes glShift { 0%,100%{transform:none} 12%{transform:translate(2px,-1px)} 28%{transform:translate(-3px,1px)} 44%{transform:translate(1px,0)} 62%{transform:translate(-2px,-1px)} 80%{transform:translate(1px,1px)} }
 @keyframes glA { 0%,100%{clip-path:inset(100% 0 0 0);transform:none} 10%{clip-path:inset(8% 0 74% 0);transform:translate(-7px,0)} 24%{clip-path:inset(52% 0 28% 0);transform:translate(6px,0)} 38%{clip-path:inset(20% 0 62% 0);transform:translate(-9px,0)} 55%{clip-path:inset(76% 0 6% 0);transform:translate(5px,0)} 70%{clip-path:inset(34% 0 48% 0);transform:translate(-4px,0)} 86%{clip-path:inset(62% 0 22% 0);transform:translate(8px,0)} }
 @keyframes glB { 0%,100%{clip-path:inset(100% 0 0 0);transform:none} 10%{clip-path:inset(60% 0 22% 0);transform:translate(7px,0)} 24%{clip-path:inset(14% 0 70% 0);transform:translate(-6px,0)} 38%{clip-path:inset(70% 0 12% 0);transform:translate(9px,0)} 55%{clip-path:inset(30% 0 54% 0);transform:translate(-5px,0)} 70%{clip-path:inset(80% 0 4% 0);transform:translate(4px,0)} 86%{clip-path:inset(44% 0 40% 0);transform:translate(-8px,0)} }
-
-.hero-deck { margin-top: clamp(22px, 2.8vw, 32px); font-family: var(--mono); font-size: clamp(0.82rem, 1.6vw, 1.08rem); line-height: 1.55; color: var(--ink-mid); max-width: 36ch; }
 
 /* --- chapter cards riding over the same field --- */
 .sc-step {
@@ -168,13 +199,13 @@ a.ix-row:hover .ix-q { color: var(--accent); }
   .pr-hint { bottom: auto; top: 12px; right: 14px; }
 }
 
-/* The graph is a canvas, so it is invisible to assistive tech and unreadable
-   on a phone. This list is the same data as real HTML: focusable, announced,
-   crawlable, and on narrow screens it becomes the primary interface. */
+/* The graph is a canvas: invisible to assistive tech, unreadable on a phone.
+   This list is the same data as real HTML. Hidden visually on desktop where
+   the graph works, but still in the accessibility tree, and shown for real
+   below 860px where the diagram is not usable. */
 .ch-list {
-  display: grid; gap: 8px;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-  padding: clamp(26px, 4vw, 44px) clamp(20px, 6vw, 90px) 0;
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
 }
 .ch-btn {
   display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: baseline;
@@ -188,9 +219,7 @@ a.ix-row:hover .ix-q { color: var(--accent); }
 .ch-btn .n { font-size: 12px; letter-spacing: -0.01em; }
 .ch-btn .w { display: block; margin-top: 5px; font-size: 11px; color: var(--ink-dim); letter-spacing: 0.02em; }
 @media (max-width: 860px) {
-  /* the graph cannot be read at this width: demote it, promote the list */
-  .pr-stage { height: 300px; opacity: 0.55; }
-  .ch-list { grid-template-columns: 1fr; }
+  .pr-stage { height: 300px; }
 }
 .visually-hidden {
   position: absolute; width: 1px; height: 1px; margin: -1px;
@@ -229,16 +258,34 @@ footer { position: relative; z-index: 3; background: var(--bg); padding: 34px cl
   </div>
 
   <div class="field-flow">
-    <section id="hero">
-      <div class="masthead">Portfolio</div>
-      <div class="hero-type">
-        <h1 class="hero-name" id="hero-name">
-          <span class="gl" data-t="Prakriti">Prakriti</span>
-          <span class="gl" data-t="Srimal">Srimal</span>
-        </h1>
-        <p class="hero-deck">Architect / Urban Designer / Urban Data Scientist.</p>
+
+    <section class="intro-step" id="intro-1">
+      <div class="intro-type">
+        <p class="intro-lead">Every city is a decision</p>
+        <h1 class="intro-line">Your city works<br>the way it does.<br>It could have<br>worked otherwise.</h1>
+        <p class="intro-sub">Almost nobody has the evidence to say how.</p>
       </div>
     </section>
+
+    <section class="intro-step" id="intro-2">
+      <div class="intro-type">
+        <p class="intro-lead">The cost of not knowing</p>
+        <h2 class="intro-line intro-stat">Millions are lost<br>every year</h2>
+        <p class="intro-sub">to decisions made without the spatial evidence to support them.</p>
+      </div>
+    </section>
+
+    <section class="intro-step" id="intro-3">
+      <div class="intro-type">
+        <p class="intro-lead">So</p>
+        <h2 class="intro-line" id="hero-name">
+          <span class="gl" data-t="Hi, I'm Prakriti.">Hi, I'm Prakriti.</span>
+        </h2>
+        <p class="intro-line intro-tag">I read cities as <em>data.</em></p>
+        <p class="intro-sub intro-roles">Every city works the way it does because of decisions, and most were made without the spatial evidence to weigh them. <strong>I build that evidence.</strong></p>
+      </div>
+    </section>
+
     <div id="sc-steps"><!-- injected --></div>
   </div>
 </div>
@@ -324,7 +371,7 @@ const CHAPTERS = [
 
   { q:'Which way is Bangalore growing?',   p:'Built-up expansion read year on year, to see whether the city is spreading north, east, or simply thickening where it already is.', slot:'built-up classification raster', shape:'radial', place:'Bangalore', status:'drafting', featured:false, mode:'Radial spread', link:null },
   { q:'Where did the water go?',           p:'The lake chain as it was, against what is left. Surface water is the clearest record of what a city chose to build over.', slot:'surface water time series', shape:'basins', place:'Bangalore', status:'drafting', featured:false, mode:'Chain of basins', link:null },
-  { q:'What does the city sound like?',    p:'First deployments of the sensing instrument, logged and mapped.', slot:'Jetson field logs', shape:'flow', place:'Bangalore', status:'drafting', featured:false, mode:'Flow', link:null },
+  { q:'What does the city sound like?',    p:'A multi-sensor instrument built from scratch: noise, air, heat, vision and GPS on one edge device. Five build updates and a SEED Chairman Award.', slot:'Jetson field logs', shape:'flow', place:'Bangalore', status:'live', featured:false, mode:'Flow', link:'real-time-sensing.html' },
   { q:'Where is Bangalore hottest?',       p:'Local climate zones against surface temperature. Heat is not distributed the way the map of the city suggests it should be.', slot:'LST + climate zone layer', shape:'ridge', place:'Bangalore', status:'planned', featured:false, mode:'Thermal ridge', link:null },
   { q:'Where did the green go?',           p:'Canopy and vegetation change across two decades.', slot:'NDVI time series', shape:'flow', place:'Bangalore', status:'planned', featured:false, mode:'Canopy flow', link:null },
   { q:'Where does Bangalore flood?',       p:'Recorded incidents against the lost water network, not elevation alone.', slot:'incidents + rajakaluve network', shape:'basins', place:'Bangalore', status:'planned', featured:false, mode:'Basins', link:null },
@@ -377,6 +424,20 @@ const CHAPTERS = [
     basins: (r, W, H) => { const k = Math.floor(r()*9), bx = 0.13+(k/8)*0.74, by = 0.78-(k/8)*0.56, j = Math.pow(r(),0.55)*0.055, a = r()*6.2832; return [(bx+Math.cos(a)*j)*W, (by+Math.sin(a)*j*1.8)*H]; },
     rings:  (r, W, H) => { const ring = 0.15+Math.floor(r()*5)*0.17, a = r()*6.2832, j = 0.010+r()*0.020; return [W/2+Math.cos(a)*(ring+j)*W*0.78, H/2+Math.sin(a)*(ring+j)*H*0.90]; },
     band:   (r, W, H) => { const g = (r()+r()+r()-1.5)/1.5; return [0.06*W+r()*0.88*W, H/2+g*H*0.26]; },
+
+    /* One clean circle. Not concentric rings: every dot sits on a single
+       ring, thin enough to read as one drawn line, with a faint scatter
+       inside so it does not look like a hollow cut-out. Listed in UNIFORM
+       so the frame fit keeps it round instead of stretching it wide. */
+    circle: (r, W, H) => {
+      const a = r() * 6.2832;
+      if (r() < 0.86) {
+        const rad = 0.40 + (r() - 0.5) * 0.018;          /* the ring itself */
+        return [W/2 + Math.cos(a) * rad * W, H/2 + Math.sin(a) * rad * W];
+      }
+      const rad = Math.pow(r(), 0.7) * 0.36;             /* sparse interior */
+      return [W/2 + Math.cos(a) * rad * W, H/2 + Math.sin(a) * rad * W];
+    },
 
 
     /* what Bangalore is made of - the v28 fabric grid, unchanged */
@@ -537,7 +598,14 @@ const CHAPTERS = [
 
   let W, H, N = 0, raf = null, prog = 0, idx = -1, clock = 0;
   let sx, sy, tx, ty, hue, tint, size, alpha, phase, states = [], buckets = [];
-  const SEQ = ['arc'].concat(FEAT.map(c => c.shape));
+  /* One distinct formation per screen, so the field visibly changes on every
+     scroll rather than sitting still. The intro runs an open scatter, then a
+     dispersed band under "millions are lost", then the dots gather into a
+     single clean circle as the introduction lands. */
+  const INTRO = 3;
+  const SEQ = ['arc', 'band', 'circle'].concat(FEAT.map(c => c.shape));
+  /* shapes that must keep their proportions rather than fill the frame */
+  const UNIFORM = new Set(['circle']);
 
   function build() {
     N = W < 720 ? 2000 : 4600;
@@ -548,6 +616,8 @@ const CHAPTERS = [
     states = SEQ.map(() => ({ x: new Float32Array(N), y: new Float32Array(N) }));
 
     SEQ.forEach((name, si) => {
+      /* Seed per index, not per shape name: every screen gets its own point
+         set, so two screens that happen to share a shape still differ. */
       const r = seeded(20260823 + si * 7919);
       const fn = SHAPES[name] || SHAPES.radial;
       const X = states[si].x, Y = states[si].y;
@@ -562,11 +632,21 @@ const CHAPTERS = [
       const x0 = pct(X, 0.012), x1 = pct(X, 0.988);
       const y0 = pct(Y, 0.012), y1 = pct(Y, 0.988);
       const mx = W * 0.035, my = H * 0.045;
-      const sx2 = (W - mx * 2) / Math.max(x1 - x0, 1);
-      const sy2 = (H - my * 2) / Math.max(y1 - y0, 1);
+      let sx2 = (W - mx * 2) / Math.max(x1 - x0, 1);
+      let sy2 = (H - my * 2) / Math.max(y1 - y0, 1);
+      /* Shapes whose whole point is their proportion get one scale for both
+         axes, otherwise per-axis fill stretches a circle into a wide ellipse.
+         They are centred instead of corner-anchored so they stay in frame. */
+      let ox = mx, oy = my;
+      if (UNIFORM.has(name)) {
+        const s2 = Math.min(sx2, sy2);
+        sx2 = sy2 = s2;
+        ox = (W - (x1 - x0) * s2) / 2;
+        oy = (H - (y1 - y0) * s2) / 2;
+      }
       for (let i = 0; i < N; i++) {
-        X[i] = mx + (X[i] - x0) * sx2;
-        Y[i] = my + (Y[i] - y0) * sy2;
+        X[i] = ox + (X[i] - x0) * sx2;
+        Y[i] = oy + (Y[i] - y0) * sy2;
       }
     });
 
@@ -606,9 +686,13 @@ const CHAPTERS = [
   function draw(t) {
     ctx.clearRect(0, 0, W, H);
     const spring = REDUCED ? 1 : 0.10;
-    /* colour drains from the five hues to the working green across
-       the first segment only - this is the handoff between sections */
-    const drain = Math.min(1, Math.max(0, prog * (states.length - 1)));
+    /* Colour drains from the five hues to the working green across the
+       segment that leaves the intro and enters chapter one, not across
+       the first segment. With three intro screens the old version went
+       green during intro 1, so screens 2 and 3 were already monochrome
+       before the chapters had started. */
+    const segs = states.length - 1;
+    const drain = Math.min(1, Math.max(0, prog * segs - (INTRO - 1)));
     for (let h = 0; h < HUES.length; h++) {
       for (let g = 0; g < TINTS.length; g++) {
         const list = buckets[h * TINTS.length + g];
@@ -642,6 +726,24 @@ const CHAPTERS = [
     });
     readout.classList.toggle('on', active >= 0);
     if (active >= 0 && active !== idx) { idx = active; nEl.textContent = idx + 1; modeEl.textContent = FEAT[idx].mode; }
+    updateSnap();
+  }
+
+  /* Snap control. Released while a gesture is in flight so nothing can be
+     blocked, re-armed shortly after it settles so a chapter actually holds,
+     and switched off completely once the last chapter's top has gone above
+     the viewport, which is what keeps the way out permanently open. */
+  const root = document.documentElement;
+  const lastStep = steps[steps.length - 1];
+  let snapTimer = null;
+
+  function updateSnap() {
+    if (REDUCED || !lastStep) return;
+    root.classList.remove('snap');
+    clearTimeout(snapTimer);
+    /* past the final chapter: leave snap off so the sections below scroll freely */
+    if (lastStep.getBoundingClientRect().top < -8) return;
+    snapTimer = setTimeout(() => { root.classList.add('snap'); }, 140);
   }
 
   resize(); addEventListener('resize', resize);
@@ -710,7 +812,7 @@ const GRAPH = {
     { id:'howfar', label:'How far can you go?',        state:'built', note:'Walk and drive catchments', to:['access','gis','blr'] },
     { id:'madeof', label:'What is Bangalore made of?', state:'built', note:'Classifying the urban fabric', to:['morph','gis','blr'] },
     { id:'pyrev',  label:'BIM Automation',             state:'built', note:'Revit API tooling in Python', to:['revit','py','arch'] },
-    { id:'sense',  label:'Sensing Instrument',         state:'wip',   note:'Multi-sensor field kit, Jetson Orin Nano', to:['hw','py','blr'] },
+    { id:'sense',  label:'Real Time Sensing',          state:'built', note:'Multi-sensor instrument on Jetson Orin Nano. SEED Chairman Award.', href:'real-time-sensing.html', to:['hw','py','blr'] },
     { id:'field',  label:'Sensing Bangalore',          state:'wip',   note:'Field notes from first deployments', to:['hw','blr'] },
     { id:'growth', label:'Which way is it growing?',   state:'wip',   note:'Built-up expansion over time', to:['rs','ml','blr'] },
     { id:'water',  label:'Where did the water go?',    state:'wip',   note:'Surface water and lake loss', to:['rs','gis','blr'] },
