@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prakriti Srimal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --mono: 'JetBrains Mono', ui-monospace, monospace;
+  --body: 'DM Sans', system-ui, sans-serif;
+  --bg:      #060807;
+  --ink:     #f0ede4;
+  --ink-mid: #929e96;
+  --ink-dim: #7d8c83;
+  --accent:  #2db354;
+  --rule:    #171d19;
+  --edge:    #5c6a62;   /* 3.53:1, for control borders */
+}
+
+html { scroll-behavior: smooth; background: var(--bg); }
+body { font-family: var(--body); background: var(--bg); color: var(--ink); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+:focus:not(:focus-visible) { outline: none; }
+.skip { position: absolute; left: -9999px; top: 0; z-index: 99; background: var(--ink); color: var(--bg); padding: 10px 16px; font-family: var(--mono); font-size: 12px; }
+.skip:focus { left: 12px; top: 12px; }
+
+.kicker { font-family: var(--mono); font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+.h2 { font-family: var(--mono); font-weight: 700; font-size: clamp(1.6rem, 4.4vw, 3rem); line-height: 1.06; letter-spacing: -0.03em; text-transform: uppercase; max-width: 20ch; }
+.sub { margin-top: 16px; max-width: 50ch; color: var(--ink-mid); line-height: 1.66; font-size: 15px; }
+
+/* ==========================================================
+   FIELD - one canvas, pinned from the title card all the way
+   through the chapters. The hero arc is simply state zero.
+   ========================================================== */
+#field { position: relative; }
+.field-pin {
+  position: sticky; top: 0; height: 100svh; overflow: hidden; z-index: 0;
+}
+#field-canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.field-readout {
+  position: absolute; top: clamp(66px, 9vh, 100px); left: clamp(20px, 6vw, 90px); z-index: 3;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: var(--ink-dim); line-height: 1.9; pointer-events: none;
+  opacity: 0; transition: opacity 300ms ease;
+}
+.field-readout.on { opacity: 1; }
+.field-readout b { color: var(--accent); font-weight: 500; }
+
+/* Chapters glide past too easily on a fast wheel/trackpad flick.
+
+   scroll-snap-type has to sit on the element that actually scrolls,
+   which on this page is html itself, not .field-flow, since that div
+   has no overflow set, so snap rules on it are ignored.
+
+   Snap is applied via a class toggled from JS, not statically, because
+   both static options fail here:
+
+   - "mandatory" alone traps the page. It requires the scroll to rest
+     on a snap point, and only the hero and four chapters have any, so
+     scrolling down from the last chapter found nothing below it and
+     got dragged back. Adding snap points to the sections below does
+     not help either: they are several viewports tall, and mandatory
+     would then fight any attempt to read the middle of one.
+
+   - "proximity" alone does not do the job asked for. It only pulls in
+     once a scroll has already come to rest near a snap point, so a
+     hard flick still passes straight through several chapters.
+
+   So: snap is released while a gesture is in flight, re-applied once
+   it settles (which is what makes a chapter hold), and switched off
+   entirely once the last chapter's top has passed the viewport, which
+   is what keeps the exit into the sections below always open. */
+html { scroll-snap-type: none; }
+html.snap { scroll-snap-type: y mandatory; }
+.field-flow { position: relative; z-index: 2; margin-top: -100svh; pointer-events: none; }
+.intro-step, .sc-step {
+  scroll-snap-align: start;
+}
+
+/* --- three-part intro: hook, stakes, introduction --- */
+.intro-step {
+  min-height: 100svh; display: flex; align-items: center;
+  padding: 96px clamp(20px, 6vw, 90px) 84px;
+}
+.intro-type { max-width: 1000px; pointer-events: auto; }
+.intro-lead {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: clamp(18px, 2.4vw, 28px);
+}
+.intro-line {
+  font-family: var(--mono); font-weight: 700;
+  font-size: clamp(1.7rem, 5.4vw, 4.2rem); line-height: 1.06;
+  letter-spacing: -0.035em;
+}
+.intro-stat { font-size: clamp(1.9rem, 6.4vw, 4.8rem); line-height: 1.02; }
+.intro-sub {
+  margin-top: clamp(22px, 2.8vw, 32px); font-family: var(--mono);
+  font-size: clamp(0.82rem, 1.6vw, 1.02rem); line-height: 1.6;
+  color: var(--ink-mid); max-width: 44ch;
+}
+.intro-roles { max-width: 50ch; }
+#intro-3 .intro-line { text-transform: none; }
+.gl { position: relative; display: block; }
+.gl::before, .gl::after { content: attr(data-t); position: absolute; left: 0; top: 0; width: 100%; pointer-events: none; user-select: none; clip-path: inset(100% 0 0 0); }
+.gl::before { color: #ff4fa0; }
+.gl::after  { color: #4fd6e8; }
+.glitching .gl { animation: glShift 380ms steps(1) 1; }
+.glitching .gl::before { animation: glA 380ms steps(1) 1; }
+.glitching .gl::after  { animation: glB 380ms steps(1) 1; }
+@keyframes glShift { 0%,100%{transform:none} 12%{transform:translate(2px,-1px)} 28%{transform:translate(-3px,1px)} 44%{transform:translate(1px,0)} 62%{transform:translate(-2px,-1px)} 80%{transform:translate(1px,1px)} }
+@keyframes glA { 0%,100%{clip-path:inset(100% 0 0 0);transform:none} 10%{clip-path:inset(8% 0 74% 0);transform:translate(-7px,0)} 24%{clip-path:inset(52% 0 28% 0);transform:translate(6px,0)} 38%{clip-path:inset(20% 0 62% 0);transform:translate(-9px,0)} 55%{clip-path:inset(76% 0 6% 0);transform:translate(5px,0)} 70%{clip-path:inset(34% 0 48% 0);transform:translate(-4px,0)} 86%{clip-path:inset(62% 0 22% 0);transform:translate(8px,0)} }
+@keyframes glB { 0%,100%{clip-path:inset(100% 0 0 0);transform:none} 10%{clip-path:inset(60% 0 22% 0);transform:translate(7px,0)} 24%{clip-path:inset(14% 0 70% 0);transform:translate(-6px,0)} 38%{clip-path:inset(70% 0 12% 0);transform:translate(9px,0)} 55%{clip-path:inset(30% 0 54% 0);transform:translate(-5px,0)} 70%{clip-path:inset(80% 0 4% 0);transform:translate(4px,0)} 86%{clip-path:inset(44% 0 40% 0);transform:translate(-8px,0)} }
+
+/* --- chapter cards riding over the same field --- */
+.sc-step {
+  min-height: 100svh; display: flex; align-items: center; padding: 0 clamp(20px, 6vw, 90px);
+}
+.sc-step:nth-child(even) { justify-content: flex-end; }
+.sc-card { max-width: 420px; pointer-events: auto; background: rgba(6,8,7,0.86); border-left: 2px solid var(--accent); padding: clamp(22px, 2.4vw, 30px); opacity: 0.2; transition: opacity 300ms ease; }
+.sc-step.on .sc-card { opacity: 1; }
+.sc-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
+.sc-q { font-family: var(--mono); font-weight: 700; font-size: clamp(1.15rem, 2.5vw, 1.7rem); line-height: 1.18; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 12px; }
+.sc-p { font-size: 14.5px; line-height: 1.66; color: var(--ink-mid); }
+.sc-go {
+  display: inline-block; margin-top: 16px; text-decoration: none;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em;
+  text-transform: uppercase; color: var(--accent);
+  border: 1px solid var(--rule); padding: 11px 18px;
+  transition: border-color 160ms, background 160ms;
+}
+.sc-go:hover { border-color: var(--accent); background: rgba(45,179,84,0.08); }
+.sc-slot { margin-top: 14px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); border-top: 1px solid var(--rule); padding-top: 10px; }
+
+/* ==========================================================
+   INDEX
+   ========================================================== */
+#index { position: relative; z-index: 3; background: var(--bg); padding: clamp(70px, 9vw, 110px) clamp(20px, 6vw, 90px) clamp(50px, 6vw, 70px); }
+.ix { margin-top: clamp(30px, 4vw, 46px); border-top: 1px solid var(--rule); }
+.ix-row {
+  display: grid; grid-template-columns: 46px 1fr 130px 120px; gap: 16px; align-items: baseline;
+  padding: 15px 0; border-bottom: 1px solid var(--rule); font-family: var(--mono);
+  transition: background 160ms; text-decoration: none; color: inherit;
+}
+.ix-row:hover { background: rgba(45,179,84,0.045); }
+a.ix-row:hover .ix-q { color: var(--accent); }
+.ix-n { font-size: 11px; color: var(--ink-dim); letter-spacing: 0.1em; }
+.ix-q { font-size: clamp(0.85rem, 1.5vw, 1rem); line-height: 1.34; letter-spacing: -0.01em; transition: color 160ms; }
+.ix-arrow { color: var(--accent); font-size: 0.8em; }
+.ix-pl { font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim); }
+.ix-s { font-size: 11px; letter-spacing: 0.18em; text-transform: uppercase; color: var(--ink-dim); display: flex; align-items: center; gap: 8px; justify-content: flex-end; }
+.ix-s i { width: 7px; height: 7px; flex: none; border: 1px solid var(--ink-dim); }
+.ix-row[data-s="live"] .ix-s { color: var(--accent); }
+.ix-row[data-s="live"] .ix-s i { background: var(--accent); border-color: var(--accent); }
+.ix-row[data-s="drafting"] .ix-s i { background: var(--ink-dim); }
+.ix-row[data-s="live"] .ix-q { color: var(--ink); }
+.ix-row[data-s="planned"] .ix-q, .ix-row[data-s="drafting"] .ix-q { color: var(--ink-mid); }
+@media (max-width: 700px) {
+  .ix-row { grid-template-columns: 34px 1fr; }
+  .ix-pl, .ix-s { grid-column: 2; justify-content: flex-start; margin-top: 6px; }
+}
+
+/* ==========================================================
+   PRACTICE - the graph is the section. The path lives inside it.
+   ========================================================== */
+#practice { position: relative; z-index: 3; background: var(--bg); }
+.pr-head { padding: clamp(70px, 9vw, 110px) clamp(20px, 6vw, 90px) clamp(26px, 3.5vw, 40px); }
+
+.pr-stage {
+  position: relative; width: 100%;
+  height: clamp(430px, 74svh, 760px);
+  border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule);
+  overflow: hidden;
+}
+.pr-stage canvas { display: block; width: 100%; height: 100%; }
+.pr-hint {
+  position: absolute; bottom: 14px; right: clamp(16px, 4vw, 30px); z-index: 3; pointer-events: none;
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; color: var(--ink-dim);
+}
+.g-tip { position: absolute; z-index: 6; pointer-events: none; background: var(--bg); border: 1px solid var(--accent); padding: 10px 13px; max-width: 250px; opacity: 0; transition: opacity 120ms; }
+.g-tip.on { opacity: 1; }
+.t-kind { font-family: var(--mono); font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 5px; }
+.t-name { font-family: var(--mono); font-weight: 700; font-size: 13px; line-height: 1.25; }
+.t-sub  { font-size: 12px; color: var(--ink-mid); margin-top: 5px; line-height: 1.5; }
+
+@media (max-width: 780px) {
+  .pr-stage { height: clamp(400px, 64svh, 560px); }
+  .pr-hint { bottom: auto; top: 12px; right: 14px; }
+}
+
+/* The graph is a canvas: invisible to assistive tech, unreadable on a phone.
+   This list is the same data as real HTML. Hidden visually on desktop where
+   the graph works, but still in the accessibility tree, and shown for real
+   below 860px where the diagram is not usable. */
+.ch-list {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.ch-btn {
+  display: grid; grid-template-columns: 62px 1fr; gap: 14px; align-items: baseline;
+  min-height: 56px; padding: 14px 16px; text-align: left; cursor: pointer;
+  background: none; border: 1px solid var(--edge); color: var(--ink-mid);
+  font-family: var(--mono); transition: border-color 160ms, color 160ms, background 160ms;
+}
+.ch-btn:hover { border-color: var(--accent); color: var(--ink); }
+.ch-btn[aria-current="true"] { border-color: var(--accent); color: var(--ink); background: rgba(45,179,84,0.08); }
+.ch-btn .y { font-size: 11px; letter-spacing: 0.14em; color: var(--accent); }
+.ch-btn .n { font-size: 12px; letter-spacing: -0.01em; }
+.ch-btn .w { display: block; margin-top: 5px; font-size: 11px; color: var(--ink-dim); letter-spacing: 0.02em; }
+@media (max-width: 860px) {
+  .pr-stage { height: 300px; }
+}
+.visually-hidden {
+  position: absolute; width: 1px; height: 1px; margin: -1px;
+  padding: 0; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+.pr-foot { padding: clamp(26px, 4vw, 44px) clamp(20px, 6vw, 90px) clamp(70px, 9vw, 120px); }
+.pr-legend { display: flex; flex-wrap: wrap; gap: 12px 26px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); }
+.pr-legend span { display: flex; align-items: center; gap: 9px; }
+.lg { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.lg-a { background: var(--accent); }
+.lg-c { border: 1px solid var(--accent); }
+.lg-m { background: var(--ink-mid); }
+.lg-p { border: 1px solid var(--ink-dim); }
+.pr-actions { margin-top: clamp(30px, 4vw, 46px); display: flex; flex-wrap: wrap; gap: 12px; }
+.btn { font-family: var(--mono); font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase; text-decoration: none; padding: 15px 24px; min-height: 44px; display: inline-flex; align-items: center; border: 1px solid var(--edge); color: var(--ink); transition: border-color 160ms, color 160ms; }
+.btn:hover { border-color: var(--accent); color: var(--accent); }
+.btn.solid { background: var(--accent); border-color: var(--accent); color: #050a07; font-weight: 500; }
+
+footer { position: relative; z-index: 3; background: var(--bg); padding: 34px clamp(20px, 6vw, 90px); border-top: 1px solid var(--rule); font-family: var(--mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-dim); display: flex; flex-wrap: wrap; gap: 14px; justify-content: space-between; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; scroll-snap-type: none; }
+  .sc-card { transition: none; opacity: 1; transform: none; }
+  .glitching .gl, .glitching .gl::before, .glitching .gl::after { animation: none; }
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#index">Skip to content</a>
+
+<!-- ============ FIELD: title card + chapters, one canvas ============ -->
+<div id="field">
+  <div class="field-pin">
+    <canvas id="field-canvas" aria-hidden="true"></canvas>
+    <div class="field-readout" id="field-readout">Chapter <b id="fr-n">1</b> / <span id="fr-tot">4</span><br><span id="fr-mode"></span></div>
+  </div>
+
+  <div class="field-flow">
+
+    <section class="intro-step" id="intro-1">
+      <div class="intro-type">
+        <p class="intro-lead">Every city is a decision</p>
+        <h1 class="intro-line">Your city works<br>the way it does.<br>It could have<br>worked otherwise.</h1>
+        <p class="intro-sub">Almost nobody has the evidence to say how.</p>
+      </div>
+    </section>
+
+    <section class="intro-step" id="intro-2">
+      <div class="intro-type">
+        <p class="intro-lead">The cost of not knowing</p>
+        <h2 class="intro-line intro-stat">Millions are lost<br>every year</h2>
+        <p class="intro-sub">to decisions made without the spatial evidence to support them.</p>
+      </div>
+    </section>
+
+    <section class="intro-step" id="intro-3">
+      <div class="intro-type">
+        <p class="intro-lead">So</p>
+        <h2 class="intro-line" id="hero-name">
+          <span class="gl" data-t="Hi, I'm Prakriti.">Hi, I'm Prakriti.</span>
+        </h2>
+        <p class="intro-sub intro-roles">Architect, urban designer, and urban data scientist.
+          I read cities.</p>
+      </div>
+    </section>
+
+    <div id="sc-steps"><!-- injected --></div>
+  </div>
+</div>
+
+<!-- ============ INDEX ============ -->
+<section id="index">
+  <div class="kicker">The Index</div>
+  <h2 class="h2">Every question, finished or not</h2>
+  <p class="sub">Mostly Bangalore, one question at a time. Nothing here is marked live until it actually is.</p>
+  <div class="ix" id="ix"><!-- injected --></div>
+</section>
+
+<!-- ============ PRACTICE: the graph is the section ============ -->
+<section id="practice">
+  <div class="pr-head">
+    <div class="kicker">The Practice</div>
+    <h2 class="h2">Every chapter added something to the network</h2>
+    <p class="sub">Seven years laid out left to right. Pick a year to see what it switched on. Drag to pan.</p>
+  </div>
+
+  <div class="pr-stage" id="pr-stage">
+    <canvas id="graph-canvas" role="img" aria-label="Network diagram of methods, places and projects. The same information is available as a list below."></canvas>
+    <div class="pr-hint">Click a year</div>
+    <div class="g-tip" id="g-tip"><div class="t-kind"></div><div class="t-name"></div><div class="t-sub"></div></div>
+
+  </div>
+
+  <nav class="ch-list" id="ch-list" aria-label="Chapters"></nav>
+  <p class="visually-hidden" id="ch-live" role="status" aria-live="polite"></p>
+
+  <div class="pr-foot">
+    <div class="pr-legend">
+      <span><i class="lg lg-c"></i> Chapter</span>
+      <span><i class="lg lg-a"></i> Anchor / published</span>
+      <span><i class="lg lg-m"></i> Method or place</span>
+      <span><i class="lg lg-p"></i> In progress</span>
+    </div>
+    <div class="pr-actions">
+      <a class="btn solid" href="mailto:prakritisrimal@gmail.com">Email</a>
+      <a class="btn" href="https://www.linkedin.com/in/prakriti-srimal-7390ab1a5/" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="btn" href="https://github.com/psrimal" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span>Prakriti Srimal &nbsp;·&nbsp; Bangalore</span>
+  <span id="yr"></span>
+</footer>
+
+<script>
+'use strict';
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const dpr = () => Math.min(devicePixelRatio || 1, 2);
+document.getElementById('yr').textContent = '© ' + new Date().getFullYear();
+
+const HUES  = ['#ff4fa0', '#4fd6e8', '#ffa023', '#a06dff', '#2db354'];
+const HUE_W = [0.20, 0.22, 0.16, 0.16, 0.26];
+const TINTS = ['#1c6e37', '#2db354', '#6de89a'];
+function pickHue(r) { let a = 0; for (let i = 0; i < HUE_W.length; i++) { a += HUE_W[i]; if (r < a) return i; } return HUE_W.length - 1; }
+function hex2rgb(h) { return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
+function mix(a, b, t) { return 'rgb(' + Math.round(a[0]+(b[0]-a[0])*t) + ',' + Math.round(a[1]+(b[1]-a[1])*t) + ',' + Math.round(a[2]+(b[2]-a[2])*t) + ')'; }
+const HUES_RGB = HUES.map(hex2rgb), TINTS_RGB = TINTS.map(hex2rgb);
+
+/* ==========================================================
+   CHAPTERS - single source of truth.
+   featured:true also gets a screen in the pinned field.
+   Keep that to four; each one costs a full screen of scroll.
+   ========================================================== */
+const CHAPTERS = [
+  { q:'What happens if everything is fifteen minutes away?',
+    p:"Post-pandemic reurbanisation read through fifteen-minute neighbourhood principles, machine learning and generative design. The master's thesis, and the point where the whole practice turned.",
+    slot:'isochrone surfaces + generated massing', shape:'isochrone', place:'London', status:'live', featured:true, mode:'Isochrone bands', link:'isochronic-city.html' },
+  { q:'Why did London feel warmer than Dubai?',
+    p:'A city built for sixty kilometres an hour and a city built for five produce different numbers of human encounters. Pace is a design decision, and warmth may be a property of streets rather than people.',
+    slot:'street speed limits + pedestrian volumes', shape:'nightlights', place:'London / Dubai', status:'live', featured:true, mode:'The city at night', link:'speed-of-a-city.html' },
+  { q:'How far can you actually get?',
+    p:'Walk and drive catchments across the city. Which neighbourhoods reach what they need, and which are entirely dependent on a car.',
+    slot:'isochrone catchments', shape:'interchange', place:'Bangalore', status:'live', featured:true, mode:'Interchange', link:null },
+  { q:'What is Bangalore actually made of?',
+    p:'Street, block and building grain, from the organic pete to the plotted north.',
+    slot:'morphometrics', shape:'grid', place:'Bangalore', status:'live', featured:true, mode:'Fabric grid', link:null },
+
+  { q:'Which way is Bangalore growing?',   p:'Built-up expansion read year on year, to see whether the city is spreading north, east, or simply thickening where it already is.', slot:'built-up classification raster', shape:'radial', place:'Bangalore', status:'drafting', featured:false, mode:'Radial spread', link:null },
+  { q:'Where did the water go?',           p:'The lake chain as it was, against what is left. Surface water is the clearest record of what a city chose to build over.', slot:'surface water time series', shape:'basins', place:'Bangalore', status:'drafting', featured:false, mode:'Chain of basins', link:null },
+  { q:'What does the city sound like?',    p:'First deployments of the sensing instrument, logged and mapped.', slot:'Jetson field logs', shape:'flow', place:'Bangalore', status:'drafting', featured:false, mode:'Flow', link:null },
+  { q:'Where is Bangalore hottest?',       p:'Local climate zones against surface temperature. Heat is not distributed the way the map of the city suggests it should be.', slot:'LST + climate zone layer', shape:'ridge', place:'Bangalore', status:'planned', featured:false, mode:'Thermal ridge', link:null },
+  { q:'Where did the green go?',           p:'Canopy and vegetation change across two decades.', slot:'NDVI time series', shape:'flow', place:'Bangalore', status:'planned', featured:false, mode:'Canopy flow', link:null },
+  { q:'Where does Bangalore flood?',       p:'Recorded incidents against the lost water network, not elevation alone.', slot:'incidents + rajakaluve network', shape:'basins', place:'Bangalore', status:'planned', featured:false, mode:'Basins', link:null },
+  { q:'Where should new transit go?',      p:'PTAL gaps against density that is currently unserved.', slot:'GTFS + population raster', shape:'rings', place:'Bangalore', status:'planned', featured:false, mode:'Rings', link:null },
+  { q:'What shape is the street network?', p:'Space syntax at city scale: integration, choice, depth.', slot:'cleaned road network', shape:'spiral', place:'Bangalore', status:'planned', featured:false, mode:'Spiral', link:null },
+  { q:'What is mobility worth?',           p:'Land value against corridor accessibility.', slot:'price data (sourcing unresolved)', shape:'band', place:'Bangalore', status:'planned', featured:false, mode:'Band', link:null }
+];
+
+/* ==========================================================
+   1 + 2. THE FIELD
+   State 0 is the title-card arc. States 1..n are the chapters.
+   Scrolling off the title card morphs the geometry AND drains
+   the five hues down to the working green. One continuous move,
+   no cut between sections.
+   ========================================================== */
+(function () {
+  const FEAT = CHAPTERS.filter(c => c.featured);
+
+  document.getElementById('sc-steps').innerHTML = FEAT.map((c, i) => `
+    <div class="sc-step">
+      <div class="sc-card">
+        <div class="sc-num">Chapter ${String(i + 1).padStart(2, '0')}</div>
+        <h2 class="sc-q">${c.q}</h2>
+        <p class="sc-p">${c.p}</p>
+        <div class="sc-slot">Slot: ${c.slot}</div>
+        ${c.link ? '<a class="sc-go" href="' + c.link + '">Read the chapter &nearr;</a>' : ''}
+      </div>
+    </div>`).join('');
+  document.getElementById('fr-tot').textContent = FEAT.length;
+
+  const wrapEl = document.getElementById('field');
+  const cv = document.getElementById('field-canvas'), ctx = cv.getContext('2d');
+  const steps = [...document.getElementById('sc-steps').children];
+  const readout = document.getElementById('field-readout');
+  const nEl = document.getElementById('fr-n'), modeEl = document.getElementById('fr-mode');
+
+  /* stable hash: lets a generator lay out a fixed set of roads or blocks
+     and then scatter points along them, instead of a pure starburst */
+  const hsh = (n, k) => { const v = Math.sin(n * 127.1 + k * 311.7) * 43758.5453; return v - Math.floor(v); };
+
+  const SHAPES = {
+    /* state 0 - the title-card arc */
+    arc: (r, W, H) => {
+      const u = Math.pow(r(), 0.6);
+      const g = (r() + r() + r() - 1.5) / 1.5;
+      const spread = 0.022 + Math.pow(u, 1.5) * 0.20;
+      return [(0.26 + u * 0.82) * W + g * spread * W, (0.94 - Math.pow(u, 1.3) * 0.84) * H + g * spread * H * 1.7];
+    },
+    radial: (r, W, H) => { const a = r()*6.2832, rad = Math.pow(r(),0.45); return [W/2+Math.cos(a)*rad*W*0.44, H/2+Math.sin(a)*rad*H*0.42]; },
+    basins: (r, W, H) => { const k = Math.floor(r()*9), bx = 0.13+(k/8)*0.74, by = 0.78-(k/8)*0.56, j = Math.pow(r(),0.55)*0.055, a = r()*6.2832; return [(bx+Math.cos(a)*j)*W, (by+Math.sin(a)*j*1.8)*H]; },
+    rings:  (r, W, H) => { const ring = 0.15+Math.floor(r()*5)*0.17, a = r()*6.2832, j = 0.010+r()*0.020; return [W/2+Math.cos(a)*(ring+j)*W*0.78, H/2+Math.sin(a)*(ring+j)*H*0.90]; },
+    band:   (r, W, H) => { const g = (r()+r()+r()-1.5)/1.5; return [0.06*W+r()*0.88*W, H/2+g*H*0.26]; },
+
+    /* One clean circle. Not concentric rings: every dot sits on a single
+       ring, thin enough to read as one drawn line, with a faint scatter
+       inside so it does not look like a hollow cut-out. Listed in UNIFORM
+       so the frame fit keeps it round instead of stretching it wide. */
+    circle: (r, W, H) => {
+      const a = r() * 6.2832;
+      if (r() < 0.86) {
+        const rad = 0.40 + (r() - 0.5) * 0.018;          /* the ring itself */
+        return [W/2 + Math.cos(a) * rad * W, H/2 + Math.sin(a) * rad * W];
+      }
+      const rad = Math.pow(r(), 0.7) * 0.36;             /* sparse interior */
+      return [W/2 + Math.cos(a) * rad * W, H/2 + Math.sin(a) * rad * W];
+    },
+
+
+    /* what Bangalore is made of - the v28 fabric grid, unchanged */
+    grid:   (r, W, H) => { const c = 22, gx = Math.floor(r()*c), gy = Math.floor(r()*13); return [(0.08+(gx/c)*0.84)*W+(r()-0.5)*10, (0.12+(gy/13)*0.76)*H+(r()-0.5)*10]; },
+
+    /* chapter 02 - the coastal city at night from orbit.
+       A filigree of short streets, densest at the core and thinning outward,
+       long highways running into the dark, isolated settlements, a lit
+       shoreline, and a sea the light stops dead at. */
+    nightlights: (r, W, H) => {
+      const cx = 0.44 * W, cy = 0.62 * H;
+      const coastY = x => (0.17 - (x / W) * 0.13 + Math.sin((x / W) * 4.1) * 0.028) * H;
+      const dry = (x, y) => (y < coastY(x)) ? [x, coastY(x) + (coastY(x) - y) * 0.55 + 2] : [x, y];
+      const k = r();
+
+      if (k < 0.56) {                       /* the street filigree */
+        const seg = Math.floor(r() * 420);
+        const rad = Math.pow(hsh(seg, 1), 1.55) * 0.44;         /* core-biased */
+        const ang = hsh(seg, 2) * 6.2832;
+        const ox = cx + Math.cos(ang) * rad * W * 1.24;
+        const oy = cy + Math.sin(ang) * rad * H * 1.16;
+        const dir = hsh(seg, 3) * 3.1416;                       /* street bearing */
+        const len = (0.012 + hsh(seg, 4) * 0.055) * W * (0.45 + rad * 1.8);
+        const t = r() - 0.5;
+        return dry(ox + Math.cos(dir) * len * t + (r() - 0.5) * 3,
+                   oy + Math.sin(dir) * len * t + (r() - 0.5) * 3);
+      }
+      if (k < 0.71) {                       /* the core */
+        const a = r() * 6.2832, rad = Math.pow(r(), 1.0) * 0.062;
+        return dry(cx + Math.cos(a) * rad * W * 1.3, cy + Math.sin(a) * rad * H * 1.3);
+      }
+      if (k < 0.84) {                       /* highways out into the black */
+        const seg = Math.floor(r() * 8);
+        const a = 0.2 + hsh(seg, 5) * 5.85;
+        const t = 0.26 + Math.pow(r(), 0.62) * 0.80;
+        const bend = Math.sin(t * 2.9 + seg) * 0.06;
+        return dry(cx + Math.cos(a + bend) * t * W * 0.90, cy + Math.sin(a + bend) * t * H * 0.84);
+      }
+      if (k < 0.93) {                       /* lit shoreline */
+        const t = r(), x = (0.03 + t * 0.94) * W;
+        return [x, coastY(x) + (0.005 + Math.pow(r(), 2.6) * 0.042) * H];
+      }
+      const seg = Math.floor(r() * 26);     /* outlying settlements */
+      const ox = (0.02 + hsh(seg, 6) * 0.96) * W, oy = (0.22 + hsh(seg, 7) * 0.74) * H;
+      const a = r() * 6.2832, rad = Math.pow(r(), 0.55) * (0.006 + hsh(seg, 8) * 0.014);
+      return dry(ox + Math.cos(a) * rad * W * 1.8, oy + Math.sin(a) * rad * H * 2.2);
+    },
+
+    /* chapter 03 - a multi-level interchange from the air. Two carriageways
+       crossing at a shallow angle, long sweeping connectors rather than tidy
+       cloverleaf circles, wedge medians between them, a fine-grain low-rise
+       field on one side and tower footprints on the other. */
+    interchange: (r, W, H) => {
+      const AR = W / H;
+      /* a straight multi-lane road: angle, offset from centre, lane count */
+      const road = (ang, cxp, cyp, lanes, gapAt, spread, t, lane) => {
+        const ca = Math.cos(ang), sa = Math.sin(ang);
+        const u = (t - 0.5) * 1.55;
+        let off = (lane - (lanes - 1) / 2) * spread;
+        if (lane >= gapAt) off += spread * 1.9;                /* the median */
+        return [ (cxp + u * ca - off * sa) * W, (cyp + (u * sa + off * ca) * AR) * H ];
+      };
+      const k = r();
+
+      if (k < 0.20) {                       /* carriageway A - 8 lanes, shallow */
+        return road(-0.26, 0.50, 0.46, 8, 4, 0.0088, r(), Math.floor(r() * 8));
+      }
+      if (k < 0.36) {                       /* carriageway B - 6 lanes, crossing */
+        return road(0.62, 0.47, 0.54, 6, 3, 0.0090, r(), Math.floor(r() * 6));
+      }
+      if (k < 0.60) {                       /* eight connectors, hung off the crossing */
+        const c = Math.floor(r() * 8);
+        const qx = (c % 2) ? 1 : -1, qy = (c < 4) ? -1 : 1;
+        const ox = 0.49 + qx * (0.140 + hsh(c, 21) * 0.080);
+        const oy = 0.50 + qy * (0.125 + hsh(c, 22) * 0.070);
+        const rad = 0.100 + hsh(c, 23) * 0.130;
+        const toward = Math.atan2(-qy, -qx);            /* open back at the crossing */
+        const a = toward - 1.05 + r() * 2.10;
+        const lane = Math.floor(r() * 2) * 0.0085;
+        return [ (ox + Math.cos(a) * (rad + lane)) * W,
+                 (oy + Math.sin(a) * (rad + lane) * AR) * H + (r() - 0.5) * 3 ];
+      }
+      if (k < 0.68) {                       /* two tight teardrop loops */
+        const q = Math.floor(r() * 2);
+        const ox = q ? 0.665 : 0.315, oy = q ? 0.635 : 0.375;
+        const a = r() * 6.2832;
+        const rad = 0.052 * (0.55 + 0.65 * Math.pow(Math.abs(Math.sin((a + (q ? 2.2 : -0.7)) / 2)), 1.5));
+        return [ (ox + Math.cos(a) * rad) * W, (oy + Math.sin(a) * rad * AR) * H ];
+      }
+      if (k < 0.74) {                       /* wedge medians caught between ramps */
+        const g = Math.floor(r() * 7);
+        const gx = 0.16 + hsh(g, 26) * 0.68, gy = 0.24 + hsh(g, 27) * 0.52;
+        const a = r() * 6.2832, rad = Math.pow(r(), 0.5) * (0.014 + hsh(g, 28) * 0.020);
+        return [ (gx + Math.cos(a) * rad) * W, (gy + Math.sin(a) * rad * AR * 0.7) * H ];
+      }
+      if (k < 0.90) {                       /* fine-grain low-rise, upper band */
+        const b = Math.floor(r() * 88);
+        const bx = 0.01 + hsh(b, 29) * 0.97, by = 0.015 + hsh(b, 30) * 0.185;
+        const bw = 0.019 + hsh(b, 31) * 0.024, bh = 0.013 + hsh(b, 32) * 0.017;
+        return [ (bx + r() * bw) * W, (by + r() * bh) * H ];
+      }
+      const t = Math.floor(r() * 6);        /* tower footprints, lower band */
+      const tx = 0.05 + hsh(t, 33) * 0.80, ty = 0.80 + hsh(t, 34) * 0.13;
+      const tw = 0.062 + hsh(t, 35) * 0.080, th = 0.050 + hsh(t, 36) * 0.070;
+      return [ (tx + r() * tw) * W, (ty + r() * th) * H ];
+    },
+
+    spiral: (r, W, H) => { const t = Math.pow(r(),0.6)*7.2, rad = t/7.2; return [W/2+Math.cos(t*2.1)*rad*W*0.40, H/2+Math.sin(t*2.1)*rad*H*0.40]; },
+    ridge:  (r, W, H) => { const u = r(), g = (r()+r()-1), spine = 0.5+Math.sin(u*7.4)*0.16+Math.sin(u*2.1)*0.09; return [0.05*W+u*0.90*W, spine*H+g*H*0.13*(0.4+Math.abs(Math.sin(u*3.1)))]; },
+    flow:   (r, W, H) => { const lane = Math.floor(r()*7), u = r(); return [0.04*W+u*0.92*W, (0.16+(lane/6)*0.68)*H+Math.sin(u*5.5+lane)*H*0.045+(r()-0.5)*12]; },
+    /* chapter 01 - isochrones. Nested time contours, lobed rather than
+       circular, with fingers reaching out along the fast corridors. */
+    isochrone: (r, W, H) => {
+      const cx = 0.50 * W, cy = 0.50 * H;
+      const CORR = [0.30, 1.25, 2.15, 3.40, 4.30, 5.30];      /* corridor bearings */
+      const lobe = (a, L) => {
+        const p = L * 1.7;
+        return 1 + 0.24 * Math.sin(3 * a + 0.9 + p)
+                 + 0.16 * Math.sin(5 * a - 0.4 + p)
+                 + 0.09 * Math.sin(8 * a + 2.1 + p);
+      };
+      const finger = a => {
+        let best = 0;
+        for (let i = 0; i < CORR.length; i++) {
+          let d = Math.abs(((a - CORR[i]) % 6.2832 + 6.2832) % 6.2832);
+          if (d > 3.1416) d = 6.2832 - d;
+          best = Math.max(best, Math.max(0, 1 - d / 0.34));
+        }
+        return best;
+      };
+      const put = (a, rad) => {
+        const rr = Math.min(rad, 0.44);
+        return [cx + Math.cos(a) * rr * W * 1.02, cy + Math.sin(a) * rr * H * 0.94];
+      };
+      const k = r();
+
+      if (k < 0.48) {                       /* the contour lines */
+        const L = Math.floor(r() * 5), a = r() * 6.2832;
+        const base = 0.072 + L * 0.078;
+        const rad = base * lobe(a, L) * (1 + finger(a) * 0.55 * (L / 4)) + (r() - 0.5) * 0.009;
+        return put(a, rad);
+      }
+      if (k < 0.87) {                       /* fill between them, denser inward */
+        const a = r() * 6.2832, t = Math.pow(r(), 1.7);
+        const L = Math.min(4, Math.floor(t * 5));
+        const rad = (0.072 + t * 0.32) * lobe(a, L) * (1 + finger(a) * 0.55 * (L / 4));
+        return put(a, rad);
+      }
+      if (k < 0.96) {                       /* the corridors themselves */
+        const i = Math.floor(r() * CORR.length);
+        const a = CORR[i] + (r() - 0.5) * 0.055;
+        return put(a, 0.03 + Math.pow(r(), 0.8) * 0.43);
+      }
+      return put(r() * 6.2832, Math.pow(r(), 0.9) * 0.042);   /* the centre */
+    },
+  };
+  const seeded = s => () => { s = (s * 16807) % 2147483647; return (s - 1) / 2147483646; };
+
+  let W, H, N = 0, raf = null, prog = 0, idx = -1, clock = 0;
+  let sx, sy, tx, ty, hue, tint, size, alpha, phase, states = [], buckets = [];
+  /* One distinct formation per screen, so the field visibly changes on every
+     scroll rather than sitting still. The intro runs an open scatter, then a
+     dispersed band under "millions are lost", then the dots gather into a
+     single clean circle as the introduction lands. */
+  const INTRO = 3;
+  const SEQ = ['arc', 'band', 'circle'].concat(FEAT.map(c => c.shape));
+  /* shapes that must keep their proportions rather than fill the frame */
+  const UNIFORM = new Set(['circle']);
+
+  function build() {
+    N = W < 720 ? 2000 : 4600;
+    sx = new Float32Array(N); sy = new Float32Array(N);
+    tx = new Float32Array(N); ty = new Float32Array(N);
+    hue = new Uint8Array(N); tint = new Uint8Array(N);
+    size = new Uint8Array(N); alpha = new Float32Array(N); phase = new Float32Array(N);
+    states = SEQ.map(() => ({ x: new Float32Array(N), y: new Float32Array(N) }));
+
+    SEQ.forEach((name, si) => {
+      /* Seed per index, not per shape name: every screen gets its own point
+         set, so two screens that happen to share a shape still differ. */
+      const r = seeded(20260823 + si * 7919);
+      const fn = SHAPES[name] || SHAPES.radial;
+      const X = states[si].x, Y = states[si].y;
+      for (let i = 0; i < N; i++) { const p = fn(r, W, H); X[i] = p[0]; Y[i] = p[1]; }
+      /* normalise every formation to the same frame, so none of them
+         floats in a pool of empty space. percentile bounds so a few
+         stray points can't shrink the whole thing. */
+      const pct = (arr, q) => {
+        const c = Float32Array.from(arr); c.sort();
+        return c[Math.min(c.length - 1, Math.max(0, Math.round(q * (c.length - 1))))];
+      };
+      const x0 = pct(X, 0.012), x1 = pct(X, 0.988);
+      const y0 = pct(Y, 0.012), y1 = pct(Y, 0.988);
+      const mx = W * 0.035, my = H * 0.045;
+      let sx2 = (W - mx * 2) / Math.max(x1 - x0, 1);
+      let sy2 = (H - my * 2) / Math.max(y1 - y0, 1);
+      /* Shapes whose whole point is their proportion get one scale for both
+         axes, otherwise per-axis fill stretches a circle into a wide ellipse.
+         They are centred instead of corner-anchored so they stay in frame. */
+      let ox = mx, oy = my;
+      if (UNIFORM.has(name)) {
+        const s2 = Math.min(sx2, sy2);
+        sx2 = sy2 = s2;
+        ox = (W - (x1 - x0) * s2) / 2;
+        oy = (H - (y1 - y0) * s2) / 2;
+      }
+      for (let i = 0; i < N; i++) {
+        X[i] = ox + (X[i] - x0) * sx2;
+        Y[i] = oy + (Y[i] - y0) * sy2;
+      }
+    });
+
+    const r2 = seeded(424242);
+    const lists = Array.from({ length: HUES.length * TINTS.length }, () => []);
+    for (let i = 0; i < N; i++) {
+      const a = r2(), b = r2(), c = r2();
+      hue[i] = pickHue(r2());
+      tint[i] = a < 0.52 ? 0 : (a < 0.90 ? 1 : 2);
+      size[i] = b < 0.09 ? 6 : (b < 0.37 ? 4 : 3);
+      alpha[i] = 0.24 + c * 0.62;
+      phase[i] = r2() * 6.2832;
+      sx[i] = states[0].x[i]; sy[i] = states[0].y[i]; tx[i] = sx[i]; ty[i] = sy[i];
+      lists[hue[i] * TINTS.length + tint[i]].push(i);
+    }
+    buckets = lists.map(l => Int32Array.from(l));
+  }
+
+  function resize() {
+    const r = dpr(); W = cv.clientWidth; H = cv.clientHeight;
+    cv.width = W * r; cv.height = H * r; ctx.setTransform(r, 0, 0, r, 0, 0);
+    build(); targets(); draw(0);
+  }
+  const ease = t => t < 0.5 ? 4*t*t*t : 1 - Math.pow(-2*t+2, 3)/2;
+
+  function targets() {
+    const last = states.length - 1;
+    const seg = Math.min(prog * last, last - 0.0001);
+    const i0 = Math.max(0, Math.floor(seg)), tt = ease(seg - i0);
+    const A = states[i0], B = states[Math.min(i0 + 1, last)];
+    for (let i = 0; i < N; i++) {
+      tx[i] = A.x[i] + (B.x[i] - A.x[i]) * tt;
+      ty[i] = A.y[i] + (B.y[i] - A.y[i]) * tt;
+    }
+  }
+
+  function draw(t) {
+    ctx.clearRect(0, 0, W, H);
+    const spring = REDUCED ? 1 : 0.10;
+    /* Colour drains from the five hues to the working green across the
+       segment that leaves the intro and enters chapter one, not across
+       the first segment. With three intro screens the old version went
+       green during intro 1, so screens 2 and 3 were already monochrome
+       before the chapters had started. */
+    const segs = states.length - 1;
+    const drain = Math.min(1, Math.max(0, prog * segs - (INTRO - 1)));
+    for (let h = 0; h < HUES.length; h++) {
+      for (let g = 0; g < TINTS.length; g++) {
+        const list = buckets[h * TINTS.length + g];
+        if (!list || !list.length) continue;
+        ctx.fillStyle = mix(HUES_RGB[h], TINTS_RGB[g], drain);
+        for (let k = 0; k < list.length; k++) {
+          const i = list[k];
+          sx[i] += (tx[i] - sx[i]) * spring;
+          sy[i] += (ty[i] - sy[i]) * spring;
+          const jx = REDUCED ? 0 : Math.sin(t * 0.7 + phase[i]) * 3.2;
+          const jy = REDUCED ? 0 : Math.cos(t * 0.55 + phase[i] * 1.3) * 2.6;
+          ctx.globalAlpha = alpha[i] * (REDUCED ? 1 : 0.62 + 0.38 * Math.sin(t * 0.9 + phase[i]));
+          ctx.fillRect((sx[i] + jx) | 0, (sy[i] + jy) | 0, size[i], size[i]);
+        }
+      }
+    }
+    ctx.globalAlpha = 1;
+  }
+  function loop() { clock += 0.016; draw(clock); raf = requestAnimationFrame(loop); }
+
+  function onScroll() {
+    const r = wrapEl.getBoundingClientRect();
+    prog = Math.max(0, Math.min(1, -r.top / Math.max(r.height - innerHeight, 1)));
+    targets();
+    let active = -1;
+    steps.forEach((s, i) => {
+      const b = s.getBoundingClientRect(), mid = b.top + b.height / 2;
+      const on = mid > innerHeight * 0.16 && mid < innerHeight * 0.88;
+      s.classList.toggle('on', on);
+      if (on) active = i;
+    });
+    readout.classList.toggle('on', active >= 0);
+    if (active >= 0 && active !== idx) { idx = active; nEl.textContent = idx + 1; modeEl.textContent = FEAT[idx].mode; }
+    updateSnap();
+  }
+
+  /* Snap control. Released while a gesture is in flight so nothing can be
+     blocked, re-armed shortly after it settles so a chapter actually holds,
+     and switched off completely once the last chapter's top has gone above
+     the viewport, which is what keeps the way out permanently open. */
+  const root = document.documentElement;
+  const lastStep = steps[steps.length - 1];
+  let snapTimer = null;
+
+  function updateSnap() {
+    if (REDUCED || !lastStep) return;
+    root.classList.remove('snap');
+    clearTimeout(snapTimer);
+    /* past the final chapter: leave snap off so the sections below scroll freely */
+    if (lastStep.getBoundingClientRect().top < -8) return;
+    snapTimer = setTimeout(() => { root.classList.add('snap'); }, 140);
+  }
+
+  resize(); addEventListener('resize', resize);
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+  if (REDUCED) draw(0);
+  else new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !raf) loop();
+    else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = null; }
+  }), { threshold: 0.01 }).observe(cv);
+})();
+
+/* glitch: short bursts, never continuous */
+(function () {
+  if (REDUCED) return;
+  const el = document.getElementById('hero-name');
+  let alive = true;
+  new IntersectionObserver(es => es.forEach(e => { alive = e.isIntersecting; }), { threshold: 0.15 }).observe(el);
+  (function burst() {
+    if (alive) { el.classList.add('glitching'); setTimeout(() => el.classList.remove('glitching'), 400); }
+    setTimeout(burst, 3400 + Math.random() * 4200);
+  })();
+})();
+
+/* ==========================================================
+   INDEX
+   ========================================================== */
+(function () {
+  document.getElementById('ix').innerHTML = CHAPTERS.map((c, i) => {
+    const tag = c.link ? 'a' : 'div', href = c.link ? ` href="${c.link}"` : '';
+    return `<${tag} class="ix-row" data-s="${c.status}"${href}>
+      <div class="ix-n">${String(i + 1).padStart(2, '0')}</div>
+      <div class="ix-q">${c.q}${c.link ? ' <span class="ix-arrow">↗</span>' : ''}</div>
+      <div class="ix-pl">${c.place}</div>
+      <div class="ix-s"><i></i>${c.status}</div>
+    </${tag}>`;
+  }).join('');
+})();
+
+/* ==========================================================
+   PRACTICE - the graph is the whole section.
+   Chapters are nodes on a chronological spine; the reader
+   panel is driven by whichever chapter is selected.
+   ========================================================== */
+
+/* always green, always labelled. edit this list to change them. */
+const ANCHORS = ['ldn', 'arch', 'blr', 'gis'];
+
+const GRAPH = {
+  methods: [
+    { id:'access', label:'Accessibility',    note:'Isochrones, PTAL, catchments' },
+    { id:'morph',  label:'Morphology',       note:'Street, block and building grain' },
+    { id:'rs',     label:'Remote Sensing',   note:'LULC, surface water, land surface temperature' },
+    { id:'ml',     label:'Machine Learning', note:'Classification and generative models' },
+    { id:'gis',    label:'Geospatial',       note:'Pipelines, projections, network data' },
+    { id:'py',     label:'Python',           note:'The tool underneath most of it' },
+    { id:'revit',  label:'Revit API',        note:'BIM automation for large AEC projects' },
+    { id:'hw',     label:'Hardware',         note:'Sensors, embedded compute, field kit' },
+    { id:'syntax', label:'Space Syntax',     note:'Configurational analysis of networks' },
+    { id:'arch',   label:'Architecture',     note:'Practice before the data' },
+    { id:'blr',    label:'Bangalore',        note:'The case study city' },
+    { id:'ldn',    label:'London',           note:'Bartlett B-Pro' }
+  ],
+  work: [
+    { id:'iso',    label:'IsoChronic City',            state:'built', note:"Master's thesis, Bartlett B-Pro", href:'isochronic-city.html', to:['access','ml','gis','ldn','morph','syntax'] },
+    { id:'speed',  label:'The Speed of a City',        state:'built', note:'Pace, pavements, and the odds of an encounter', href:'speed-of-a-city.html', to:['ldn','morph','access'] },
+    { id:'howfar', label:'How far can you go?',        state:'built', note:'Walk and drive catchments', to:['access','gis','blr'] },
+    { id:'madeof', label:'What is Bangalore made of?', state:'built', note:'Classifying the urban fabric', to:['morph','gis','blr'] },
+    { id:'pyrev',  label:'BIM Automation',             state:'built', note:'Revit API tooling in Python', to:['revit','py','arch'] },
+    { id:'sense',  label:'Sensing Instrument',         state:'wip',   note:'Multi-sensor field kit, Jetson Orin Nano', to:['hw','py','blr'] },
+    { id:'field',  label:'Sensing Bangalore',          state:'wip',   note:'Field notes from first deployments', to:['hw','blr'] },
+    { id:'growth', label:'Which way is it growing?',   state:'wip',   note:'Built-up expansion over time', to:['rs','ml','blr'] },
+    { id:'water',  label:'Where did the water go?',    state:'wip',   note:'Surface water and lake loss', to:['rs','gis','blr'] },
+    { id:'green',  label:'Where did the green go?',    state:'wip',   note:'Canopy and vegetation change', to:['rs','blr'] },
+    { id:'heat',   label:'Where is it hottest?',       state:'wip',   note:'Climate zones and surface temperature', to:['rs','ml','blr'] },
+    { id:'flood',  label:'Where does it flood?',       state:'wip',   note:'Incidents against the lost water network', to:['gis','rs','blr'] },
+    { id:'transit',label:'Where should transit go?',   state:'wip',   note:'PTAL gaps and underserved density', to:['access','gis','blr'] },
+    { id:'depth',  label:'Shape of the network',       state:'wip',   note:'Space syntax at city scale', to:['syntax','morph','blr'] },
+    { id:'value',  label:'What is mobility worth?',    state:'wip',   note:'Land value against corridor access', to:['access','gis','blr'] }
+  ]
+};
+
+/* the path. copy lifted verbatim from v22.
+   `lights` is what that chapter switched on. */
+const STORY = [
+  { yr:'2016', ch:'Architecture', lights:['arch'],
+    title:'The studio I loved most was urban design.',
+    body:'Designing for people and thinking about how a design would have an impact on them. That was the part that felt real. Not the building. The life inside it.',
+    org:'BMS College of Engineering · B.Arch', chips:[] },
+  { yr:'2022', ch:'London', lights:['ldn','arch'],
+    title:'I went to UCL not knowing what the course was about.',
+    body:'Best university in the world. My dream city. That was enough reason. I generally just get excited by things not knowing what they hold. As they unfold, I keep falling in love with them.',
+    org:'Bartlett School of Architecture · UCL B-Pro · MArch Urban Design', chips:[] },
+  { yr:'2023', ch:'IsoChronic City', lights:['iso','ml','syntax','access','morph','gis','ldn','speed'],
+    title:'As it unfolded, I kept falling in love with it.',
+    body:'Machine learning. Space syntax. Generative design. Applied to the 15-minute neighbourhood. The thesis that changed everything about how I understood what design could do.',
+    org:"Master's Thesis · UCL B-Pro · 2023", chips:[] },
+  { yr:'2023', ch:'Back home', lights:['arch','blr'],
+    title:'Came back. Did detail drawings for a year. Then I could see the ceiling.',
+    body:'New things are always fun. The question is what happens after the novelty wears off.',
+    org:'', chips:['Junior Architect','Adobe Photoshop','Google SketchUp','AutoCAD'] },
+  { yr:'2024', ch:'Automation', lights:['py','revit','pyrev','arch'],
+    title:'I used to run away from coding my entire life. Then I got a call.',
+    body:'Join a computational design team. Turned out to be an automation team. Zero coding background between all of us. Trained as architects, writing Python for Revit.',
+    org:'', chips:['Computational Designer','Python','RevitAPI','Grasshopper','RhinoInsideRevit'] },
+  { yr:'2025', ch:'The Transfer', lights:['gis','ml','blr','howfar','madeof','access'],
+    title:'I found a door. I walked through it.',
+    body:"This is the job I've loved the most. Whenever something interesting appeared, I volunteered. Business development. Data visualisation. Analytics. Building a sensor. The freedom to explore is the thing.",
+    org:'', chips:['Senior Urban Data Scientist','Python','QGIS','ArcGIS','Machine Learning'] },
+  { yr:'Now', ch:'Now', lights:['blr','rs','hw','sense','field','growth','water','green','heat','flood','transit','depth','value','syntax','ml'],
+    title:'Next in line. LLMs. ML. AI.',
+    body:'Applying the same spatial rigour to Bangalore as a case study. A rapidly growing city with vast amounts of unread spatial data. Building a real-time sensing instrument. Writing spatial analyses. Exploring machine learning models. The tools I know are not enough yet. That is the point.',
+    org:'', chips:['Python','GeoPandas','QGIS','pyRevit','Machine Learning','Space Syntax','Jetson Orin','SQL','Urban Design'] }
+];
+
+(function () {
+  const stage = document.getElementById('pr-stage');
+  const cv = document.getElementById('graph-canvas'), ctx = cv.getContext('2d');
+  const tip = document.getElementById('g-tip');
+
+  /* No panning. The world is sized to the stage, so the whole graph
+     is always on screen and always fits. */
+  let PADX = 74, PADY = 54;
+  let W = 0, H = 0, WW = 2200, WH = 1000, SC = 1;
+  let nodes = [], edges = [], byId = {}, chapterNodes = [], labels = [];
+  let hover = null, raf = null, clock = 0, sel = 0, lit = new Set(), tightLabels = false;
+  let m = { x: -999, y: -999, in: false }, C = {};
+
+  const F_CH_YR  = "700 12px 'JetBrains Mono', monospace";
+  const F_CH_SUB = "500 9.5px 'JetBrains Mono', monospace";
+  const F_METHOD = "500 11.5px 'JetBrains Mono', monospace";
+  const F_WORK   = "400 10.5px 'JetBrains Mono', monospace";
+
+  function palette() {
+    const cs = getComputedStyle(stage);
+    C = { ink: cs.getPropertyValue('--ink').trim(), mid: cs.getPropertyValue('--ink-mid').trim(),
+          dim: cs.getPropertyValue('--ink-dim').trim(), acc: cs.getPropertyValue('--accent').trim() };
+  }
+
+  function build() {
+    nodes = []; edges = []; byId = {}; chapterNodes = [];
+    GRAPH.methods.forEach(mm => {
+      const n = { ...mm, kind: 'method', deg: 0, tagged: true, anchor: ANCHORS.indexOf(mm.id) >= 0,
+                  x: Math.random() * WW, y: WH * (0.22 + Math.random() * 0.56), vx: 0, vy: 0 };
+      byId[mm.id] = n; nodes.push(n);
+    });
+    GRAPH.work.forEach(w => {
+      const n = { ...w, kind: 'work', deg: w.to.length, tagged: true,
+                  x: Math.random() * WW, y: WH * (0.16 + Math.random() * 0.68), vx: 0, vy: 0 };
+      byId[w.id] = n; nodes.push(n);
+      w.to.forEach(t => { if (byId[t]) { edges.push({ a: n, b: byId[t] }); byId[t].deg++; } });
+    });
+
+    /* chapters: pinned on a chronological spine across the full width */
+    STORY.forEach((c, i) => {
+      const hx = (0.045 + (i / (STORY.length - 1)) * 0.91) * WW;
+      const hy = WH * (0.5 + Math.sin(i * 1.05 + 0.4) * 0.19);
+      const n = { id: 'ch' + i, kind: 'chapter', idx: i, label: c.yr, sub: c.ch, tagged: true,
+                  note: c.ch, homeX: hx, homeY: hy, x: hx, y: hy, vx: 0, vy: 0, r: 10 };
+      byId[n.id] = n; nodes.push(n); chapterNodes.push(n);
+      const w = 1 / Math.sqrt(c.lights.length);
+      c.lights.forEach(t => {
+        if (!byId[t]) return;
+        /* a chapter called Architecture linked to a node called Architecture
+           draws as a line to itself. keep the pull, drop the line. */
+        const same = (byId[t].label || '').toLowerCase() === n.sub.toLowerCase();
+        edges.push({ a: n, b: byId[t], chapter: true, w: w, hidden: same });
+      });
+      if (i > 0) edges.push({ a: chapterNodes[i - 1], b: n, spine: true });
+    });
+
+    /* a method or project sits near the chapters that switched it on,
+       so the network fills the frame chronologically instead of balling up */
+    nodes.filter(n => n.kind !== 'chapter').forEach(n => {
+      const xs = STORY.map((c, i) => c.lights.indexOf(n.id) >= 0 ? chapterNodes[i].homeX : null).filter(v => v != null);
+      n.homeX = xs.length ? xs.reduce((a, b) => a + b, 0) / xs.length : WW * 0.5;
+      n.x = n.homeX + (Math.random() - 0.5) * 160;
+    });
+
+    /* untagged texture: no labels, no tooltips, no claims */
+    const hosts = nodes.filter(n => n.kind !== 'chapter');
+    const MINORS = W < 760 ? 80 : 175;
+    for (let i = 0; i < MINORS; i++) {
+      const host = hosts[(Math.random() * hosts.length) | 0];
+      const n = { id: 'u' + i, kind: 'minor', tagged: false,
+                  homeX: 40 + Math.random() * (WW - 80), homeY: 50 + Math.random() * (WH - 100),
+                  x: host.x + (Math.random() - 0.5) * 230, y: host.y + (Math.random() - 0.5) * 190, vx: 0, vy: 0 };
+      nodes.push(n);
+      edges.push({ a: n, b: host, minor: true });
+    }
+
+    nodes.forEach(n => {
+      if (n.kind === 'minor') n.r = Math.random() < 0.22 ? 2.6 : 1.8;
+      else if (n.kind === 'method') n.r = (n.anchor ? 6.5 : 4.5) + Math.min(n.deg, 9) * 1.05;
+      else if (n.kind === 'work') n.r = n.state === 'built' ? 6 : 4.8;
+    });
+  }
+
+  function solve(iters) {
+    const CUT = 115000;
+    for (let k = 0; k < iters; k++) {
+      const cool = 1 - k / iters;
+      for (let i = 0; i < nodes.length; i++) {
+        const a = nodes[i];
+        for (let j = i + 1; j < nodes.length; j++) {
+          const b = nodes[j];
+          const ddx = b.x - a.x, ddy = b.y - a.y;
+          const d2 = Math.max(ddx * ddx + ddy * ddy, 4);
+          if (d2 > CUT) continue;
+          const d = Math.sqrt(d2);
+          const st = (a.kind === 'minor' && b.kind === 'minor') ? 3200 : 34000;
+          const f = st / d2, fx = ddx / d * f, fy = ddy / d * f;
+          a.vx -= fx; a.vy -= fy; b.vx += fx; b.vy += fy;
+        }
+      }
+      for (const e of edges) {
+        const ddx = e.b.x - e.a.x, ddy = e.b.y - e.a.y;
+        const d = Math.max(Math.hypot(ddx, ddy), 1);
+        const rest = e.minor ? 88 : e.spine ? 240 : e.chapter ? 195 : 170;
+        const stiff = (e.minor ? 0.042 : e.spine ? 0.05 : 0.022) * (e.w || 1);
+        const f = (d - rest) * stiff, fx = ddx / d * f, fy = ddy / d * f;
+        e.a.vx += fx; e.a.vy += fy; e.b.vx -= fx; e.b.vy -= fy;
+      }
+      for (const n of nodes) {
+        if (n.kind === 'chapter') {
+          n.vx += (n.homeX - n.x) * 0.40;
+          n.vy += (n.homeY - n.y) * 0.34;
+        } else if (n.kind === 'minor') {
+          n.vx += (n.homeX - n.x) * 0.008;
+          n.vy += (n.homeY - n.y) * 0.008;
+        } else {
+          n.vy += (WH / 2 - n.y) * 0.0022;
+          n.vx += (n.homeX - n.x) * 0.010;
+        }
+        n.x += n.vx * 0.5 * cool; n.y += n.vy * 0.5 * cool;
+        n.vx *= 0.74; n.vy *= 0.74;
+        n.x = Math.max(30, Math.min(WW - 30, n.x));
+        n.y = Math.max(34, Math.min(WH - 34, n.y));
+      }
+    }
+  }
+
+  const px = n => PADX + n.x * SC;
+  const py = n => PADY + n.y * SC;
+
+  /* ---------- label placement, resolved once so nothing ever overlaps ---------- */
+  function layoutLabels() {
+    labels = [];
+    const TIGHT = W < 860;          /* too narrow for 34 labels; show only the fixed ones */
+    for (const n of nodes) {
+      if (!n.tagged) continue;
+      if (TIGHT && n.kind !== 'chapter' && !n.anchor) continue;
+      if (n.kind === 'chapter') {
+        ctx.font = F_CH_YR;
+        labels.push({ n: n, text: n.label, font: F_CH_YR, w: ctx.measureText(n.label).width,
+                      h: 12, ox: 0, oy: -(n.rr + 12), always: true, key: 'yr' });
+        ctx.font = F_CH_SUB;
+        const t = n.sub.toUpperCase();
+        labels.push({ n: n, text: t, font: F_CH_SUB, w: ctx.measureText(t).width,
+                      h: 10, ox: 0, oy: n.rr + 12, always: true, key: 'sub' });
+      } else {
+        const f = n.kind === 'method' ? F_METHOD : F_WORK;
+        ctx.font = f;
+        labels.push({ n: n, text: n.label, font: f, w: ctx.measureText(n.label).width,
+                      h: 11, ox: 0, oy: n.rr + 11, always: !!n.anchor, key: 'lbl' });
+      }
+    }
+    /* relax: push apart any two boxes that overlap, keep them on canvas */
+    for (let pass = 0; pass < 260; pass++) {
+      let moved = 0;
+      for (let i = 0; i < labels.length; i++) {
+        const A = labels[i], ax = px(A.n) + A.ox, ay = py(A.n) + A.oy;
+        for (let j = i + 1; j < labels.length; j++) {
+          const B = labels[j], bx = px(B.n) + B.ox, by = py(B.n) + B.oy;
+          const ovx = (A.w + B.w) / 2 + 7 - Math.abs(ax - bx);
+          const ovy = (A.h + B.h) / 2 + 4 - Math.abs(ay - by);
+          if (ovx <= 0 || ovy <= 0) continue;
+          const dir = (ay <= by) ? -1 : 1;
+          const push = Math.min(ovy, 5) * 0.5;
+          A.oy += dir * push; B.oy -= dir * push;
+          if (ovy > ovx) {
+            const dx = (ax <= bx) ? -1 : 1;
+            A.ox += dx * 1.4; B.ox -= dx * 1.4;
+          }
+          moved++;
+        }
+      }
+      /* keep every label inside the frame and near its node */
+      for (const L of labels) {
+        L.oy = Math.max(-46, Math.min(46, L.oy));
+        L.ox = Math.max(-52, Math.min(52, L.ox));
+        const y = py(L.n) + L.oy, x = px(L.n) + L.ox;
+        if (y < 12) L.oy += 12 - y;
+        if (y > H - 10) L.oy -= y - (H - 10);
+        if (x - L.w / 2 < 8) L.ox += 8 - (x - L.w / 2);
+        if (x + L.w / 2 > W - 8) L.ox -= (x + L.w / 2) - (W - 8);
+      }
+      if (!moved) break;
+    }
+    tightLabels = TIGHT;
+    for (const L of labels) { L.n.lab = L.n.lab || {}; L.n.lab[L.key] = L; }
+  }
+
+  function relayout() {
+    PADX = W < 860 ? 28 : 74; PADY = W < 860 ? 34 : 54;
+    const availW = Math.max(220, W - PADX * 2), availH = Math.max(180, H - PADY * 2);
+    WH = 1000; WW = Math.round(1000 * availW / availH); SC = availH / WH;
+    build(); solve(300);
+    /* node sizes follow the frame so a small stage can't overlap */
+    const RS = Math.max(0.55, Math.min(1, SC / 0.62));
+    nodes.forEach(n => n.rr = n.r * RS);
+    layoutLabels();
+    lit = new Set(STORY[sel].lights.concat(['ch' + sel]));
+  }
+
+  function resize() {
+    const r = dpr(); W = stage.clientWidth; H = stage.clientHeight;
+    cv.width = W * r; cv.height = H * r; ctx.setTransform(r, 0, 0, r, 0, 0);
+    relayout();
+  }
+
+  function pick() {
+    if (!m.in) return null;
+    let best = null, bd = 22 * 22;
+    for (const n of nodes) {
+      if (!n.tagged) continue;
+      const a = px(n) - m.x, b = py(n) - m.y, d = a * a + b * b;
+      if (d < bd) { bd = d; best = n; }
+    }
+    return best;
+  }
+
+  /* one real button per chapter: focusable, announced, and the primary
+     control on narrow screens where the canvas is not usable */
+  var live = document.getElementById('ch-live');
+  var chList = document.getElementById('ch-list');
+  var chBtns = [];
+  if (chList) {
+    chList.innerHTML = STORY.map(function (c, i) {
+      var names = c.lights.map(function (id) {
+        var m = GRAPH.methods.find(function (x) { return x.id === id; });
+        if (m) return m.label;
+        var w = GRAPH.work.find(function (x) { return x.id === id; });
+        return w ? w.label : null;
+      }).filter(Boolean);
+      var added = names.length ? names.join(', ') : 'no methods yet';
+      var label = c.yr + ', ' + c.ch + '. Added: ' + added;
+      return '<button type="button" class="ch-btn" data-i="' + i + '" aria-current="false"' +
+             ' aria-label="' + label.replace(/"/g, '&quot;') + '">' +
+             '<span class="y" aria-hidden="true">' + c.yr + '</span>' +
+             '<span aria-hidden="true"><span class="n">' + c.ch + '</span>' +
+             '<span class="w">' + added + '</span></span>' +
+             '</button>';
+    }).join('');
+    chBtns = [].slice.call(chList.children);
+    chBtns.forEach(function (b) {
+      b.addEventListener('click', function () { select(+b.dataset.i); });
+    });
+  }
+
+  function select(i) {
+    sel = (i + STORY.length) % STORY.length;
+    lit = new Set(STORY[sel].lights.concat(['ch' + sel]));
+    chBtns.forEach(function (b, j) {
+      b.setAttribute('aria-current', j === sel ? 'true' : 'false');
+    });
+    if (live) live.textContent = STORY[sel].yr + ', ' + STORY[sel].ch + '. ' + STORY[sel].title;
+  }
+
+  function drawLabel(L, alpha, color) {
+    ctx.globalAlpha = alpha; ctx.font = L.font; ctx.fillStyle = color;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(L.text, px(L.n) + L.ox, py(L.n) + L.oy);
+    ctx.globalAlpha = 1;
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+    const near = hover ? new Set([hover.id]) : null;
+    if (hover) edges.forEach(e => { if (e.a === hover) near.add(e.b.id); if (e.b === hover) near.add(e.a.id); });
+    const isLit = id => lit.has(id);
+
+    for (const e of edges) {
+      if (e.hidden) continue;
+      const ax = px(e.a), ay = py(e.a), bx = px(e.b), by = py(e.b);
+      const hoverLit = hover && (e.a === hover || e.b === hover);
+      const chapLit = isLit(e.a.id) && isLit(e.b.id);
+      let al, col = C.mid, lw = 1;
+      if (e.spine) { al = 0.5; col = C.acc; lw = 1.5; }
+      else if (chapLit) { al = 0.7; col = C.acc; }
+      else if (e.minor) { al = 0.055; }
+      else { al = 0.085; }
+      if (hover) { al = hoverLit ? 0.85 : 0.03; col = hoverLit ? C.acc : C.mid; }
+      ctx.globalAlpha = al; ctx.strokeStyle = col; ctx.lineWidth = lw;
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by); ctx.stroke();
+    }
+    ctx.globalAlpha = 1; ctx.lineWidth = 1;
+
+    /* nodes */
+    for (const n of nodes) {
+      const x = px(n), y = py(n);
+      if (n.kind === 'minor') {
+        ctx.globalAlpha = hover ? 0.09 : 0.22;
+        ctx.fillStyle = C.mid;
+        ctx.beginPath(); ctx.arc(x, y, n.rr, 0, 6.2832); ctx.fill();
+        continue;
+      }
+      const chapLit = isLit(n.id);
+      const dimmed = hover ? !near.has(n.id) : (!chapLit && !n.anchor && n.kind !== 'chapter');
+      const r = n.rr * (n === hover ? 1.4 : (chapLit ? 1.2 : 1));
+
+      if (n.kind === 'chapter') {
+        const active = n.idx === sel;
+        if (active) {
+          const pulse = REDUCED ? 0 : (0.5 + 0.5 * Math.sin(clock * 2));
+          ctx.globalAlpha = 0.14 + pulse * 0.14; ctx.fillStyle = C.acc;
+          ctx.beginPath(); ctx.arc(x, y, r + 8 + pulse * 4, 0, 6.2832); ctx.fill();
+          ctx.globalAlpha = 1; ctx.fillStyle = C.acc;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill();
+        } else {
+          ctx.globalAlpha = 0.72; ctx.strokeStyle = C.acc; ctx.lineWidth = 1.5;
+          ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.stroke();
+        }
+        ctx.globalAlpha = 1;
+        continue;
+      }
+
+      ctx.globalAlpha = dimmed ? 0.2 : 1;
+      const green = n.anchor || chapLit || (n.kind === 'work' && n.state === 'built');
+      if (green) { ctx.fillStyle = C.acc; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); }
+      else if (n.kind === 'method') { ctx.fillStyle = C.mid; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.fill(); }
+      else { ctx.strokeStyle = C.dim; ctx.lineWidth = 1.3; ctx.beginPath(); ctx.arc(x, y, r, 0, 6.2832); ctx.stroke(); }
+      ctx.globalAlpha = 1;
+    }
+
+    /* labels last, from their resolved slots */
+    for (const L of labels) {
+      const n = L.n, chapLit = isLit(n.id);
+      if (n.kind === 'chapter') {
+        const active = n.idx === sel;
+        drawLabel(L, active ? 1 : 0.6, L.key === 'yr' ? (active ? C.ink : C.mid) : (active ? C.acc : C.dim));
+        continue;
+      }
+      const earned = n === hover || (hover && near.has(n.id)) || chapLit;
+      if (earned) drawLabel(L, 0.96, n.kind === 'method' ? C.ink : C.acc);
+      else if (n.anchor && !hover) drawLabel(L, 0.62, C.acc);
+    }
+  }
+
+  function frame() {
+    clock += 0.016;
+    const h = pick();
+    if (h !== hover) {
+      hover = h;
+      if (h) {
+        tip.querySelector('.t-kind').textContent =
+          h.kind === 'chapter' ? 'Chapter ' + (h.idx + 1) :
+          h.kind === 'method' ? (h.anchor ? 'Anchor' : 'Method') :
+          (h.state === 'built' ? 'Published' : 'In progress');
+        tip.querySelector('.t-name').textContent = h.kind === 'chapter' ? h.sub : h.label;
+        tip.querySelector('.t-sub').textContent =
+          (h.kind === 'chapter' ? STORY[h.idx].title : h.note) + (h.href ? '  \u2197 Open' : '');
+        tip.classList.add('on');
+      } else tip.classList.remove('on');
+    }
+    if (hover) {
+      tip.style.left = Math.min(Math.max(m.x + 16, 8), Math.max(W - 266, 8)) + 'px';
+      tip.style.top = Math.min(Math.max(m.y + 16, 8), Math.max(H - 110, 8)) + 'px';
+    }
+    stage.style.cursor = (hover && (hover.kind === 'chapter' || hover.href)) ? 'pointer' : 'default';
+    draw();
+    raf = requestAnimationFrame(frame);
+  }
+
+  stage.addEventListener('pointermove', e => {
+    const r = stage.getBoundingClientRect();
+    m.x = e.clientX - r.left; m.y = e.clientY - r.top; m.in = true;
+  });
+  stage.addEventListener('pointerleave', () => { m.in = false; m.x = -999; });
+  stage.addEventListener('pointerup', () => {
+    if (!hover) return;
+    if (hover.href) { location.href = hover.href; return; }
+    if (hover.kind === 'chapter') select(hover.idx);
+  });
+  stage.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight') { select(sel + 1); e.preventDefault(); }
+    if (e.key === 'ArrowLeft')  { select(sel - 1); e.preventDefault(); }
+  });
+  stage.setAttribute("aria-hidden", "false");
+
+  palette(); resize();
+  let rt = null;
+  addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(resize, 180); });
+
+  if (REDUCED) draw();
+  else new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting && !raf) { palette(); frame(); }
+    else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = null; }
+  }), { threshold: 0.02 }).observe(stage);
+})();
+</script>
+</body>
+</html>
