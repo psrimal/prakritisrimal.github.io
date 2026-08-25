@@ -17,9 +17,9 @@
   --accent: #2db354; --rule: #171d19;
   --edge: #5c6a62;   /* 3.53:1, for control borders */
   --gut: clamp(20px, 5vw, 64px);
-  --text: 60ch;
-  --marg: 372px;
-  --sep: clamp(26px, 4vw, 60px);
+  --text: 58ch;
+  --marg: 470px;
+  --sep: clamp(26px, 4vw, 56px);
 }
 html { scroll-behavior: smooth; background: var(--bg); }
 body { font-family: var(--body); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: hidden; }
@@ -92,7 +92,9 @@ article { padding: clamp(46px, 6vw, 78px) 0 clamp(60px, 8vw, 100px); }
 }
 .col-text .close p + p { margin-top: 0.65em; }
 
-.col-marg { display: flex; flex-direction: column; gap: clamp(24px, 3vw, 40px); }
+.col-marg { display: flex; flex-direction: column; gap: clamp(20px, 2.6vw, 32px); }
+.photo-row { display: flex; gap: clamp(12px, 1.6vw, 18px); }
+.photo-row .m-fig { flex: 1; min-width: 0; }
 .m-fig figure { position: relative; overflow: hidden; background: #0b100d; border: 1px solid var(--rule); aspect-ratio: 4 / 5; }
 .m-fig img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .m-fig figure::after {
@@ -134,7 +136,10 @@ article { padding: clamp(46px, 6vw, 78px) 0 clamp(60px, 8vw, 100px); }
     max-width: 62ch; row-gap: clamp(26px, 5vw, 44px);
   }
   .hero-meta { border-left: none; padding-left: 0; border-top: 1px solid var(--rule); padding-top: 14px; }
-  .m-fig figure { aspect-ratio: 16 / 10; }
+  .m-fig figure { aspect-ratio: 3 / 4; }
+}
+@media (max-width: 560px) {
+  .photo-row { flex-direction: column; }
 }
 
 footer {
@@ -189,23 +194,25 @@ footer a:hover { color: var(--accent); }
     </div>
 
     <aside class="col-marg">
-      <div class="m-fig">
-        <div class="m-speed">60 km/h</div>
-        <figure data-slot="dubai-street.jpg">
-          <img src="assets/speed/dubai-street.jpg" alt="A road in Dubai seen at eye level">
-        </figure>
-        <div class="m-cap">Dubai. Movement between enclosures.</div>
+      <div class="photo-row">
+        <div class="m-fig">
+          <div class="m-speed">60 km/h</div>
+          <figure data-slot="dubai-street.jpg">
+            <img src="assets/speed/dubai-street.jpg" alt="A road in Dubai seen at eye level">
+          </figure>
+          <div class="m-cap">Dubai.</div>
+        </div>
+
+        <div class="m-fig">
+          <div class="m-speed">5 km/h</div>
+          <figure data-slot="london-street.jpg">
+            <img src="assets/speed/london-street.jpg" alt="A street in London seen at eye level">
+          </figure>
+          <div class="m-cap">London.</div>
+        </div>
       </div>
 
       <div class="m-pull">Cities don't just determine how we move. They determine how often we're available to each other.</div>
-
-      <div class="m-fig">
-        <div class="m-speed">5 km/h</div>
-        <figure data-slot="london-street.jpg">
-          <img src="assets/speed/london-street.jpg" alt="A street in London seen at eye level">
-        </figure>
-        <div class="m-cap">London. Shared pavement, shared pace.</div>
-      </div>
 
       <div class="m-note">
         <b>Worth reading</b>
