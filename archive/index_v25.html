@@ -4,20 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Prakriti Srimal</title>
-<script>
-/* Refresh should always land at the top. Browsers otherwise restore the
-   previous scroll position, which on this page drops you mid-canvas with
-   the particle field already part-way through its morph. Restoration is
-   turned off here in head, before the browser can apply it, and the
-   position is forced once more on load to cover the cases where a browser
-   restores anyway (bfcache, some mobile browsers). */
-if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
-addEventListener('load', function () {
-  /* instant, not smooth: html has scroll-behavior smooth, and an animated
-     scroll-to-top on every load would be visible and slow */
-  window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
-});
-</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
@@ -66,45 +52,36 @@ a { color: inherit; }
 .field-readout.on { opacity: 1; }
 .field-readout b { color: var(--accent); font-weight: 500; }
 
-/* Static mandatory snap, driven entirely by CSS.
+/* Chapters glide past too easily on a fast wheel/trackpad flick.
 
-   scroll-snap-type has to sit on the element that actually scrolls, which
-   on this page is html itself: .field-flow has no overflow set, so it is
-   not a scroll container and snap rules on it are ignored.
+   scroll-snap-type has to sit on the element that actually scrolls,
+   which on this page is html itself, not .field-flow, since that div
+   has no overflow set, so snap rules on it are ignored.
 
-   "mandatory" plus scroll-snap-stop: always forces the browser to land on
-   every section in sequence, even on a hard fling that would otherwise
-   cover two or three screens in one gesture.
+   Snap is applied via a class toggled from JS, not statically, because
+   both static options fail here:
 
-   No JS is involved, deliberately. An earlier version toggled snap-type
-   between none and mandatory from JS to release it mid-gesture; that is
-   what produced the stepping and glitching, because the re-arm kept
-   landing inside the gaps between wheel notches. Held static, mandatory
-   is smooth, and the browser handles the animation itself.
+   - "mandatory" alone traps the page. It requires the scroll to rest
+     on a snap point, and only the hero and four chapters have any, so
+     scrolling down from the last chapter found nothing below it and
+     got dragged back. Adding snap points to the sections below does
+     not help either: they are several viewports tall, and mandatory
+     would then fight any attempt to read the middle of one.
 
-   Only .intro-step and .sc-step declare scroll-snap-align, so the index
-   and graph sections further down have no snap points and scroll freely
-   once you are past the last chapter. */
-html { scroll-snap-type: y mandatory; }
-/* Snapping is switched off past the field. #index and #practice are
-   several viewports tall, so they cannot be snap points themselves:
-   mandatory would drag you back while you were reading the middle of one.
-   But with no snap point at all below the last chapter, mandatory has
-   nowhere to let the scroll rest and pulls you back up, which made the
-   index unreachable.
+   - "proximity" alone does not do the job asked for. It only pulls in
+     once a scroll has already come to rest near a snap point, so a
+     hard flick still passes straight through several chapters.
 
-   So #index gets a snap point purely as an exit, and once its top has
-   reached the top of the viewport snapping is disabled outright. That
-   toggle happens once, at a boundary, at a moment when the page is
-   already aligned, so there is nothing to see. This is not the per
-   gesture release and re-arm that caused the earlier stepping. */
-html.nosnap { scroll-snap-type: none; }
+   So: snap is released while a gesture is in flight, re-applied once
+   it settles (which is what makes a chapter hold), and switched off
+   entirely once the last chapter's top has passed the viewport, which
+   is what keeps the exit into the sections below always open. */
+html { scroll-snap-type: none; }
+html.snap { scroll-snap-type: y mandatory; }
 .field-flow { position: relative; z-index: 2; margin-top: -100svh; pointer-events: none; }
 .intro-step, .sc-step {
   scroll-snap-align: start;
-  scroll-snap-stop: always;
 }
-#index { scroll-snap-align: start; }
 
 /* --- three-part intro: hook, stakes, introduction --- */
 .intro-step {
@@ -112,6 +89,10 @@ html.nosnap { scroll-snap-type: none; }
   padding: 96px clamp(20px, 6vw, 90px) 84px;
 }
 .intro-type { max-width: 1000px; pointer-events: auto; }
+.intro-lead {
+  font-family: var(--mono); font-size: 11px; letter-spacing: 0.26em;
+  text-transform: uppercase; color: var(--accent); margin-bottom: clamp(18px, 2.4vw, 28px);
+}
 .intro-line {
   font-family: var(--mono); font-weight: 700;
   font-size: clamp(1.7rem, 5.4vw, 4.2rem); line-height: 1.06;
@@ -149,6 +130,7 @@ html.nosnap { scroll-snap-type: none; }
 .sc-step:nth-child(even) { justify-content: flex-end; }
 .sc-card { max-width: 420px; pointer-events: auto; background: rgba(6,8,7,0.86); border-left: 2px solid var(--accent); padding: clamp(22px, 2.4vw, 30px); opacity: 0.2; transition: opacity 300ms ease; }
 .sc-step.on .sc-card { opacity: 1; }
+.sc-num { font-family: var(--mono); font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; color: var(--accent); margin-bottom: 12px; }
 .sc-q { font-family: var(--mono); font-weight: 700; font-size: clamp(1.15rem, 2.5vw, 1.7rem); line-height: 1.18; letter-spacing: -0.02em; text-transform: uppercase; margin-bottom: 12px; }
 .sc-p { font-size: 14.5px; line-height: 1.66; color: var(--ink-mid); }
 .sc-go {
@@ -279,13 +261,15 @@ footer { position: relative; z-index: 3; background: var(--bg); padding: 34px cl
 
     <section class="intro-step" id="intro-1">
       <div class="intro-type">
-        <h1 class="intro-line">Your city works<br>the way it does.<br>But what if it<br>could have worked<br>otherwise?</h1>
+        <p class="intro-lead">Every city is a decision</p>
+        <h1 class="intro-line">Your city works<br>the way it does.<br>It could have<br>worked otherwise.</h1>
         <p class="intro-sub">Almost nobody has the evidence to say how.</p>
       </div>
     </section>
 
     <section class="intro-step" id="intro-2">
       <div class="intro-type">
+        <p class="intro-lead">The cost of not knowing</p>
         <h2 class="intro-line intro-stat">Millions are lost<br>every year</h2>
         <p class="intro-sub">to decisions made without the spatial evidence to support them.</p>
       </div>
@@ -293,11 +277,12 @@ footer { position: relative; z-index: 3; background: var(--bg); padding: 34px cl
 
     <section class="intro-step" id="intro-3">
       <div class="intro-type">
+        <p class="intro-lead">So</p>
         <h2 class="intro-line" id="hero-name">
           <span class="gl" data-t="Hi, I'm Prakriti.">Hi, I'm Prakriti.</span>
         </h2>
         <p class="intro-line intro-tag">I read cities as <em>data.</em></p>
-        <p class="intro-sub intro-roles">Every city works the way it does because of decisions, and most were made without the spatial evidence to weigh them.</p>
+        <p class="intro-sub intro-roles">Every city works the way it does because of decisions, and most were made without the spatial evidence to weigh them. <strong>I build that evidence.</strong></p>
       </div>
     </section>
 
@@ -307,15 +292,18 @@ footer { position: relative; z-index: 3; background: var(--bg); padding: 34px cl
 
 <!-- ============ INDEX ============ -->
 <section id="index">
-  <div class="kicker">Case Files</div>
-  <h2 class="h2">The Journey</h2>
+  <div class="kicker">The Index</div>
+  <h2 class="h2">Every question, finished or not</h2>
+  <p class="sub">Mostly Bangalore, one question at a time. Nothing here is marked live until it actually is.</p>
   <div class="ix" id="ix"><!-- injected --></div>
 </section>
 
 <!-- ============ PRACTICE: the graph is the section ============ -->
 <section id="practice">
   <div class="pr-head">
+    <div class="kicker">The Practice</div>
     <h2 class="h2">Every chapter added something to the network</h2>
+    <p class="sub">Seven years laid out left to right. Pick a year to see what it switched on. Drag to pan.</p>
   </div>
 
   <div class="pr-stage" id="pr-stage">
@@ -405,6 +393,7 @@ const CHAPTERS = [
   document.getElementById('sc-steps').innerHTML = FEAT.map((c, i) => `
     <div class="sc-step">
       <div class="sc-card">
+        <div class="sc-num">Chapter ${String(i + 1).padStart(2, '0')}</div>
         <h2 class="sc-q">${c.q}</h2>
         <p class="sc-p">${c.p}</p>
         <div class="sc-slot">Slot: ${c.slot}</div>
@@ -737,6 +726,24 @@ const CHAPTERS = [
     });
     readout.classList.toggle('on', active >= 0);
     if (active >= 0 && active !== idx) { idx = active; nEl.textContent = idx + 1; modeEl.textContent = FEAT[idx].mode; }
+    updateSnap();
+  }
+
+  /* Snap control. Released while a gesture is in flight so nothing can be
+     blocked, re-armed shortly after it settles so a chapter actually holds,
+     and switched off completely once the last chapter's top has gone above
+     the viewport, which is what keeps the way out permanently open. */
+  const root = document.documentElement;
+  const lastStep = steps[steps.length - 1];
+  let snapTimer = null;
+
+  function updateSnap() {
+    if (REDUCED || !lastStep) return;
+    root.classList.remove('snap');
+    clearTimeout(snapTimer);
+    /* past the final chapter: leave snap off so the sections below scroll freely */
+    if (lastStep.getBoundingClientRect().top < -8) return;
+    snapTimer = setTimeout(() => { root.classList.add('snap'); }, 140);
   }
 
   resize(); addEventListener('resize', resize);
@@ -746,31 +753,6 @@ const CHAPTERS = [
     if (e.isIntersecting && !raf) loop();
     else if (!e.isIntersecting && raf) { cancelAnimationFrame(raf); raf = null; }
   }), { threshold: 0.01 }).observe(cv);
-})();
-
-/* Snap release past the field.
-
-   One state change at a boundary, not a per-gesture release: that is the
-   difference between this and the version that stuttered. Going down,
-   snapping is dropped the moment #index reaches the top of the viewport,
-   which is a point where the page is already aligned. Going back up it is
-   only restored once #index has fallen well down the viewport again, so
-   re-arming cannot yank you back down into it. */
-(function () {
-  const root = document.documentElement;
-  const idx = document.getElementById('index');
-  if (!idx) return;
-  let off = false;
-
-  function update() {
-    const top = idx.getBoundingClientRect().top;
-    if (!off && top <= 0) { root.classList.add('nosnap'); off = true; }
-    else if (off && top > innerHeight * 0.6) { root.classList.remove('nosnap'); off = false; }
-  }
-
-  addEventListener('scroll', update, { passive: true });
-  addEventListener('resize', update);
-  update();
 })();
 
 /* glitch: short bursts, never continuous */
